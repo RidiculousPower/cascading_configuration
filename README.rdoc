@@ -1,0 +1,117 @@
+== Cascading Configuration
+
+http://rubygems.org/gems/cascading-configuration
+
+== DESCRIPTION:
+
+Adds methods for cascading configurations to Class and object instances.
+
+== SUMMARY:
+  
+  Provides Public Methods (Class and instance):
+
+  * :attr_cascading_configuration
+  * :attr_cascading_configuration_array
+  * :attr_cascading_configuration_hash
+ 
+  Provides Private Methods (Class and instance):
+
+  * :get_cascading_hash_downward_from_Object
+  * :get_cascading_array_downward_from_Object
+  * :get_configuration_searching_upward_from_self
+
+== INSTALL:
+
+  * sudo gem install cascading-configuration
+
+== EXAMPLE:
+
+  #############################################################################
+  ########################### Base Configuration ##############################
+  #############################################################################
+
+  class MyClass
+
+    include CascadingConfiguration
+
+    ############################### Settings ##################################
+
+    attr_cascading_configuration       :configuration_property
+
+	configuration_property = :some_configuration_value
+
+    ############################ Settings Arrays ##############################
+
+    attr_cascading_configuration_array :configuration_array
+	
+	configuration_array = [ :configuration_value1, :configuration_value2 ]
+
+    ############################ Settings Hashes ##############################
+
+    attr_cascading_configuration_hash  :configuration_hash
+
+	configuration_hash = { :configuration1 => :configuration_value1,
+	                       :configuration2 => :configuration_value2 }
+
+  end
+  
+  #############################################################################
+  ######################## Inherited Configuration ############################
+  #############################################################################
+
+  class MyOtherClass < MyClass
+
+    ############################### Settings ##################################
+
+    # we inherit configuration
+    configuration_property # => :some_configuration_value
+
+    # we can change the value in this class
+	configuration_property = :some_other_configuration_value
+    configuration_property # => :some_other_configuration_value
+
+    # while our superclass retains its configuration
+    superclass.configuration_property # => :some_configuration_value
+
+    ############################ Settings Arrays ##############################
+
+	configuration_array += [ :configuration_value3 ]
+	configuration_array -= [ :configuration_value2 ]
+
+	configuration_array = [ :configuration_value1, :configuration_value2 ]
+
+    ############################ Settings Hashes ##############################
+
+	configuration_hash.delete( :configuration1 )
+	
+	configuration_hash[ :configuration3 ] = :configuration_value3
+	
+	configuration_hash = { :configuration1 => :configuration_value1,
+	                       :configuration2 => :configuration_value2 }
+
+  end
+
+== LICENSE:
+
+  (The MIT License)
+
+  Copyright (c) 2011 Asher
+
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  'Software'), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
+
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
