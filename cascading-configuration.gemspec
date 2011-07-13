@@ -13,6 +13,10 @@ Gem::Specification.new do |spec|
   spec.email                     =  'asher@ridiculouspower.com'
   spec.homepage                  =  'http://rubygems.org/gems/cascading-configuration'
 
+  spec.add_dependency            'cascading-configuration-setting'
+  spec.add_dependency            'cascading-configuration-array'
+  spec.add_dependency            'cascading-configuration-hash'
+
   spec.date                      =  Date.today.to_s
   
   # ensure the gem is built out of versioned files
