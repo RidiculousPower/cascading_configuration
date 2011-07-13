@@ -3,13 +3,13 @@
 	url = rp@ridiculouspower.com:ruby/cascading-configuration/base
 [submodule "setting"]
 	path = setting
-	url = rp@ridiculouspower.com:ruby/cascading-configuration/setting
+	url = git@github.com:Asher-/cascading-configuration-setting.git
 [submodule "settings-hash"]
 	path = settings-hash
-	url = rp@ridiculouspower.com:ruby/cascading-configuration/settings-hash
+	url = git@github.com:Asher-/cascading-configuration-hash.git
 [submodule "settings-array"]
 	path = settings-array
-	url = rp@ridiculouspower.com:ruby/cascading-configuration/settings-array
+	url = git@github.com:Asher-/cascading-configuration-array.git
 [submodule "variable"]
 	path = variable
-	url = rp@ridiculouspower.com:ruby/cascading-configuration/variable
+	url = git@github.com:Asher-/cascading-configuration-variable.git
