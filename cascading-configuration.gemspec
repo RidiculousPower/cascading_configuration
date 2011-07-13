@@ -6,8 +6,8 @@ Gem::Specification.new do |spec|
   spec.rubyforge_project         =  'cascading-configuration'
   spec.version                   =  '1.0.0'
 
-  spec.summary                   =  "Adds methods for cascading configurations to Class and object instances."
-  spec.description               =  "Provides :get_cascading_hash_downward_from_Object,  :get_cascading_array_downward_from_Object, and :get_configuration_searching_upward_from_self."
+  spec.summary                   =  "Adds methods for cascading configurations."
+  spec.description               =  "Provides :attr_configuration,  :attr_configuration_array, and :attr_configuration_hash."
 
   spec.authors                   =  [ 'Asher' ]
   spec.email                     =  'asher@ridiculouspower.com'

@@ -1,0 +1,15 @@
+[submodule "base"]
+	path = base
+	url = rp@ridiculouspower.com:ruby/cascading-configuration/base
+[submodule "setting"]
+	path = setting
+	url = rp@ridiculouspower.com:ruby/cascading-configuration/setting
+[submodule "settings-hash"]
+	path = settings-hash
+	url = rp@ridiculouspower.com:ruby/cascading-configuration/settings-hash
+[submodule "settings-array"]
+	path = settings-array
+	url = rp@ridiculouspower.com:ruby/cascading-configuration/settings-array
+[submodule "variable"]
+	path = variable
+	url = rp@ridiculouspower.com:ruby/cascading-configuration/variable
