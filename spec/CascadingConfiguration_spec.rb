@@ -55,7 +55,7 @@ describe CascadingConfiguration do
       CascadingConfiguration::MockModule.some_configuration.should == :some_value
     end
 
-    # instance of first inheriting class
+    # Instance of First Inheriting Class
     object_instance_two = CascadingConfiguration::MockClassSub1.new
     object_instance_two.some_configuration.should == :a_value_not_yet_used
     object_instance_one.some_configuration.should == :yet_another_value
@@ -126,7 +126,7 @@ describe CascadingConfiguration do
       CascadingConfiguration::MockModule.some_array_configuration.should == [ :some_value ]
     end
 
-    # instance of first inheriting class
+    # Instance of First Inheriting Class
     object_instance_two = CascadingConfiguration::MockClassSub1.new
     object_instance_two.some_array_configuration.should == [ :a_value_not_yet_used ]
     object_instance_one.some_array_configuration.should == [ :yet_another_value ]
@@ -197,7 +197,7 @@ describe CascadingConfiguration do
       CascadingConfiguration::MockModule.some_hash_configuration.should == { :some_value => :some_value }
     end
 
-    # instance of first inheriting class
+    # Instance of First Inheriting Class
     object_instance_two = CascadingConfiguration::MockClassSub1.new
     object_instance_two.some_hash_configuration.should == { :a_value_not_yet_used => :some_value }
     object_instance_one.some_hash_configuration.should == { :yet_another_value => :some_value }
