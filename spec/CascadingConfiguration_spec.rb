@@ -62,14 +62,14 @@ describe CascadingConfiguration do
     CascadingConfiguration::MockClass.some_configuration.should == :another_value
     CascadingConfiguration::MockModule.some_configuration.should == :some_value
 
-    # second inheriting class
+    # Second Inheriting Class
     class CascadingConfiguration::MockClassSub2 < CascadingConfiguration::MockClassSub1
       some_configuration.should == :a_value_not_yet_used
       self.some_configuration = :another_value_not_yet_used
       some_configuration.should == :another_value_not_yet_used
     end
 
-    # instance of second inheriting class
+    # Instance of Second Inheriting Class
     object_instance_three = CascadingConfiguration::MockClassSub2.new
     object_instance_three.some_configuration.should == :another_value_not_yet_used
     object_instance_three.some_configuration = :one_more_unused_value
@@ -133,14 +133,14 @@ describe CascadingConfiguration do
     CascadingConfiguration::MockClass.some_array_configuration.should == [ :another_value ]
     CascadingConfiguration::MockModule.some_array_configuration.should == [ :some_value ]
 
-    # second inheriting class
+    # Second Inheriting Class
     class CascadingConfiguration::MockClassSub2 < CascadingConfiguration::MockClassSub1
       some_array_configuration.should == [ :a_value_not_yet_used ]
       self.some_array_configuration = [ :another_value_not_yet_used ]
       some_array_configuration.should == [ :another_value_not_yet_used ]
     end
 
-    # instance of second inheriting class
+    # Instance of Second Inheriting Class
     object_instance_three = CascadingConfiguration::MockClassSub2.new
     object_instance_three.some_array_configuration.should == [ :another_value_not_yet_used ]
     object_instance_three.some_array_configuration = [ :one_more_unused_value ]
@@ -204,14 +204,14 @@ describe CascadingConfiguration do
     CascadingConfiguration::MockClass.some_hash_configuration.should == { :another_value => :some_value }
     CascadingConfiguration::MockModule.some_hash_configuration.should == { :some_value => :some_value }
 
-    # second inheriting class
+    # Second Inheriting Class
     class CascadingConfiguration::MockClassSub2 < CascadingConfiguration::MockClassSub1
       some_hash_configuration.should == { :a_value_not_yet_used => :some_value }
       self.some_hash_configuration = { :another_value_not_yet_used => :some_value }
       some_hash_configuration.should == { :another_value_not_yet_used => :some_value }
     end
 
-    # instance of second inheriting class
+    # Instance of Second Inheriting Class
     object_instance_three = CascadingConfiguration::MockClassSub2.new
     object_instance_three.some_hash_configuration.should == { :another_value_not_yet_used => :some_value }
     object_instance_three.some_hash_configuration = { :one_more_unused_value => :some_value }

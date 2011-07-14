@@ -1,16 +1,16 @@
-== Cascading Configuration
+# Cascading Configuration #
 
 http://rubygems.org/gems/cascading-configuration
 
-== DESCRIPTION:
+# Description #
 
 Adds methods for cascading configurations.
 
-== SUMMARY:
+# Summary #
 
 Cascading configuration methods for single settings, arrays, hashes.
 
-# :attr_configuration #
+## :attr_configuration ##
 
 :attr_configuration provides inheritable configuration that cascades downward. 
 
@@ -18,7 +18,7 @@ Configuration inheritance can cascade through modules, classes, and instances.
 
 :attr_configuration defines a single attribute accessor that searches upward for the first ancestor defining the configuration. 
 
-# :attr_configuration_array #
+## :attr_configuration_array ##
 
 :attr_configuration_array provides inheritable configuration that cascades downward. 
 
@@ -28,7 +28,7 @@ Configuration inheritance can cascade through modules, classes, and instances.
 
 The array maintained by :attr_configuration_array is kept ordered and unique.
 
-# :attr_configuration_hash #
+## :attr_configuration_hash ##
 
 :attr_configuration_hash provides inheritable configuration that cascades downward. 
 
@@ -41,6 +41,18 @@ Configuration inheritance can cascade through modules, classes, and instances.
 * sudo gem install cascading-configuration
 
 # Usage #
+
+Including CascadingConfiguration includes:
+
+* CascadingConfiguration::Setting
+* CascadingConfiguration::Array
+* CascadingConfiguration::Hash
+
+```ruby
+  module AnyModuleOrClass
+    include CascadingConfiguration
+  end
+```
 
 See supporting package README files for examples in each case:
 
