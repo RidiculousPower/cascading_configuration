@@ -1,11 +1,13 @@
 
-require 'cascading-configuration-setting'
-require 'cascading-configuration-array'
-require 'cascading-configuration-hash'
-
-#require_relative '../setting/lib/cascading-configuration-setting.rb'
-#require_relative '../settings-array/lib/cascading-configuration-array.rb'
-#require_relative '../settings-hash/lib/cascading-configuration-hash.rb'
+if $cascading_configuration_development
+	require_relative '../setting/lib/cascading-configuration-setting.rb'
+	require_relative '../settings-array/lib/cascading-configuration-array.rb'
+	require_relative '../settings-hash/lib/cascading-configuration-hash.rb'
+else
+	require 'cascading-configuration-setting'
+	require 'cascading-configuration-array'
+	require 'cascading-configuration-hash'
+end
 
 module CascadingConfiguration
 end
