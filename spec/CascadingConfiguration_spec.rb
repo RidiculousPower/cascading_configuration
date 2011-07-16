@@ -8,6 +8,8 @@ describe CascadingConfiguration do
   ########################
   
   it 'can declare an attribute as a cascading configuration setting' do
+    module CascadingConfiguration::MockModule2
+    end
 
     # first module
     module CascadingConfiguration::MockModule
