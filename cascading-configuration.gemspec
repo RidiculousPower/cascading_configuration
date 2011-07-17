@@ -4,7 +4,7 @@ Gem::Specification.new do |spec|
 
   spec.name                      =  'cascading-configuration'
   spec.rubyforge_project         =  'cascading-configuration'
-  spec.version                   =  '1.1.0'
+  spec.version                   =  '1.1.1'
 
   spec.summary                   =  "Adds methods for cascading configurations."
   spec.description               =  "Provides :attr_configuration,  :attr_configuration_array, and :attr_configuration_hash."
