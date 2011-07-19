@@ -8,8 +8,6 @@ describe CascadingConfiguration do
   ########################
   
   it 'can declare an attribute as a cascading configuration setting' do
-    module CascadingConfiguration::MockModule2
-    end
 
     # first module
     module CascadingConfiguration::MockModule
@@ -87,6 +85,7 @@ describe CascadingConfiguration do
 
     # first module
     module CascadingConfiguration::MockModule
+      include CascadingConfiguration
       attr_configuration_array :some_array_configuration
       self.some_array_configuration = [ :some_value ]
       some_array_configuration.should == [ :some_value ]
@@ -94,6 +93,7 @@ describe CascadingConfiguration do
 
     # including module 1
     module CascadingConfiguration::MockModule2
+      include CascadingConfiguration::MockModule
       some_array_configuration.should == [ :some_value ]
       self.some_array_configuration = [ :module_value ]
       some_array_configuration.should == [ :module_value ]
@@ -101,11 +101,13 @@ describe CascadingConfiguration do
 
     # including module 2
     module CascadingConfiguration::MockModule3
+      include CascadingConfiguration::MockModule2
       some_array_configuration.should == [ :module_value ]
     end
 
     # top class
     class CascadingConfiguration::MockClass
+      include CascadingConfiguration::MockModule3
       some_array_configuration.should == [ :module_value ]
       self.some_array_configuration = [ :another_value ]
       some_array_configuration.should == [ :another_value ]
