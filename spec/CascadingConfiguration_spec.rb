@@ -1,3 +1,4 @@
+$cascading_configuration_development = true
 
 require_relative '../lib/cascading-configuration.rb'
 

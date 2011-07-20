@@ -8,33 +8,53 @@ Adds methods for cascading configurations.
 
 # Summary #
 
-Cascading configuration methods for single settings, arrays, hashes.
+Cascading configuration methods for single-object settings, arrays, hashes.
+
+The cascading aspect of each works the same, returning the appropriate lowest accumulated value. Configuration inheritance can cascade through modules, classes, and to instances.
+
+This means that we can create configuration modules, optionally setting configuration defaults, and include those configuration modules in other modules or classes.
 
 ## :attr_configuration ##
 
-:attr_configuration provides inheritable configuration that cascades downward. 
+:attr_configuration provides inheritable single-object configurations that cascades downward. The value lowest in the ancestor hierarchy will be returned.
 
-Configuration inheritance can cascade through modules, classes, and instances.
+### :attr_class_configuration ###
 
-:attr_configuration defines a single attribute accessor that searches upward for the first ancestor defining the configuration. 
+:attr_class_configuration works like :attr_configuration but does not cascade to instances.
+
+### :attr_local_configuration ###
+
+:attr_local_configuration works like :attr_configuration but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
 
 ## :attr_configuration_array ##
 
-:attr_configuration_array provides inheritable configuration that cascades downward. 
+:attr_configuration_array provides inheritable array configurations that cascade downward. A composite sorted and unique array will be returned (merging downward from most distant ancestor to self). 
 
-Configuration inheritance can cascade through modules, classes, and instances.
-
-:attr_configuration_array defines a single attribute accessor that composes the set of configuration values appropriate to the ancestor level being queried (merging downward from most distant ancestor to self). An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward.
+An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward. 
 
 The array maintained by :attr_configuration_array is kept ordered and unique.
 
+### :attr_class_configuration_array ###
+
+:attr_class_configuration_array works like :attr_configuration_array but does not cascade to instances.
+
+### :attr_local_configuration_array ###
+
+:attr_local_configuration_array works like :attr_configuration_array but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
+
 ## :attr_configuration_hash ##
 
-:attr_configuration_hash provides inheritable configuration that cascades downward. 
+:attr_configuration_array provides inheritable hash configurations that cascade downward. A composite hash will be returned (merging downward from most distant ancestor to self). 
 
-Configuration inheritance can cascade through modules, classes, and instances.
+An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward.
 
-:attr_configuration_hash defines a single attribute accessor that composes the set of configuration values appropriate to the ancestor level being queried (merging downward from most distant ancestor to self). An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward.
+### :attr_class_configuration_hash ###
+
+:attr_class_configuration_hash works like :attr_configuration_hash but does not cascade to instances.
+
+### :attr_local_configuration_hash ###
+
+:attr_local_configuration_hash works like :attr_configuration_hash but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
 
 # Install #
 
@@ -42,23 +62,501 @@ Configuration inheritance can cascade through modules, classes, and instances.
 
 # Usage #
 
-Including CascadingConfiguration includes:
+Including the module will enable support for singleton and for instances.
+
+```ruby
+module AnyModuleOrClass
+  include CascadingConfiguration
+end
+```
+
+Extending the module will enable support for singleton only.
+
+```ruby
+module AnyModuleOrClass
+  extend CascadingConfiguration
+end
+```
+
+Including or extending CascadingConfiguration includes or extends:
 
 * CascadingConfiguration::Setting
 * CascadingConfiguration::Array
 * CascadingConfiguration::Hash
 
+Accordingly, each module can also be used independently. The first package included or extended with also include/extend the common support package:
+
+* CascadingConfiguration::Variable
+
+## Interface ##
+
+### :attr_configuration ###
+
+Define initial configuration in a module or class:
+
 ```ruby
-  module AnyModuleOrClass
-    include CascadingConfiguration
-  end
+module SomeModule
+
+  include CascadingConfiguration::Setting
+
+  attr_configuration :some_setting
+
+  some_setting # => nil
+
+  # note: if we don't specify the receiver here (self) assignment creates local variable instead
+  self.some_setting = :some_value
+
+  some_setting # => :some_value
+
+end
 ```
 
-See supporting package README files for examples in each case:
+Include initial module in a module or class:
 
-* attr_configuration
-* attr_configuration_array
-* attr_configuration_hash
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  some_setting # => :some_value
+
+  self.some_setting = :some_other_value
+
+  some_setting # => :some_other_value
+
+  SomeModule.some_setting # => :some_value
+
+end
+```
+
+And it cascades to instances:
+
+```ruby
+instance = SomeClass.new
+
+instance.some_setting.should == :some_value
+
+instance.some_setting = :another_value
+
+instance.some_setting.should == :another_value
+```
+
+#### :attr_class_configuration ####
+
+Define initial configuration in a module or class:
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Setting
+
+  attr_class_configuration :some_setting
+
+  some_setting # => nil
+
+  self.some_setting = :some_value
+
+  some_setting # => :some_value
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  some_setting # => :some_value
+
+  self.some_setting = :some_other_value
+
+  some_setting # => :some_other_value
+
+  SomeModule.some_setting # => :some_value
+
+end
+```
+
+And it does not cascade to instances:
+
+```ruby
+instance = SomeClass.new
+
+instance.respond_to?( :some_setting ).should == false
+```
+
+#### :attr_local_configuration ####
+
+Define initial configuration in a module or class:
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Setting
+
+  attr_local_configuration :some_setting
+
+  some_setting # => nil
+
+  self.some_setting = :some_value
+
+  some_setting # => :some_value
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  respond_to?( :some_setting ).should == false
+
+end
+```
+
+### :attr_configuration_array ###
+
+Define initial configuration in a module or class:
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_array_configuration :some_array_setting
+
+  some_array_setting # => nil
+
+  some_array_setting.push( :some_value )
+
+  some_array_setting # => [ :some_value ]
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  some_array_setting # => [ :some_value ]
+
+  self.some_array_setting = [ :some_other_value ]
+
+  some_array_setting # => [ :some_other_value ]
+
+  some_array_setting.push( :another_value ) # => [ :another_value, :some_other_value ]
+
+  SomeModule.some_array_setting # => [ :some_value ]
+
+end
+```
+
+And it cascades to instances:
+
+```ruby
+instance = SomeClass.new
+
+instance.some_array_setting.should == [ :another_value, :some_other_value ]
+
+instance.some_array_setting.delete( :some_other_value )
+
+instance.some_array_setting.should == [ :another_value ]
+```
+
+#### :attr_class_configuration_array ####
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_array_configuration :some_array_setting
+
+  some_array_setting # => nil
+
+  some_array_setting.push( :some_value )
+
+  some_array_setting # => [ :some_value ]
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  some_array_setting # => [ :some_value ]
+
+  self.some_array_setting = [ :some_other_value ]
+
+  some_array_setting # => [ :some_other_value ]
+
+  some_array_setting.push( :another_value ) # => [ :another_value, :some_other_value ]
+
+  SomeModule.some_array_setting # => [ :some_value ]
+
+end
+```
+
+And it does not cascade to instances:
+
+```ruby
+instance = SomeClass.new
+
+instance.respond_to?( :some_array_setting ).should == false
+```
+
+#### :attr_local_configuration_array ####
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_array_configuration :some_array_setting
+
+  some_array_setting # => nil
+
+  some_array_setting.push( :some_value )
+
+  some_array_setting # => [ :some_value ]
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  respond_to?( :some_array_setting ).should == false
+
+end
+```
+
+### :attr_configuration_hash ###
+
+Define initial configuration in a module or class:
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Hash
+
+  attr_configuration_hash :some_hash_setting
+
+  some_hash_setting # => nil
+
+  some_hash_setting[ :some_setting ] = :some_value
+
+  some_hash_setting[ :some_setting ] # => :some_value
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  some_hash_setting[ :some_setting ] # => :some_value
+
+  self.some_hash_setting.replace( :some_other_setting => :some_other_value )
+
+  some_hash_setting # => { :some_other_setting => :some_other_value }
+
+end
+```
+
+And it cascades to instances:
+
+```ruby
+instance = SomeClass.new
+
+instance.some_hash_setting.should == { :some_other_setting => :some_other_value }
+
+instance.some_hash_setting.delete( :some_other_setting )
+
+instance.some_hash_setting.should == {}
+```
+
+#### :attr_class_configuration_hash ####
+
+Define initial configuration in a module or class:
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Hash
+
+  attr_class_configuration_hash :some_hash_setting
+
+  some_hash_setting # => nil
+
+  some_hash_setting[ :some_setting ] = :some_value
+
+  some_hash_setting[ :some_setting ] # => :some_value
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  some_hash_setting[ :some_setting ] # => :some_value
+
+  self.some_hash_setting.replace( :some_other_setting => :some_other_value )
+
+  some_hash_setting # => { :some_other_setting => :some_other_value }
+
+end
+```
+
+And it does not cascade to instances:
+
+```ruby
+instance = SomeClass.new
+
+instance.respond_to?( :some_hash_setting ).should == false
+```
+
+#### :attr_local_configuration_hash ####
+
+Define initial configuration in a module or class:
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Hash
+
+  attr_class_configuration_hash :some_hash_setting
+
+  some_hash_setting # => nil
+
+  some_hash_setting[ :some_setting ] = :some_value
+
+  some_hash_setting[ :some_setting ] # => :some_value
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  respond_to?( :some_hash_setting ).should == false
+
+end
+```
+
+## Additional Functionality ##
+
+Cascading-configuration also provides several other convenience functions. 
+
+### Variable Name Prefixing ###
+
+Configuration prefix can be set so that variables use property name with the configuration prefix prepended.
+
+This can be done in order defined (current configuration prefix is stored for configuration), or it can be specified on a per-property basis.
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration
+
+  attr_configuration :some_setting
+
+  self.some_setting = :a_value
+
+  instance_variables.include?( :@some_setting ) # => true
+
+  # we can declare a prefix for specific properties
+  attr_configuration_prefix '__configuration_prefix__', :some_other_setting
+
+  attr_configuration :some_other_setting, :yet_another_setting
+
+  self.some_setting = :some_value
+  self.yet_another_setting = :another_value
+
+  instance_variables.include?( :@some_other_setting ) # => false
+  instance_variables.include?( :@__configuration_prefix__some_other_setting ) # => true
+  instance_variables.include?( :@yet_another_setting ) # => true
+
+  # or we can declare a prefix for all properties defined after prefix is declared
+  attr_configuration_prefix '__another_configuration_prefix__'
+
+  attr_configuration :still_another_prefix
+
+  instance_variables.include?( :@still_another_prefix ) # => false
+  instance_variables.include?( :@__another_configuration_prefix__still_another_prefix ) # => true
+
+end
+```
+
+### Method Redefinition ###
+
+Any declared configuration is defined in order to support locally redefining the method and accessing the original by calling super.
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration
+
+  attr_configuration :some_array_setting
+
+  def some_array_setting=( value )
+    puts 'Replacing configuration array!'
+    super
+  end
+
+end
+```
+
+### Hidden Configuration ###
+
+#### :attr_hide ####
+
+Coming soon.
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration
+
+  attr_configuration :some_array_setting
+
+  instance_variables.include?( :@some_array_setting ) # => true
+
+  attr_hide :some_array_setting
+
+  instance_variables.include?( :@some_array_setting ) # => false  
+
+end
+```
+
+Causes configuration variable to be stored in external context so that it is not included in instance variables.
 
 # License #
 
