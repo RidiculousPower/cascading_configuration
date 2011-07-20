@@ -455,46 +455,6 @@ end
 
 Cascading-configuration also provides several other convenience functions. 
 
-### Variable Name Prefixing ###
-
-Configuration prefix can be set so that variables use property name with the configuration prefix prepended.
-
-This can be done in order defined (current configuration prefix is stored for configuration), or it can be specified on a per-property basis.
-
-```ruby
-module SomeModule
-
-  include CascadingConfiguration
-
-  attr_configuration :some_setting
-
-  self.some_setting = :a_value
-
-  instance_variables.include?( :@some_setting ) # => true
-
-  # we can declare a prefix for specific properties
-  attr_configuration_prefix '__configuration_prefix__', :some_other_setting
-
-  attr_configuration :some_other_setting, :yet_another_setting
-
-  self.some_setting = :some_value
-  self.yet_another_setting = :another_value
-
-  instance_variables.include?( :@some_other_setting ) # => false
-  instance_variables.include?( :@__configuration_prefix__some_other_setting ) # => true
-  instance_variables.include?( :@yet_another_setting ) # => true
-
-  # or we can declare a prefix for all properties defined after prefix is declared
-  attr_configuration_prefix '__another_configuration_prefix__'
-
-  attr_configuration :still_another_prefix
-
-  instance_variables.include?( :@still_another_prefix ) # => false
-  instance_variables.include?( :@__another_configuration_prefix__still_another_prefix ) # => true
-
-end
-```
-
 ### Method Redefinition ###
 
 Any declared configuration is defined in order to support locally redefining the method and accessing the original by calling super.
