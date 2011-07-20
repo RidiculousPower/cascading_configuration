@@ -18,7 +18,7 @@ This means that we can create configuration modules, optionally setting configur
 
 :attr_configuration provides inheritable single-object configurations that cascades downward. The value lowest in the ancestor hierarchy will be returned.
 
-### :attr_class_configuration ###
+### :attr_module_configuration, :attr_class_configuration ###
 
 :attr_class_configuration works like :attr_configuration but does not cascade to instances.
 
@@ -34,7 +34,7 @@ An internal cache is kept, and any configuration updates that occur to higher-le
 
 The array maintained by :attr_configuration_array is kept ordered and unique.
 
-### :attr_class_configuration_array ###
+### :attr_module_configuration_array, :attr_class_configuration_array ###
 
 :attr_class_configuration_array works like :attr_configuration_array but does not cascade to instances.
 
@@ -48,7 +48,7 @@ The array maintained by :attr_configuration_array is kept ordered and unique.
 
 An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward.
 
-### :attr_class_configuration_hash ###
+### :attr_module_configuration_hash, :attr_class_configuration_hash ###
 
 :attr_class_configuration_hash works like :attr_configuration_hash but does not cascade to instances.
 
@@ -141,7 +141,7 @@ instance.some_setting = :another_value
 instance.some_setting.should == :another_value
 ```
 
-#### :attr_class_configuration ####
+#### :attr_module_configuration, :attr_class_configuration ####
 
 Define initial configuration in a module or class:
 
@@ -271,7 +271,7 @@ instance.some_array_setting.delete( :some_other_value )
 instance.some_array_setting.should == [ :another_value ]
 ```
 
-#### :attr_class_configuration_array ####
+#### :attr_module_configuration_array, :attr_class_configuration_array ####
 
 ```ruby
 module SomeModule
@@ -395,7 +395,7 @@ instance.some_hash_setting.delete( :some_other_setting )
 instance.some_hash_setting.should == {}
 ```
 
-#### :attr_class_configuration_hash ####
+#### :attr_module_configuration_hash, :attr_class_configuration_hash ####
 
 Define initial configuration in a module or class:
 
