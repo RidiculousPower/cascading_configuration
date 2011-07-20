@@ -14,48 +14,6 @@ The cascading aspect of each works the same, returning the appropriate lowest ac
 
 This means that we can create configuration modules, optionally setting configuration defaults, and include those configuration modules in other modules or classes.
 
-## :attr_configuration ##
-
-:attr_configuration provides inheritable single-object configurations that cascades downward. The value lowest in the ancestor hierarchy will be returned.
-
-### :attr_module_configuration, :attr_class_configuration ###
-
-:attr_class_configuration works like :attr_configuration but does not cascade to instances.
-
-### :attr_local_configuration ###
-
-:attr_local_configuration works like :attr_configuration but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
-
-## :attr_configuration_array ##
-
-:attr_configuration_array provides inheritable array configurations that cascade downward. A composite sorted and unique array will be returned (merging downward from most distant ancestor to self). 
-
-An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward. 
-
-The array maintained by :attr_configuration_array is kept ordered and unique.
-
-### :attr_module_configuration_array, :attr_class_configuration_array ###
-
-:attr_class_configuration_array works like :attr_configuration_array but does not cascade to instances.
-
-### :attr_local_configuration_array ###
-
-:attr_local_configuration_array works like :attr_configuration_array but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
-
-## :attr_configuration_hash ##
-
-:attr_configuration_array provides inheritable hash configurations that cascade downward. A composite hash will be returned (merging downward from most distant ancestor to self). 
-
-An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward.
-
-### :attr_module_configuration_hash, :attr_class_configuration_hash ###
-
-:attr_class_configuration_hash works like :attr_configuration_hash but does not cascade to instances.
-
-### :attr_local_configuration_hash ###
-
-:attr_local_configuration_hash works like :attr_configuration_hash but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
-
 # Install #
 
 * sudo gem install cascading-configuration
@@ -88,9 +46,9 @@ Accordingly, each module can also be used independently. The first package inclu
 
 * CascadingConfiguration::Variable
 
-## Interface ##
+## :attr_configuration ##
 
-### :attr_configuration ###
+:attr_configuration provides inheritable single-object configurations that cascades downward. The value lowest in the ancestor hierarchy will be returned.
 
 Define initial configuration in a module or class:
 
@@ -141,7 +99,9 @@ instance.some_setting = :another_value
 instance.some_setting.should == :another_value
 ```
 
-#### :attr_module_configuration, :attr_class_configuration ####
+### :attr_module_configuration, :attr_class_configuration ###
+
+:attr_class_configuration works like :attr_configuration but does not cascade to instances.
 
 Define initial configuration in a module or class:
 
@@ -187,7 +147,9 @@ instance = SomeClass.new
 instance.respond_to?( :some_setting ).should == false
 ```
 
-#### :attr_local_configuration ####
+### :attr_local_configuration ###
+
+:attr_local_configuration works like :attr_configuration but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
 
 Define initial configuration in a module or class:
 
@@ -219,7 +181,13 @@ class SomeClass
 end
 ```
 
-### :attr_configuration_array ###
+## :attr_configuration_array ##
+
+:attr_configuration_array provides inheritable array configurations that cascade downward. A composite sorted and unique array will be returned (merging downward from most distant ancestor to self). 
+
+An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward. 
+
+The array maintained by :attr_configuration_array is kept ordered and unique.
 
 Define initial configuration in a module or class:
 
@@ -271,7 +239,9 @@ instance.some_array_setting.delete( :some_other_value )
 instance.some_array_setting.should == [ :another_value ]
 ```
 
-#### :attr_module_configuration_array, :attr_class_configuration_array ####
+### :attr_module_configuration_array, :attr_class_configuration_array ###
+
+:attr_class_configuration_array works like :attr_configuration_array but does not cascade to instances.
 
 ```ruby
 module SomeModule
@@ -317,7 +287,9 @@ instance = SomeClass.new
 instance.respond_to?( :some_array_setting ).should == false
 ```
 
-#### :attr_local_configuration_array ####
+### :attr_local_configuration_array ###
+
+:attr_local_configuration_array works like :attr_configuration_array but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
 
 ```ruby
 module SomeModule
@@ -347,7 +319,11 @@ class SomeClass
 end
 ```
 
-### :attr_configuration_hash ###
+## :attr_configuration_hash ##
+
+:attr_configuration_array provides inheritable hash configurations that cascade downward. A composite hash will be returned (merging downward from most distant ancestor to self). 
+
+An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward.
 
 Define initial configuration in a module or class:
 
@@ -395,7 +371,9 @@ instance.some_hash_setting.delete( :some_other_setting )
 instance.some_hash_setting.should == {}
 ```
 
-#### :attr_module_configuration_hash, :attr_class_configuration_hash ####
+### :attr_module_configuration_hash, :attr_class_configuration_hash ###
+
+:attr_class_configuration_hash works like :attr_configuration_hash but does not cascade to instances.
 
 Define initial configuration in a module or class:
 
@@ -439,7 +417,9 @@ instance = SomeClass.new
 instance.respond_to?( :some_hash_setting ).should == false
 ```
 
-#### :attr_local_configuration_hash ####
+### :attr_local_configuration_hash ###
+
+:attr_local_configuration_hash works like :attr_configuration_hash but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
 
 Define initial configuration in a module or class:
 
