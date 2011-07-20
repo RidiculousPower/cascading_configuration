@@ -514,30 +514,6 @@ module SomeModule
 end
 ```
 
-### Hidden Configuration ###
-
-#### :attr_hide ####
-
-Coming soon.
-
-```ruby
-module SomeModule
-
-  include CascadingConfiguration
-
-  attr_configuration :some_array_setting
-
-  instance_variables.include?( :@some_array_setting ) # => true
-
-  attr_hide :some_array_setting
-
-  instance_variables.include?( :@some_array_setting ) # => false  
-
-end
-```
-
-Causes configuration variable to be stored in external context so that it is not included in instance variables.
-
 # License #
 
   (The MIT License)
