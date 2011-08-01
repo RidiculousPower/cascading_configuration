@@ -4,7 +4,7 @@ Gem::Specification.new do |spec|
 
   spec.name                      =  'cascading-configuration'
   spec.rubyforge_project         =  'cascading-configuration'
-  spec.version                   =  '1.2.0'
+  spec.version                   =  '1.3.0'
 
   spec.summary                   =  "Adds methods for cascading configurations."
   spec.description               =  "Provides :attr_configuration,  :attr_configuration_array, and :attr_configuration_hash."
@@ -12,6 +12,8 @@ Gem::Specification.new do |spec|
   spec.authors                   =  [ 'Asher' ]
   spec.email                     =  'asher@ridiculouspower.com'
   spec.homepage                  =  'http://rubygems.org/gems/cascading-configuration'
+
+  spec.add_dependency            'module-cluster'
 
   spec.add_dependency            'cascading-configuration-setting'
   spec.add_dependency            'cascading-configuration-array'
