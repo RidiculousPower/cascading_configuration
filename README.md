@@ -149,7 +149,77 @@ instance.respond_to?( :some_setting ).should == false
 
 ### :attr_local_configuration ###
 
-:attr_local_configuration works like :attr_configuration but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
+:attr_local_configuration works like :attr_configuration but only cascades to the first including class. Subclasses will inherit but value will not be resolved through ancestor chain.
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Setting
+
+  attr_local_configuration :some_setting
+
+  some_setting # => nil
+
+  self.some_setting = :some_value
+
+  some_setting # => :some_value
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  respond_to?( :some_setting ).should == true
+  instance_methods.include?( :some_setting ).should == true
+
+  some_setting # => :some_value
+
+end
+
+SomeClass.new.some_setting # => :some_value
+```
+
+### :attr_instance_configuration ###
+
+:attr_instance_configuration works like :attr_configuration but is only defined in instances of defining object. This means Modules and Classes will have an instance method defined, and that Subclasses will inherit but value will not be resolved through ancestor chain.
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Setting
+
+  attr_instance_configuration :some_setting
+
+  respond_to?( :some_setting ).should == false
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  respond_to?( :some_setting ).should == false
+  instance_methods.include?( :some_setting ).should == true
+
+end
+
+instance = SomeClass.new
+instance.some_setting = :some_value
+instance.some_setting # => :some_value
+```
+
+### :attr_object_configuration ###
+
+:attr_object_configuration works like :attr_configuration but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable.
 
 Define initial configuration in a module or class:
 
@@ -158,7 +228,7 @@ module SomeModule
 
   include CascadingConfiguration::Setting
 
-  attr_local_configuration :some_setting
+  attr_object_configuration :some_setting
 
   some_setting # => nil
 
@@ -289,14 +359,84 @@ instance.respond_to?( :some_array_setting ).should == false
 
 ### :attr_local_configuration_array ###
 
-:attr_local_configuration_array works like :attr_configuration_array but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
+:attr_local_configuration_array works like :attr_configuration_array but only cascades to the first including class. Subclasses will inherit but value will not be resolved through ancestor chain.
 
 ```ruby
 module SomeModule
 
   include CascadingConfiguration::Array
 
-  attr_array_configuration :some_array_setting
+  attr_local_configuration_array :some_array_setting
+
+  some_array_setting # => []
+
+  self.some_array_setting = [ :some_value ]
+
+  some_array_setting # => [ :some_value ]
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  respond_to?( :some_array_setting ).should == true
+  instance_methods.include?( :some_array_setting ).should == true
+
+  some_array_setting # => [ :some_value ]
+
+end
+
+SomeClass.new.some_array_setting # => :some_value
+```
+
+### :attr_instance_configuration_array ###
+
+:attr_instance_configuration_array works like :attr_configuration_array but is only defined in instances of defining object. This means Modules and Classes will have an instance method defined, and that Subclasses will inherit but value will not be resolved through ancestor chain.
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_instance_configuration_array :some_array_setting
+
+  respond_to?( :some_array_setting ).should == false
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  respond_to?( :some_array_setting ).should == false
+  instance_methods.include?( :some_array_setting ).should == true
+
+end
+
+instance = SomeClass.new
+instance.some_array_setting = [ :some_value ]
+instance.some_array_setting # => [ :some_value ]
+```
+
+### :attr_object_configuration_array ###
+
+:attr_object_configuration_array works like :attr_configuration_array but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable.
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_object_configuration_array :some_array_setting
 
   some_array_setting # => nil
 
@@ -419,7 +559,77 @@ instance.respond_to?( :some_hash_setting ).should == false
 
 ### :attr_local_configuration_hash ###
 
-:attr_local_configuration_hash works like :attr_configuration_hash but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
+:attr_local_configuration_hash works like :attr_configuration_hash but only cascades to the first including class. Subclasses will inherit but value will not be resolved through ancestor chain.
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Hash
+
+  attr_local_configuration_hash :some_hash_setting
+
+  some_hash_setting # => {}
+
+  self.some_hash_setting[ :some_setting ] = :some_value
+
+  some_hash_setting # => { :some_setting => :some_value }
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  respond_to?( :some_hash_setting ).should == true
+  instance_methods.include?( :some_hash_setting ).should == true
+
+  some_hash_setting # => { :some_setting => :some_value }
+
+end
+
+SomeClass.new.some_hash_setting # => :some_value
+```
+
+### :attr_instance_configuration_hash ###
+
+:attr_instance_configuration_hash works like :attr_configuration_hash but is only defined in instances of defining object. This means Modules and Classes will have an instance method defined, and that Subclasses will inherit but value will not be resolved through ancestor chain.
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Hash
+
+  attr_instance_configuration_hash :some_hash_setting
+
+  respond_to?( :some_hash_setting ).should == false
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  respond_to?( :some_hash_setting ).should == false
+  instance_methods.include?( :some_hash_setting ).should == true
+
+end
+
+instance = SomeClass.new
+instance.some_hash_setting[ :some_setting ] = :some_value
+instance.some_hash_setting # => { :some_setting => :some_value }
+```
+
+### :attr_object_configuration_hash ###
+
+:attr_object_configuration_hash works like :attr_configuration_hash but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable.
 
 Define initial configuration in a module or class:
 
@@ -428,7 +638,7 @@ module SomeModule
 
   include CascadingConfiguration::Hash
 
-  attr_class_configuration_hash :some_hash_setting
+  attr_object_configuration_hash :some_hash_setting
 
   some_hash_setting # => nil
 
