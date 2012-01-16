@@ -179,7 +179,7 @@ describe CascadingConfiguration do
 
     # top class
     class CascadingConfiguration::MockClass
-      some_hash_configuration.should == { :module_value => :some_value }
+      some_hash_configuration.should == {  }
       self.some_hash_configuration = { :another_value => :some_value }
       some_hash_configuration.should == { :another_value => :some_value }
     end
