@@ -1,16 +1,56 @@
-== Gem Loaded
+== Cascading Configuration
 
-http://rubygems.org/gems/gem-loaded
+http://rubygems.org/gems/cascading-configuration
 
 == Description
 
-Reports whether a given gem is loaded.
+Adds methods for cascading configurations.
 
 == Summary
 
-Provides Gem.loaded?.
+Cascading configuration methods for single settings, arrays, hashes.
 
-Created primarily in order to determine development vs. production load paths (require vs. require_relative).
+== :attr_configuration
+
+:attr_configuration provides inheritable single-object configurations that cascades downward. The value lowest in the ancestor hierarchy will be returned.
+
+:attr_class_configuration works like :attr_configuration but does not cascade to instances.
+
+:attr_local_configuration works like :attr_configuration but only cascades to the first including class. Subclasses will inherit but value will not be resolved through ancestor chain.
+
+:attr_instance_configuration works like :attr_configuration but is only defined in instances of defining object. This means Modules and Classes will have an instance method defined, and that Subclasses will inherit but value will not be resolved through ancestor chain.
+
+:attr_object_configuration works like :attr_configuration but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable.
+
+== :attr_configuration_array
+
+:attr_configuration_array provides inheritable array configurations that cascade downward. A composite sorted and unique array will be returned (merging downward from most distant ancestor to self). 
+
+An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward. 
+
+The array maintained by :attr_configuration_array is kept ordered and unique.
+
+:attr_class_configuration_array works like :attr_configuration_array but does not cascade to instances.
+
+:attr_local_configuration_array works like :attr_configuration_array but only cascades to the first including class. Subclasses will inherit but value will not be resolved through ancestor chain.
+
+:attr_instance_configuration_array works like :attr_configuration_array but is only defined in instances of defining object. This means Modules and Classes will have an instance method defined, and that Subclasses will inherit but value will not be resolved through ancestor chain.
+
+:attr_object_configuration_array works like :attr_configuration_array but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable.
+
+== :attr_configuration_hash
+
+:attr_configuration_array provides inheritable hash configurations that cascade downward. A composite hash will be returned (merging downward from most distant ancestor to self). 
+
+An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward.
+
+:attr_class_configuration_hash works like :attr_configuration_hash but does not cascade to instances.
+
+:attr_local_configuration_hash works like :attr_configuration_hash but only cascades to the first including class. Subclasses will inherit but value will not be resolved through ancestor chain.
+
+:attr_instance_configuration_hash works like :attr_configuration_hash but is only defined in instances of defining object. This means Modules and Classes will have an instance method defined, and that Subclasses will inherit but value will not be resolved through ancestor chain.
+
+:attr_object_configuration_hash works like :attr_configuration_hash but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable.
 
 == Install
 
