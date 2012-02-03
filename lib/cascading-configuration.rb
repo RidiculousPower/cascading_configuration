@@ -1,4 +1,6 @@
 
+require 'module-cluster'
+
 require 'cascading-configuration-setting'
 require 'cascading-configuration-array'
 require 'cascading-configuration-hash'

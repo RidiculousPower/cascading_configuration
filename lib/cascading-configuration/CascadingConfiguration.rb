@@ -1,10 +1,14 @@
 
 module CascadingConfiguration
   
-	include CascadingConfiguration::Variable
-
-  include CascadingConfiguration::Setting
-  include CascadingConfiguration::Array
-  include CascadingConfiguration::Hash
-
+  extend ModuleCluster::Define::Cluster
+  
+  include_also_includes( CascadingConfiguration::Setting, 
+                         CascadingConfiguration::Array,
+                         CascadingConfiguration::Hash )
+  
+  extend_also_extends( CascadingConfiguration::Setting,
+                       CascadingConfiguration::Array,
+                       CascadingConfiguration::Hash )
+  
 end
