@@ -152,6 +152,535 @@ describe CascadingConfiguration do
     
   end
   
+  #####################################
+  #  attr_configuration_unique_array  #
+  #####################################
+  
+  it 'can define a configuration array, which is the primary interface' do
+
+    # possibilities:
+    # * module extended with setting
+    # => singleton gets attr_configuration and configurations
+    # => including modules and classes get nothing
+    # => extending modules and classes get nothing
+    # => instances of including and extending classes get nothing
+    # * module included with setting
+    # => singleton gets attr_configuration and configurations
+    # => including modules and classes get attr_configuration and configurations
+    # => instances of including classes get configurations
+    # => extending modules and classes get attr_configuration and configurations
+    # => instances of extending classes get nothing
+    module CascadingConfiguration::ConfigurationMockModuleExtended
+      extend CascadingConfiguration
+      # => singleton gets attr_configuration and configurations
+      respond_to?( :attr_configuration_unique_array ).should == true
+      attr_configuration_unique_array :some_unique_configuration_array
+      respond_to?( :some_unique_configuration_array ).should == true
+      some_unique_configuration_array.should == []
+      some_unique_configuration_array.push( :a_configuration )
+      some_unique_configuration_array.should == [ :a_configuration ]
+      instance_methods.include?( :some_unique_configuration_array ).should == false
+      instance_variables.empty?.should == true
+      # => including modules and classes get nothing
+      module SubmoduleIncluding
+        include CascadingConfiguration::ConfigurationMockModuleExtended
+        instance_methods.include?( :some_unique_configuration_array ).should == false
+        respond_to?( :some_unique_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+      # => extending modules and classes get nothing
+      module SubmoduleExtending
+        extend CascadingConfiguration::ConfigurationMockModuleExtended
+        instance_methods.include?( :some_unique_configuration_array ).should == false
+        respond_to?( :some_unique_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+      # => instances of including and extending classes get nothing
+      class ClassIncluding
+        include CascadingConfiguration::ConfigurationMockModuleExtended
+        instance_methods.include?( :some_unique_configuration_array ).should == false
+        respond_to?( :some_unique_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+      class ClassExtending
+        extend CascadingConfiguration::ConfigurationMockModuleExtended
+        instance_methods.include?( :some_unique_configuration_array ).should == false
+        respond_to?( :some_unique_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+    end
+
+    # * module included with setting
+    module CascadingConfiguration::ConfigurationMockModuleIncluded
+      include CascadingConfiguration
+      # => singleton gets attr_configuration and configurations
+      respond_to?( :attr_configuration_unique_array ).should == true
+      attr_configuration_unique_array :some_unique_configuration_array
+      respond_to?( :some_unique_configuration_array ).should == true
+      some_unique_configuration_array.should == []
+      some_unique_configuration_array.push( :a_configuration )
+      some_unique_configuration_array.should == [ :a_configuration ]
+      instance_methods.include?( :some_unique_configuration_array ).should == true
+      instance_variables.empty?.should == true
+      # => including modules and classes get attr_configuration and configurations
+      module SubmoduleIncluding
+        include CascadingConfiguration::ConfigurationMockModuleIncluded
+        instance_methods.include?( :some_unique_configuration_array ).should == true
+        respond_to?( :some_unique_configuration_array ).should == true
+        some_unique_configuration_array.should == [ :a_configuration ]
+        some_unique_configuration_array.push( :another_configuration )
+        some_unique_configuration_array.push( :another_configuration )
+        some_unique_configuration_array.should == [ :a_configuration, :another_configuration ]
+        instance_variables.empty?.should == true
+      end
+      # => extending modules and classes get attr_configuration and configurations
+      module SubmoduleExtending
+        extend CascadingConfiguration::ConfigurationMockModuleIncluded
+        # if we're extended then we want to use the eigenclass ancestor chain
+        # - the first ancestor will be the extending module
+        # - the rest of the ancestors will be the extending module's include chain
+        respond_to?( :some_unique_configuration_array ).should == true
+        some_unique_configuration_array.should == [ :a_configuration ]
+        some_unique_configuration_array.push( :some_other_configuration )
+        some_unique_configuration_array.push( :some_other_configuration )
+        some_unique_configuration_array.push( :some_other_configuration )
+        some_unique_configuration_array.should == [ :a_configuration, :some_other_configuration ]
+        instance_methods.include?( :some_unique_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+      # => instances of including classes get configurations
+      class ClassIncluding
+        include CascadingConfiguration::ConfigurationMockModuleIncluded
+        instance_methods.include?( :some_unique_configuration_array ).should == true
+        respond_to?( :some_unique_configuration_array ).should == true
+        some_unique_configuration_array.should == [ :a_configuration ]
+        some_unique_configuration_array.push( :some_other_configuration )
+        some_unique_configuration_array.should == [ :a_configuration, :some_other_configuration ]
+        instance_variables.empty?.should == true
+      end
+      setting_class_including_instance = ClassIncluding.new
+      setting_class_including_instance.respond_to?( :some_unique_configuration_array ).should == true
+      setting_class_including_instance.some_unique_configuration_array.should == [ :a_configuration, :some_other_configuration ]
+      setting_class_including_instance.some_unique_configuration_array.delete( :some_other_configuration )
+      setting_class_including_instance.some_unique_configuration_array = [ :our_setting_value ]
+      setting_class_including_instance.some_unique_configuration_array.should == [ :our_setting_value ]
+      setting_class_including_instance.instance_variables.empty?.should == true
+      # => instances of extending classes get nothing
+      class ClassExtending
+        extend CascadingConfiguration::ConfigurationMockModuleIncluded
+        respond_to?( :some_unique_configuration_array ).should == true
+        some_unique_configuration_array.should == [ :a_configuration ]
+        some_unique_configuration_array.push( :some_other_configuration )
+        some_unique_configuration_array.should == [ :a_configuration, :some_other_configuration ]
+        instance_variables.empty?.should == true
+      end
+      setting_class_including_instance = ClassExtending.new
+      setting_class_including_instance.respond_to?( :some_unique_configuration_array ).should == false
+      setting_class_including_instance.instance_variables.empty?.should == true
+    end
+
+    class CascadingConfiguration::ConfigurationMockClass
+      include CascadingConfiguration::ConfigurationMockModuleIncluded::SubmoduleIncluding
+      some_unique_configuration_array.should == [ :a_configuration, :another_configuration ]
+      some_unique_configuration_array.push( :some_other_configuration )
+      some_unique_configuration_array.push( :some_other_configuration )
+      some_unique_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration ]
+      instance_variables.empty?.should == true
+    end
+    object_instance_one = CascadingConfiguration::ConfigurationMockClass.new
+    object_instance_one.some_unique_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration ]
+    object_instance_one.some_unique_configuration_array.delete( :a_configuration )
+    object_instance_one.some_unique_configuration_array.should == [ :another_configuration, :some_other_configuration ]
+    object_instance_one.instance_variables.empty?.should == true
+    class CascadingConfiguration::ConfigurationMockClassSub1 < CascadingConfiguration::ConfigurationMockClass
+      some_unique_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration ]
+      some_unique_configuration_array.delete( :a_configuration )
+      some_unique_configuration_array.should == [ :another_configuration, :some_other_configuration ]
+      instance_variables.empty?.should == true
+    end
+    object_instance_two = CascadingConfiguration::ConfigurationMockClassSub1.new
+    object_instance_two.some_unique_configuration_array.should == [ :another_configuration, :some_other_configuration ]
+    object_instance_two.some_unique_configuration_array.delete( :another_configuration )
+    object_instance_two.some_unique_configuration_array.should == [ :some_other_configuration ]
+    object_instance_two.instance_variables.empty?.should == true
+    class CascadingConfiguration::ConfigurationMockClassSub2 < CascadingConfiguration::ConfigurationMockClassSub1
+      some_unique_configuration_array.should == [ :another_configuration, :some_other_configuration ]
+      #some_unique_configuration_array.push( :yet_another_configuration )
+      #some_unique_configuration_array.should == [ :another_configuration, :some_other_configuration, :yet_another_configuration ]
+      instance_variables.empty?.should == true
+    end
+
+    # change ancestor setting
+    CascadingConfiguration::ConfigurationMockClass.some_unique_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration ]
+    CascadingConfiguration::ConfigurationMockClass.some_unique_configuration_array.push( :a_yet_unused_configuration )
+    CascadingConfiguration::ConfigurationMockClass.some_unique_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration, :a_yet_unused_configuration ]
+    object_instance_one.some_unique_configuration_array.should == [ :another_configuration, :some_other_configuration, :a_yet_unused_configuration ]
+    CascadingConfiguration::ConfigurationMockClassSub1.some_unique_configuration_array.should == [ :another_configuration, :some_other_configuration, :a_yet_unused_configuration ]
+    object_instance_two.some_unique_configuration_array.should == [ :some_other_configuration, :a_yet_unused_configuration ]
+    
+    # freeze ancestor setting
+    object_instance_one.some_unique_configuration_array.freeze!
+    object_instance_one.some_unique_configuration_array.should == [ :another_configuration, :some_other_configuration, :a_yet_unused_configuration ]
+    CascadingConfiguration::ConfigurationMockClassSub1.some_unique_configuration_array.freeze!
+    CascadingConfiguration::ConfigurationMockClassSub1.some_unique_configuration_array.should == [ :another_configuration, :some_other_configuration, :a_yet_unused_configuration ]
+    CascadingConfiguration::ConfigurationMockClass.some_unique_configuration_array.push( :non_cascading_configuration )
+    CascadingConfiguration::ConfigurationMockClass.some_unique_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration, :a_yet_unused_configuration, :non_cascading_configuration ]
+    object_instance_one.some_unique_configuration_array.should == [ :another_configuration, :some_other_configuration, :a_yet_unused_configuration ]
+    CascadingConfiguration::ConfigurationMockClassSub1.some_unique_configuration_array.should == [ :another_configuration, :some_other_configuration, :a_yet_unused_configuration ]
+    object_instance_two.some_unique_configuration_array.should == [ :some_other_configuration, :a_yet_unused_configuration ]
+        
+  end
+  
+  #####################################
+  #  attr_configuration_sorted_array  #
+  #####################################
+  
+  it 'can define a configuration array, which is the primary interface' do
+
+    # possibilities:
+    # * module extended with setting
+    # => singleton gets attr_configuration and configurations
+    # => including modules and classes get nothing
+    # => extending modules and classes get nothing
+    # => instances of including and extending classes get nothing
+    # * module included with setting
+    # => singleton gets attr_configuration and configurations
+    # => including modules and classes get attr_configuration and configurations
+    # => instances of including classes get configurations
+    # => extending modules and classes get attr_configuration and configurations
+    # => instances of extending classes get nothing
+    module CascadingConfiguration::ConfigurationMockModuleExtended
+      extend CascadingConfiguration
+      # => singleton gets attr_configuration and configurations
+      respond_to?( :attr_configuration_sorted_array ).should == true
+      attr_configuration_sorted_array :some_sorted_configuration_array
+      respond_to?( :some_sorted_configuration_array ).should == true
+      some_sorted_configuration_array.should == []
+      some_sorted_configuration_array.push( :a_configuration )
+      some_sorted_configuration_array.should == [ :a_configuration ]
+      instance_methods.include?( :some_sorted_configuration_array ).should == false
+      instance_variables.empty?.should == true
+      # => including modules and classes get nothing
+      module SubmoduleIncluding
+        include CascadingConfiguration::ConfigurationMockModuleExtended
+        instance_methods.include?( :some_sorted_configuration_array ).should == false
+        respond_to?( :some_sorted_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+      # => extending modules and classes get nothing
+      module SubmoduleExtending
+        extend CascadingConfiguration::ConfigurationMockModuleExtended
+        instance_methods.include?( :some_sorted_configuration_array ).should == false
+        respond_to?( :some_sorted_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+      # => instances of including and extending classes get nothing
+      class ClassIncluding
+        include CascadingConfiguration::ConfigurationMockModuleExtended
+        instance_methods.include?( :some_sorted_configuration_array ).should == false
+        respond_to?( :some_sorted_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+      class ClassExtending
+        extend CascadingConfiguration::ConfigurationMockModuleExtended
+        instance_methods.include?( :some_sorted_configuration_array ).should == false
+        respond_to?( :some_sorted_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+    end
+
+    # * module included with setting
+    module CascadingConfiguration::ConfigurationMockModuleIncluded
+      include CascadingConfiguration
+      # => singleton gets attr_configuration and configurations
+      respond_to?( :attr_configuration_sorted_array ).should == true
+      attr_configuration_sorted_array :some_sorted_configuration_array
+      respond_to?( :some_sorted_configuration_array ).should == true
+      some_sorted_configuration_array.should == []
+      some_sorted_configuration_array.push( :a_configuration )
+      some_sorted_configuration_array.should == [ :a_configuration ]
+      instance_methods.include?( :some_sorted_configuration_array ).should == true
+      instance_variables.empty?.should == true
+      # => including modules and classes get attr_configuration and configurations
+      module SubmoduleIncluding
+        include CascadingConfiguration::ConfigurationMockModuleIncluded
+        instance_methods.include?( :some_sorted_configuration_array ).should == true
+        respond_to?( :some_sorted_configuration_array ).should == true
+        some_sorted_configuration_array.should == [ :a_configuration ]
+        some_sorted_configuration_array.push( :another_configuration )
+        some_sorted_configuration_array.should == [ :a_configuration, :another_configuration ]
+        instance_variables.empty?.should == true
+      end
+      # => extending modules and classes get attr_configuration and configurations
+      module SubmoduleExtending
+        extend CascadingConfiguration::ConfigurationMockModuleIncluded
+        # if we're extended then we want to use the eigenclass ancestor chain
+        # - the first ancestor will be the extending module
+        # - the rest of the ancestors will be the extending module's include chain
+        respond_to?( :some_sorted_configuration_array ).should == true
+        some_sorted_configuration_array.should == [ :a_configuration ]
+        some_sorted_configuration_array.push( :some_other_configuration )
+        some_sorted_configuration_array.should == [ :a_configuration, :some_other_configuration ]
+        instance_methods.include?( :some_sorted_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+      # => instances of including classes get configurations
+      class ClassIncluding
+        include CascadingConfiguration::ConfigurationMockModuleIncluded
+        instance_methods.include?( :some_sorted_configuration_array ).should == true
+        respond_to?( :some_sorted_configuration_array ).should == true
+        some_sorted_configuration_array.should == [ :a_configuration ]
+        some_sorted_configuration_array.push( :some_other_configuration )
+        some_sorted_configuration_array.should == [ :a_configuration, :some_other_configuration ]
+        instance_variables.empty?.should == true
+      end
+      setting_class_including_instance = ClassIncluding.new
+      setting_class_including_instance.respond_to?( :some_sorted_configuration_array ).should == true
+      setting_class_including_instance.some_sorted_configuration_array.should == [ :a_configuration, :some_other_configuration ]
+      setting_class_including_instance.some_sorted_configuration_array.delete( :some_other_configuration )
+      setting_class_including_instance.some_sorted_configuration_array = [ :our_setting_value ]
+      setting_class_including_instance.some_sorted_configuration_array.should == [ :our_setting_value ]
+      setting_class_including_instance.instance_variables.empty?.should == true
+      # => instances of extending classes get nothing
+      class ClassExtending
+        extend CascadingConfiguration::ConfigurationMockModuleIncluded
+        respond_to?( :some_sorted_configuration_array ).should == true
+        some_sorted_configuration_array.should == [ :a_configuration ]
+        some_sorted_configuration_array.push( :some_other_configuration )
+        some_sorted_configuration_array.should == [ :a_configuration, :some_other_configuration ]
+        instance_variables.empty?.should == true
+      end
+      setting_class_including_instance = ClassExtending.new
+      setting_class_including_instance.respond_to?( :some_sorted_configuration_array ).should == false
+      setting_class_including_instance.instance_variables.empty?.should == true
+    end
+
+    class CascadingConfiguration::ConfigurationMockClass
+      include CascadingConfiguration::ConfigurationMockModuleIncluded::SubmoduleIncluding
+      some_sorted_configuration_array.should == [ :a_configuration, :another_configuration ]
+      some_sorted_configuration_array.push( :some_other_configuration )
+      some_sorted_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration ]
+      instance_variables.empty?.should == true
+    end
+    object_instance_one = CascadingConfiguration::ConfigurationMockClass.new
+    object_instance_one.some_sorted_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration ]
+    object_instance_one.some_sorted_configuration_array.delete( :a_configuration )
+    object_instance_one.some_sorted_configuration_array.should == [ :another_configuration, :some_other_configuration ]
+    object_instance_one.instance_variables.empty?.should == true
+    class CascadingConfiguration::ConfigurationMockClassSub1 < CascadingConfiguration::ConfigurationMockClass
+      some_sorted_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration ]
+      some_sorted_configuration_array.delete( :a_configuration )
+      some_sorted_configuration_array.should == [ :another_configuration, :some_other_configuration ]
+      instance_variables.empty?.should == true
+    end
+    object_instance_two = CascadingConfiguration::ConfigurationMockClassSub1.new
+    object_instance_two.some_sorted_configuration_array.should == [ :another_configuration, :some_other_configuration ]
+    object_instance_two.some_sorted_configuration_array.delete( :another_configuration )
+    object_instance_two.some_sorted_configuration_array.should == [ :some_other_configuration ]
+    object_instance_two.instance_variables.empty?.should == true
+    class CascadingConfiguration::ConfigurationMockClassSub2 < CascadingConfiguration::ConfigurationMockClassSub1
+      some_sorted_configuration_array.should == [ :another_configuration, :some_other_configuration ]
+      some_sorted_configuration_array.push( :yet_another_configuration )
+      some_sorted_configuration_array.should == [ :another_configuration, :some_other_configuration, :yet_another_configuration ]
+      instance_variables.empty?.should == true
+    end
+
+    # change ancestor setting
+    CascadingConfiguration::ConfigurationMockClass.some_sorted_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration ]
+    CascadingConfiguration::ConfigurationMockClass.some_sorted_configuration_array.push( :a_yet_unused_configuration )
+    CascadingConfiguration::ConfigurationMockClass.some_sorted_configuration_array.should == [ :a_configuration, :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    object_instance_one.some_sorted_configuration_array.should == [ :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    CascadingConfiguration::ConfigurationMockClassSub1.some_sorted_configuration_array.should == [ :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    object_instance_two.some_sorted_configuration_array.should == [ :a_yet_unused_configuration, :some_other_configuration ]
+    
+    # freeze ancestor setting
+    object_instance_one.some_sorted_configuration_array.freeze!
+    object_instance_one.some_sorted_configuration_array.should == [ :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    CascadingConfiguration::ConfigurationMockClassSub1.some_sorted_configuration_array.freeze!
+    CascadingConfiguration::ConfigurationMockClassSub1.some_sorted_configuration_array.should == [ :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    CascadingConfiguration::ConfigurationMockClass.some_sorted_configuration_array.push( :non_cascading_configuration )
+    CascadingConfiguration::ConfigurationMockClass.some_sorted_configuration_array.should == [ :a_configuration, :a_yet_unused_configuration, :another_configuration, :non_cascading_configuration, :some_other_configuration ]
+    object_instance_one.some_sorted_configuration_array.should == [ :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    CascadingConfiguration::ConfigurationMockClassSub1.some_sorted_configuration_array.should == [ :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    object_instance_two.some_sorted_configuration_array.should == [ :a_yet_unused_configuration, :some_other_configuration ]
+        
+  end
+  
+  ############################################
+  #  attr_configuration_sorted_unique_array  #
+  ############################################
+  
+  it 'can define a configuration array, which is the primary interface' do
+
+    # possibilities:
+    # * module extended with setting
+    # => singleton gets attr_configuration and configurations
+    # => including modules and classes get nothing
+    # => extending modules and classes get nothing
+    # => instances of including and extending classes get nothing
+    # * module included with setting
+    # => singleton gets attr_configuration and configurations
+    # => including modules and classes get attr_configuration and configurations
+    # => instances of including classes get configurations
+    # => extending modules and classes get attr_configuration and configurations
+    # => instances of extending classes get nothing
+    module CascadingConfiguration::ConfigurationMockModuleExtended
+      extend CascadingConfiguration
+      # => singleton gets attr_configuration and configurations
+      respond_to?( :attr_configuration_sorted_unique_array ).should == true
+      attr_configuration_sorted_unique_array :some_sorted_unique_configuration_array
+      respond_to?( :some_sorted_unique_configuration_array ).should == true
+      some_sorted_unique_configuration_array.should == []
+      some_sorted_unique_configuration_array.push( :a_configuration )
+      some_sorted_unique_configuration_array.should == [ :a_configuration ]
+      instance_methods.include?( :some_sorted_unique_configuration_array ).should == false
+      instance_variables.empty?.should == true
+      # => including modules and classes get nothing
+      module SubmoduleIncluding
+        include CascadingConfiguration::ConfigurationMockModuleExtended
+        instance_methods.include?( :some_sorted_unique_configuration_array ).should == false
+        respond_to?( :some_sorted_unique_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+      # => extending modules and classes get nothing
+      module SubmoduleExtending
+        extend CascadingConfiguration::ConfigurationMockModuleExtended
+        instance_methods.include?( :some_sorted_unique_configuration_array ).should == false
+        respond_to?( :some_sorted_unique_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+      # => instances of including and extending classes get nothing
+      class ClassIncluding
+        include CascadingConfiguration::ConfigurationMockModuleExtended
+        instance_methods.include?( :some_sorted_unique_configuration_array ).should == false
+        respond_to?( :some_sorted_unique_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+      class ClassExtending
+        extend CascadingConfiguration::ConfigurationMockModuleExtended
+        instance_methods.include?( :some_sorted_unique_configuration_array ).should == false
+        respond_to?( :some_sorted_unique_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+    end
+
+    # * module included with setting
+    module CascadingConfiguration::ConfigurationMockModuleIncluded
+      include CascadingConfiguration
+      # => singleton gets attr_configuration and configurations
+      respond_to?( :attr_configuration_sorted_unique_array ).should == true
+      attr_configuration_sorted_unique_array :some_sorted_unique_configuration_array
+      respond_to?( :some_sorted_unique_configuration_array ).should == true
+      some_sorted_unique_configuration_array.should == []
+      some_sorted_unique_configuration_array.push( :a_configuration )
+      some_sorted_unique_configuration_array.should == [ :a_configuration ]
+      instance_methods.include?( :some_sorted_unique_configuration_array ).should == true
+      instance_variables.empty?.should == true
+      # => including modules and classes get attr_configuration and configurations
+      module SubmoduleIncluding
+        include CascadingConfiguration::ConfigurationMockModuleIncluded
+        instance_methods.include?( :some_sorted_unique_configuration_array ).should == true
+        respond_to?( :some_sorted_unique_configuration_array ).should == true
+        some_sorted_unique_configuration_array.should == [ :a_configuration ]
+        some_sorted_unique_configuration_array.push( :another_configuration )
+        some_sorted_unique_configuration_array.should == [ :a_configuration, :another_configuration ]
+        instance_variables.empty?.should == true
+      end
+      # => extending modules and classes get attr_configuration and configurations
+      module SubmoduleExtending
+        extend CascadingConfiguration::ConfigurationMockModuleIncluded
+        # if we're extended then we want to use the eigenclass ancestor chain
+        # - the first ancestor will be the extending module
+        # - the rest of the ancestors will be the extending module's include chain
+        respond_to?( :some_sorted_unique_configuration_array ).should == true
+        some_sorted_unique_configuration_array.should == [ :a_configuration ]
+        some_sorted_unique_configuration_array.push( :some_other_configuration )
+        some_sorted_unique_configuration_array.should == [ :a_configuration, :some_other_configuration ]
+        instance_methods.include?( :some_sorted_unique_configuration_array ).should == false
+        instance_variables.empty?.should == true
+      end
+      # => instances of including classes get configurations
+      class ClassIncluding
+        include CascadingConfiguration::ConfigurationMockModuleIncluded
+        instance_methods.include?( :some_sorted_unique_configuration_array ).should == true
+        respond_to?( :some_sorted_unique_configuration_array ).should == true
+        some_sorted_unique_configuration_array.should == [ :a_configuration ]
+        some_sorted_unique_configuration_array.push( :some_other_configuration )
+        some_sorted_unique_configuration_array.should == [ :a_configuration, :some_other_configuration ]
+        instance_variables.empty?.should == true
+      end
+      setting_class_including_instance = ClassIncluding.new
+      setting_class_including_instance.respond_to?( :some_sorted_unique_configuration_array ).should == true
+      setting_class_including_instance.some_sorted_unique_configuration_array.should == [ :a_configuration, :some_other_configuration ]
+      setting_class_including_instance.some_sorted_unique_configuration_array.delete( :some_other_configuration )
+      setting_class_including_instance.some_sorted_unique_configuration_array = [ :our_setting_value ]
+      setting_class_including_instance.some_sorted_unique_configuration_array.should == [ :our_setting_value ]
+      setting_class_including_instance.instance_variables.empty?.should == true
+      # => instances of extending classes get nothing
+      class ClassExtending
+        extend CascadingConfiguration::ConfigurationMockModuleIncluded
+        respond_to?( :some_sorted_unique_configuration_array ).should == true
+        some_sorted_unique_configuration_array.should == [ :a_configuration ]
+        some_sorted_unique_configuration_array.push( :some_other_configuration )
+        some_sorted_unique_configuration_array.should == [ :a_configuration, :some_other_configuration ]
+        instance_variables.empty?.should == true
+      end
+      setting_class_including_instance = ClassExtending.new
+      setting_class_including_instance.respond_to?( :some_sorted_unique_configuration_array ).should == false
+      setting_class_including_instance.instance_variables.empty?.should == true
+    end
+
+    class CascadingConfiguration::ConfigurationMockClass
+      include CascadingConfiguration::ConfigurationMockModuleIncluded::SubmoduleIncluding
+      some_sorted_unique_configuration_array.should == [ :a_configuration, :another_configuration ]
+      some_sorted_unique_configuration_array.push( :some_other_configuration )
+      some_sorted_unique_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration ]
+      instance_variables.empty?.should == true
+    end
+    object_instance_one = CascadingConfiguration::ConfigurationMockClass.new
+    object_instance_one.some_sorted_unique_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration ]
+    object_instance_one.some_sorted_unique_configuration_array.delete( :a_configuration )
+    object_instance_one.some_sorted_unique_configuration_array.should == [ :another_configuration, :some_other_configuration ]
+    object_instance_one.instance_variables.empty?.should == true
+    class CascadingConfiguration::ConfigurationMockClassSub1 < CascadingConfiguration::ConfigurationMockClass
+      some_sorted_unique_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration ]
+      some_sorted_unique_configuration_array.delete( :a_configuration )
+      some_sorted_unique_configuration_array.should == [ :another_configuration, :some_other_configuration ]
+      instance_variables.empty?.should == true
+    end
+    object_instance_two = CascadingConfiguration::ConfigurationMockClassSub1.new
+    object_instance_two.some_sorted_unique_configuration_array.should == [ :another_configuration, :some_other_configuration ]
+    object_instance_two.some_sorted_unique_configuration_array.delete( :another_configuration )
+    object_instance_two.some_sorted_unique_configuration_array.should == [ :some_other_configuration ]
+    object_instance_two.instance_variables.empty?.should == true
+    class CascadingConfiguration::ConfigurationMockClassSub2 < CascadingConfiguration::ConfigurationMockClassSub1
+      some_sorted_unique_configuration_array.should == [ :another_configuration, :some_other_configuration ]
+      some_sorted_unique_configuration_array.push( :yet_another_configuration )
+      some_sorted_unique_configuration_array.should == [ :another_configuration, :some_other_configuration, :yet_another_configuration ]
+      instance_variables.empty?.should == true
+    end
+
+    # change ancestor setting
+    CascadingConfiguration::ConfigurationMockClass.some_sorted_unique_configuration_array.should == [ :a_configuration, :another_configuration, :some_other_configuration ]
+    CascadingConfiguration::ConfigurationMockClass.some_sorted_unique_configuration_array.push( :a_yet_unused_configuration )
+    CascadingConfiguration::ConfigurationMockClass.some_sorted_unique_configuration_array.should == [ :a_configuration, :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    object_instance_one.some_sorted_unique_configuration_array.should == [ :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    CascadingConfiguration::ConfigurationMockClassSub1.some_sorted_unique_configuration_array.should == [ :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    object_instance_two.some_sorted_unique_configuration_array.should == [ :a_yet_unused_configuration, :some_other_configuration ]
+    
+    # freeze ancestor setting
+    object_instance_one.some_sorted_unique_configuration_array.freeze!
+    object_instance_one.some_sorted_unique_configuration_array.should == [ :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    CascadingConfiguration::ConfigurationMockClassSub1.some_sorted_unique_configuration_array.freeze!
+    CascadingConfiguration::ConfigurationMockClassSub1.some_sorted_unique_configuration_array.should == [ :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    CascadingConfiguration::ConfigurationMockClass.some_sorted_unique_configuration_array.push( :non_cascading_configuration )
+    CascadingConfiguration::ConfigurationMockClass.some_sorted_unique_configuration_array.should == [ :a_configuration, :a_yet_unused_configuration, :another_configuration, :non_cascading_configuration, :some_other_configuration ]
+    object_instance_one.some_sorted_unique_configuration_array.should == [ :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    CascadingConfiguration::ConfigurationMockClassSub1.some_sorted_unique_configuration_array.should == [ :a_yet_unused_configuration, :another_configuration, :some_other_configuration ]
+    object_instance_two.some_sorted_unique_configuration_array.should == [ :a_yet_unused_configuration, :some_other_configuration ]
+        
+  end
+  
   #############################
   #  attr_configuration_hash  #
   #############################

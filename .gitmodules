@@ -13,3 +13,12 @@
 [submodule "variable"]
 	path = variable
 	url = git@github.com:Asher-/cascading-configuration-variable.git
+[submodule "settings-array-unique"]
+	path = settings-array-unique
+	url = ./settings-array-unique
+[submodule "settings-array-sorted-unique"]
+	path = settings-array-sorted-unique
+	url = ./settings-array-sorted-unique
+[submodule "settings-array-sorted"]
+	path = settings-array-sorted
+	url = ./settings-array-sorted

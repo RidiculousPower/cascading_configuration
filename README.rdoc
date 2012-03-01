@@ -38,6 +38,42 @@ The array maintained by :attr_configuration_array is kept ordered and unique.
 
 :attr_object_configuration_array works like :attr_configuration_array but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable.
 
+== :attr_configuration_unique_array
+
+:attr_configuration_unique_array provides inheritable array configurations that cascade downward. A composite sorted and unique array will be returned (merging downward from most distant ancestor to self). 
+
+An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward. 
+
+The array maintained by :attr_configuration_unique_array is kept unique.
+
+:attr_class_configuration_unique_array works like :attr_configuration_unique_array but does not cascade to instances.
+
+:attr_local_configuration_unique_array works like :attr_configuration_unique_array but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
+
+== :attr_configuration_sorted_array
+
+:attr_configuration_sorted_array provides inheritable array configurations that cascade downward. A composite sorted and unique array will be returned (merging downward from most distant ancestor to self). 
+
+An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward. 
+
+The array maintained by :attr_configuration_sorted_array is kept ordered.
+
+:attr_class_configuration_sorted_array works like :attr_configuration_sorted_array but does not cascade to instances.
+
+:attr_local_configuration_sorted_array works like :attr_configuration_sorted_array but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
+
+== :attr_configuration_sorted_unique_array
+
+:attr_configuration_sorted_unique_array provides inheritable array configurations that cascade downward. A composite sorted and unique array will be returned (merging downward from most distant ancestor to self). 
+
+An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward. 
+
+The array maintained by :attr_configuration_sorted_unique_array is kept ordered and unique.
+
+:attr_class_configuration_sorted_unique_array works like :attr_configuration_sorted_unique_array but does not cascade to instances.
+
+:attr_local_configuration_sorted_unique_array works like :attr_configuration_sorted_unique_array but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
+
 == :attr_configuration_hash
 
 :attr_configuration_array provides inheritable hash configurations that cascade downward. A composite hash will be returned (merging downward from most distant ancestor to self). 

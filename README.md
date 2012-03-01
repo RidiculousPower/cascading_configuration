@@ -459,6 +459,420 @@ class SomeClass
 end
 ```
 
+## :attr_configuration_unique_array ##
+
+:attr_configuration_unique_array provides inheritable array configurations that cascade downward. A composite sorted and unique array will be returned (merging downward from most distant ancestor to self). 
+
+An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward. 
+
+The array maintained by :attr_configuration_unique_array is kept unique.
+
+Define initial configuration in a module or class:
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_array_configuration :some_array_setting
+
+  some_array_setting # => nil
+
+  some_array_setting.push( :some_value )
+
+  some_array_setting # => [ :some_value ]
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  some_array_setting # => [ :some_value ]
+
+  self.some_array_setting = [ :some_other_value ]
+
+  some_array_setting # => [ :some_other_value ]
+
+  some_array_setting.push( :another_value ) # => [ :another_value, :some_other_value ]
+
+  SomeModule.some_array_setting # => [ :some_value ]
+
+end
+```
+
+And it cascades to instances:
+
+```ruby
+instance = SomeClass.new
+
+instance.some_array_setting.should == [ :another_value, :some_other_value ]
+
+instance.some_array_setting.delete( :some_other_value )
+
+instance.some_array_setting.should == [ :another_value ]
+```
+
+### :attr_module_configuration_unique_array, :attr_class_configuration_unique_array ###
+
+:attr_class_configuration_unique_array works like :attr_configuration_unique_array but does not cascade to instances.
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_array_configuration :some_array_setting
+
+  some_array_setting # => nil
+
+  some_array_setting.push( :some_value )
+
+  some_array_setting # => [ :some_value ]
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  some_array_setting # => [ :some_value ]
+
+  self.some_array_setting = [ :some_other_value ]
+
+  some_array_setting # => [ :some_other_value ]
+
+  some_array_setting.push( :another_value ) # => [ :another_value, :some_other_value ]
+
+  SomeModule.some_array_setting # => [ :some_value ]
+
+end
+```
+
+And it does not cascade to instances:
+
+```ruby
+instance = SomeClass.new
+
+instance.respond_to?( :some_array_setting ).should == false
+```
+
+### :attr_local_configuration_unique_array ###
+
+:attr_local_configuration_unique_array works like :attr_configuration_unique_array but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_array_configuration :some_array_setting
+
+  some_array_setting # => nil
+
+  some_array_setting.push( :some_value )
+
+  some_array_setting # => [ :some_value ]
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  respond_to?( :some_array_setting ).should == false
+
+end
+```
+
+## :attr_configuration_sorted_array ##
+
+:attr_configuration_sorted_array provides inheritable array configurations that cascade downward. A composite sorted and unique array will be returned (merging downward from most distant ancestor to self). 
+
+An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward. 
+
+The array maintained by :attr_configuration_sorted_array is kept ordered.
+
+Define initial configuration in a module or class:
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_array_configuration :some_array_setting
+
+  some_array_setting # => nil
+
+  some_array_setting.push( :some_value )
+
+  some_array_setting # => [ :some_value ]
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  some_array_setting # => [ :some_value ]
+
+  self.some_array_setting = [ :some_other_value ]
+
+  some_array_setting # => [ :some_other_value ]
+
+  some_array_setting.push( :another_value ) # => [ :another_value, :some_other_value ]
+
+  SomeModule.some_array_setting # => [ :some_value ]
+
+end
+```
+
+And it cascades to instances:
+
+```ruby
+instance = SomeClass.new
+
+instance.some_array_setting.should == [ :another_value, :some_other_value ]
+
+instance.some_array_setting.delete( :some_other_value )
+
+instance.some_array_setting.should == [ :another_value ]
+```
+
+### :attr_module_configuration_sorted_array, :attr_class_configuration_sorted_array ###
+
+:attr_class_configuration_sorted_array works like :attr_configuration_sorted_array but does not cascade to instances.
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_array_configuration :some_array_setting
+
+  some_array_setting # => nil
+
+  some_array_setting.push( :some_value )
+
+  some_array_setting # => [ :some_value ]
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  some_array_setting # => [ :some_value ]
+
+  self.some_array_setting = [ :some_other_value ]
+
+  some_array_setting # => [ :some_other_value ]
+
+  some_array_setting.push( :another_value ) # => [ :another_value, :some_other_value ]
+
+  SomeModule.some_array_setting # => [ :some_value ]
+
+end
+```
+
+And it does not cascade to instances:
+
+```ruby
+instance = SomeClass.new
+
+instance.respond_to?( :some_array_setting ).should == false
+```
+
+### :attr_local_configuration_sorted_array ###
+
+:attr_local_configuration_sorted_array works like :attr_configuration_sorted_array but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_array_configuration :some_array_setting
+
+  some_array_setting # => nil
+
+  some_array_setting.push( :some_value )
+
+  some_array_setting # => [ :some_value ]
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  respond_to?( :some_array_setting ).should == false
+
+end
+```
+
+## :attr_configuration_sorted_unique_array ##
+
+:attr_configuration_sorted_unique_array provides inheritable array configurations that cascade downward. A composite sorted and unique array will be returned (merging downward from most distant ancestor to self). 
+
+An internal cache is kept, and any configuration updates that occur to higher-level ancestors cascade immediately downward. 
+
+The array maintained by :attr_configuration_sorted_unique_array is kept ordered and unique.
+
+Define initial configuration in a module or class:
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_array_configuration :some_array_setting
+
+  some_array_setting # => nil
+
+  some_array_setting.push( :some_value )
+
+  some_array_setting # => [ :some_value ]
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  some_array_setting # => [ :some_value ]
+
+  self.some_array_setting = [ :some_other_value ]
+
+  some_array_setting # => [ :some_other_value ]
+
+  some_array_setting.push( :another_value ) # => [ :another_value, :some_other_value ]
+
+  SomeModule.some_array_setting # => [ :some_value ]
+
+end
+```
+
+And it cascades to instances:
+
+```ruby
+instance = SomeClass.new
+
+instance.some_array_setting.should == [ :another_value, :some_other_value ]
+
+instance.some_array_setting.delete( :some_other_value )
+
+instance.some_array_setting.should == [ :another_value ]
+```
+
+### :attr_module_configuration_sorted_unique_array, :attr_class_configuration_sorted_unique_array ###
+
+:attr_class_configuration_sorted_unique_array works like :attr_configuration_sorted_unique_array but does not cascade to instances.
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_array_configuration :some_array_setting
+
+  some_array_setting # => nil
+
+  some_array_setting.push( :some_value )
+
+  some_array_setting # => [ :some_value ]
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  some_array_setting # => [ :some_value ]
+
+  self.some_array_setting = [ :some_other_value ]
+
+  some_array_setting # => [ :some_other_value ]
+
+  some_array_setting.push( :another_value ) # => [ :another_value, :some_other_value ]
+
+  SomeModule.some_array_setting # => [ :some_value ]
+
+end
+```
+
+And it does not cascade to instances:
+
+```ruby
+instance = SomeClass.new
+
+instance.respond_to?( :some_array_setting ).should == false
+```
+
+### :attr_local_configuration_sorted_unique_array ###
+
+:attr_local_configuration_sorted_unique_array works like :attr_configuration_sorted_unique_array but does not cascade. This is primarily useful for creating local configurations maintained in parallel with cascading configurations (for instance, with the same variable prefixes), for overriding the local configuration method, and for hiding the configuration variable (coming soon).
+
+```ruby
+module SomeModule
+
+  include CascadingConfiguration::Array
+
+  attr_array_configuration :some_array_setting
+
+  some_array_setting # => nil
+
+  some_array_setting.push( :some_value )
+
+  some_array_setting # => [ :some_value ]
+
+end
+```
+
+Include initial module in a module or class:
+
+```ruby
+class SomeClass
+
+  include SomeModule
+
+  respond_to?( :some_array_setting ).should == false
+
+end
+```
+
 ## :attr_configuration_hash ##
 
 :attr_configuration_array provides inheritable hash configurations that cascade downward. A composite hash will be returned (merging downward from most distant ancestor to self). 
