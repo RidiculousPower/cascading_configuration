@@ -10,7 +10,7 @@ describe CascadingConfiguration do
   it 'can declare an attribute as a cascading configuration setting' do
 
     # first module
-    module CascadingConfiguration::MockModule
+    module ::CascadingConfiguration::MockModule
       include CascadingConfiguration
       attr_configuration :some_configuration
       self.some_configuration = :some_value
@@ -18,7 +18,7 @@ describe CascadingConfiguration do
     end
 
     # including module 1
-    module CascadingConfiguration::MockModule2
+    module ::CascadingConfiguration::MockModule2
       include CascadingConfiguration::MockModule
       some_configuration.should == :some_value
       self.some_configuration = :module_value
@@ -26,7 +26,7 @@ describe CascadingConfiguration do
     end
 
     # including module 2
-    module CascadingConfiguration::MockModule3
+    module ::CascadingConfiguration::MockModule3
       include CascadingConfiguration::MockModule2
     end
 
@@ -84,7 +84,7 @@ describe CascadingConfiguration do
   it 'can declare an attribute as a cascading configuration array' do
 
     # first module
-    module CascadingConfiguration::MockModule
+    module ::CascadingConfiguration::MockModule
       include CascadingConfiguration
       attr_configuration_array :some_array_configuration
       self.some_array_configuration = [ :some_value ]
@@ -92,7 +92,7 @@ describe CascadingConfiguration do
     end
 
     # including module 1
-    module CascadingConfiguration::MockModule2
+    module ::CascadingConfiguration::MockModule2
       include CascadingConfiguration::MockModule
       some_array_configuration.should == [ :some_value ]
       self.some_array_configuration = [ :module_value ]
@@ -100,7 +100,7 @@ describe CascadingConfiguration do
     end
 
     # including module 2
-    module CascadingConfiguration::MockModule3
+    module ::CascadingConfiguration::MockModule3
       include CascadingConfiguration::MockModule2
       some_array_configuration.should == [ :module_value ]
     end
@@ -170,7 +170,7 @@ describe CascadingConfiguration do
     # => instances of including classes get configurations
     # => extending modules and classes get attr_configuration and configurations
     # => instances of extending classes get nothing
-    module CascadingConfiguration::ConfigurationMockModuleExtended
+    module ::CascadingConfiguration::ConfigurationMockModuleExtended
       extend CascadingConfiguration
       # => singleton gets attr_configuration and configurations
       respond_to?( :attr_configuration_unique_array ).should == true
@@ -211,7 +211,7 @@ describe CascadingConfiguration do
     end
 
     # * module included with setting
-    module CascadingConfiguration::ConfigurationMockModuleIncluded
+    module ::CascadingConfiguration::ConfigurationMockModuleIncluded
       include CascadingConfiguration
       # => singleton gets attr_configuration and configurations
       respond_to?( :attr_configuration_unique_array ).should == true
@@ -349,7 +349,7 @@ describe CascadingConfiguration do
     # => instances of including classes get configurations
     # => extending modules and classes get attr_configuration and configurations
     # => instances of extending classes get nothing
-    module CascadingConfiguration::ConfigurationMockModuleExtended
+    module ::CascadingConfiguration::ConfigurationMockModuleExtended
       extend CascadingConfiguration
       # => singleton gets attr_configuration and configurations
       respond_to?( :attr_configuration_sorted_array ).should == true
@@ -390,7 +390,7 @@ describe CascadingConfiguration do
     end
 
     # * module included with setting
-    module CascadingConfiguration::ConfigurationMockModuleIncluded
+    module ::CascadingConfiguration::ConfigurationMockModuleIncluded
       include CascadingConfiguration
       # => singleton gets attr_configuration and configurations
       respond_to?( :attr_configuration_sorted_array ).should == true
@@ -524,7 +524,7 @@ describe CascadingConfiguration do
     # => instances of including classes get configurations
     # => extending modules and classes get attr_configuration and configurations
     # => instances of extending classes get nothing
-    module CascadingConfiguration::ConfigurationMockModuleExtended
+    module ::CascadingConfiguration::ConfigurationMockModuleExtended
       extend CascadingConfiguration
       # => singleton gets attr_configuration and configurations
       respond_to?( :attr_configuration_sorted_unique_array ).should == true
@@ -565,7 +565,7 @@ describe CascadingConfiguration do
     end
 
     # * module included with setting
-    module CascadingConfiguration::ConfigurationMockModuleIncluded
+    module ::CascadingConfiguration::ConfigurationMockModuleIncluded
       include CascadingConfiguration
       # => singleton gets attr_configuration and configurations
       respond_to?( :attr_configuration_sorted_unique_array ).should == true
@@ -688,21 +688,21 @@ describe CascadingConfiguration do
   it 'can declare an attribute as a cascading configuration hash' do
 
     # first module
-    module CascadingConfiguration::MockModule
+    module ::CascadingConfiguration::MockModule
       attr_configuration_hash :some_hash_configuration
       self.some_hash_configuration = { :some_value => :some_value }
       some_hash_configuration.should == { :some_value => :some_value }
     end
 
     # including module 1
-    module CascadingConfiguration::MockModule2
+    module ::CascadingConfiguration::MockModule2
       some_hash_configuration.should == { :some_value => :some_value }
       self.some_hash_configuration = { :module_value => :some_value }
       some_hash_configuration.should == { :module_value => :some_value }
     end
 
     # including module 2
-    module CascadingConfiguration::MockModule3
+    module ::CascadingConfiguration::MockModule3
 
     end
 

@@ -17,7 +17,7 @@ else
   require 'cascading-configuration-hash'
 end
 
-module CascadingConfiguration
+module ::CascadingConfiguration
 end
 
 require_relative 'cascading-configuration/CascadingConfiguration.rb'

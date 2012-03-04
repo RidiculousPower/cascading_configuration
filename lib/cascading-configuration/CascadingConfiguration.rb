@@ -1,5 +1,5 @@
 
-module CascadingConfiguration
+module ::CascadingConfiguration
   
   extend ModuleCluster::Define::Cluster
   
