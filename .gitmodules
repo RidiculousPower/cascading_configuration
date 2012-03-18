@@ -31,3 +31,12 @@
 [submodule "inheritance"]
 	path = inheritance
 	url = ./inheritance/
+[submodule "cascading-configuration-ancestors"]
+	path = cascading-configuration-ancestors
+	url = git@github.com:Asher-/cascading-configuration-ancestors.git
+[submodule "cascading-configuration-methods"]
+	path = cascading-configuration-methods
+	url = git@github.com:Asher-/cascading-configuration-methods.git
+[submodule "cascading-configuration-inheritance"]
+	path = cascading-configuration-inheritance
+	url = git@github.com:Asher-/cascading-configuration-inheritance.git
