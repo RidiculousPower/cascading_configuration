@@ -40,3 +40,12 @@
 [submodule "cascading-configuration-inheritance"]
 	path = cascading-configuration-inheritance
 	url = git@github.com:Asher-/cascading-configuration-inheritance.git
+[submodule "cascading-configuration-sorted-array"]
+	path = cascading-configuration-sorted-array
+	url = git@github.com:Asher-/cascading-configuration-sorted-array.git
+[submodule "cascading-configuration-unique-array"]
+	path = cascading-configuration-unique-array
+	url = git@github.com:Asher-/cascading-configuration-unique-array.git
+[submodule "cascading-configuration-sorted-unique-array"]
+	path = cascading-configuration-sorted-unique-array
+	url = git@github.com:Asher-/cascading-configuration-sorted-unique-array.git
