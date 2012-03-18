@@ -15,7 +15,7 @@
 	url = git@github.com:Asher-/cascading-configuration-variable.git
 [submodule "settings-array-unique"]
 	path = settings-array-unique
-	url = ./settings-array-unique
+	url = ./settings-array-unique/
 [submodule "settings-array-sorted-unique"]
 	path = settings-array-sorted-unique
 	url = ./settings-array-sorted-unique
