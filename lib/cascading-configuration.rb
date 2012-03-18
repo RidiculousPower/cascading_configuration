@@ -1,6 +1,4 @@
 
-require 'module-cluster'
-
 if $__cascading_configuration__spec__development
   require_relative '../setting/lib/cascading-configuration-setting.rb'
   require_relative '../settings-array/lib/cascading-configuration-array.rb'

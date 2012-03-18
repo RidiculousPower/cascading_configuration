@@ -22,3 +22,12 @@
 [submodule "settings-array-sorted"]
 	path = settings-array-sorted
 	url = ./settings-array-sorted
+[submodule "ancestors"]
+	path = ancestors
+	url = ./ancestors/
+[submodule "methods"]
+	path = methods
+	url = ./methods
+[submodule "inheritance"]
+	path = inheritance
+	url = ./inheritance/
