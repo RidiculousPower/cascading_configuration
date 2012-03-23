@@ -3,6 +3,22 @@ $__cascading_configuration__spec__development = true
 specs = [
 
   [
+    'ancestors/spec/'
+  ],
+
+  [
+    'definition/spec/'
+  ],
+
+  [
+    'inheritance/spec/'
+  ],
+
+  [
+    'methods/spec/'
+  ],
+
+  [
     'variable/spec/'
   ],
   

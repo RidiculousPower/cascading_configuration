@@ -15,7 +15,7 @@
 	url = git@github.com:Asher-/cascading-configuration-variable.git
 [submodule "settings-array-unique"]
 	path = settings-array-unique
-	url = ./settings-array-unique/
+	url = ./settings-array-unique
 [submodule "settings-array-sorted-unique"]
 	path = settings-array-sorted-unique
 	url = ./settings-array-sorted-unique
@@ -30,7 +30,7 @@
 	url = ./methods
 [submodule "inheritance"]
 	path = inheritance
-	url = ./inheritance/
+	url = ./inheritance
 [submodule "cascading-configuration-ancestors"]
 	path = cascading-configuration-ancestors
 	url = git@github.com:Asher-/cascading-configuration-ancestors.git
@@ -49,3 +49,6 @@
 [submodule "cascading-configuration-sorted-unique-array"]
 	path = cascading-configuration-sorted-unique-array
 	url = git@github.com:Asher-/cascading-configuration-sorted-unique-array.git
+[submodule "definition"]
+	path = definition
+	url = ./definition/
