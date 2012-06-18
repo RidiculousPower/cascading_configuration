@@ -24,11 +24,16 @@ Each module supports the same pattern for naming methods it provides.
 
 * The module has a name, which is used in each of the method types (:setting, :hash, :array, :unique_array, :sorted_array, :sorted_unique_array).
 * There are 5 types of base methods:
-*   attr_[module_name] - a cascading method, which will affect instances according to include/extend pattern used.
-*   attr_module_[module_name] and attr_class_[module_name] - cascading module/class methods, which will affect all module singletons according to include/extend pattern used.
-*   attr_instance_[module_name] - cascading instance methods, which will affect instances of including modules according to include/extend pattern used.
-*   attr_local_[module_name] - non-cascading methods that will affect the instance declared on as well as instances of that instance, if applicable.
-*   attr_object_[module_name] - non-cascading methods that will affect only the instance declared on.
+*   attr_[module_name]
+> a cascading method, which will affect instances according to include/extend pattern used.
+*   attr_module_[module_name] and attr_class_[module_name]
+> cascading module/class methods, which will affect all module singletons according to include/extend pattern used.
+*   attr_instance_[module_name]
+> cascading instance methods, which will affect instances of including modules according to include/extend pattern used.
+*   attr_local_[module_name]
+> non-cascading methods that will affect the instance declared on as well as instances of that instance, if applicable.
+*   attr_object_[module_name]
+> non-cascading methods that will affect only the instance declared on.
 
 ## Inheritable Objects ##
 
