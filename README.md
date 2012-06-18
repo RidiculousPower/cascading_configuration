@@ -27,20 +27,16 @@ Each module supports the same pattern for naming methods it provides.
 *   :attr\_[module\_name]
 
     > a cascading method, which will affect instances according to include/extend pattern used.
-
-*   :attr\_module\_[module\_name] and attr\_class\_[module\_name]
+**   :attr\_module\_[module\_name] and attr\_class\_[module\_name]
 
     > cascading module/class methods, which will affect all module singletons according to include/extend pattern used.
-
-*   :attr\_instance\_[module\_name]
+**   :attr\_instance\_[module\_name]
 
     > cascading instance methods, which will affect instances of including modules according to include/extend pattern used.
-
-*   :attr\_local\_[module\_name]
+**   :attr\_local\_[module\_name]
 
     > non-cascading methods that will affect the instance declared on as well as instances of that instance, if applicable.
-
-*   :attr\_object\_[module\_name]
+**   :attr\_object\_[module\_name]
 
     > non-cascading methods that will affect only the instance declared on.
 
