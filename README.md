@@ -10,50 +10,9 @@ Provides inheritable values across Ruby inheritance hierarchy or across arbitrar
 
 Inheritable Objects and Downward-Compositing Hashes and Arrays; Downward-Transforming Values coming soon.
 
-## Inheritable Objects ##
+# Install #
 
-Inheritable Objects are values received from an ancestor:
-
-```ruby
-class A
-  include ::CascadingConfiguration::Setting
-  attr_configuration  :some_setting
-  self.some_setting = :some_value
-end
-
-class B < A
-  some_setting == :some_value
-  self.some_setting = :another_value
-end
-
-class C < B
-  some_setting == :another_value
-end
-```
-
-Simply put, the instance asked for the value will look up its ancestor chain until it finds an explicitly assigned value, which it returns.
-
-This is provided by:
-
-* CascadingConfiguration::Setting
-
-## Downward-Compositing Hashes and Arrays ##
-
-Whether Hashes or Arrays, the idea is the same. We call the Compositing Objects. They all work the same way (automatically):
-
-1. The compositing object is initialized with a reference to the configuration instance it is attached to.
-2. The compositing object is initialized (separately) for its immediate parent object.
-3. Whenever an update occurs, the compositing object updates its registered child object with the update.
-
-This way the lower objects are kept in sync with parent elements. Overriding hooked methods (provided by HookedArray from the hooked-array gem) provides a great deal of flexible functionality, permitting elements to be transformed as they are passed down the ancestor hierarchy.
-
-Right now there are 5 types of Compositing Objects:
-
-* CascadingConfiguration::Hash
-* CascadingConfiguration::Array
-* CascadingConfiguration::Array::Unique
-* CascadingConfiguration::Array::Sorted
-* CascadingConfiguration::Array::Sorted::Unique
+* sudo gem install cascading-configuration
 
 ## Downward-Transforming Values ##
 
@@ -63,33 +22,27 @@ Each time a child is registered, Downward-Transforming Values are processed via 
 
 Final details still being determined.
 
-# Install #
-
-* sudo gem install cascading-configuration
-
 # Usage #
 
 Since CascadingConfiguration produces configurations for both singletons and instances, include or extend of a CascadingConfiguration module (for instance CascadingConfiguration::Setting) also causes the including instance to be extended by module::ClassInstance (ie CascadingConfiguration::Setting::ClassInstance).
 
 The result is that extending will enable only the singleton, whereas including will enable both singleton and instances.
 
-## Common Method Pattern ##
+## Basic Examples ##
 
 Each module supports the same pattern for naming methods it provides.
 
 * The module has a name, which is used in each of the method types (:setting, :hash, :array, :unique_array, :sorted_array, :sorted_unique_array).
 * There are 5 types of base methods:
-** attr_[module_name] - a cascading method, which will affect instances according to include/extend pattern used.
-** attr_module_[module_name] and attr_class_[module_name] - cascading module/class methods, which will affect all module singletons according to include/extend pattern used.
-** attr_instance_[module_name] - cascading instance methods, which will affect instances of including modules according to include/extend pattern used.
-** attr_local_[module_name] - non-cascading methods that will affect the instance declared on as well as instances of that instance, if applicable.
-** attr_object_[module_name] - non-cascading methods that will affect only the instance declared on.
-
-## Basic Examples ##
+*   attr_[module_name] - a cascading method, which will affect instances according to include/extend pattern used.
+*   attr_module_[module_name] and attr_class_[module_name] - cascading module/class methods, which will affect all module singletons according to include/extend pattern used.
+*   attr_instance_[module_name] - cascading instance methods, which will affect instances of including modules according to include/extend pattern used.
+*   attr_local_[module_name] - non-cascading methods that will affect the instance declared on as well as instances of that instance, if applicable.
+*   attr_object_[module_name] - non-cascading methods that will affect only the instance declared on.
 
 ### Inheritable Objects ###
 
-Provided by CascadingConfiguration::Setting:
+Inheritable Objects are values received from an ancestor:
 
 ```ruby
 module ModuleA
@@ -113,9 +66,23 @@ class ClassC < ClassB
 end
 ```
 
+Simply put, the instance asked for the value will look up its ancestor chain until it finds an explicitly assigned value, which it returns.
+
+This is provided by:
+
+* CascadingConfiguration::Setting
+
 ### Downward-Compositing Hashes and Arrays ###
 
-Provided by:
+Whether Hashes or Arrays, the idea is the same. We call the Compositing Objects. They all work the same way (automatically):
+
+1. The compositing object is initialized with a reference to the configuration instance it is attached to.
+2. The compositing object is initialized (separately) for its immediate parent object.
+3. Whenever an update occurs, the compositing object updates its registered child object with the update.
+
+This way the lower objects are kept in sync with parent elements. Overriding hooked methods (provided by HookedArray from the hooked-array gem) provides a great deal of flexible functionality, permitting elements to be transformed as they are passed down the ancestor hierarchy.
+
+Right now there are 5 types of Compositing Objects:
 
 * CascadingConfiguration::Hash
 * CascadingConfiguration::Array

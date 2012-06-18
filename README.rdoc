@@ -10,31 +10,6 @@ Provides inheritable values across Ruby inheritance hierarchy or across arbitrar
 
 Inheritable Objects and Downward-Compositing Hashes and Arrays; Downward-Transforming Values coming soon.
 
-=== Inheritable Objects
-
-Inheritable Objects are values received from an ancestor:
-
-	class A
-	  include ::CascadingConfiguration::Setting
-	  attr_configuration  :some_setting
-	  self.some_setting = :some_value
-	end
-
-	class B < A
-	  some_setting == :some_value
-	  self.some_setting = :another_value
-	end
-
-	class C < B
-	  some_setting == :another_value
-	end
-
-Simply put, the instance asked for the value will look up its ancestor chain until it finds an explicitly assigned value, which it returns.
-
-This is provided by:
-
-* CascadingConfiguration::Setting
-
 === Downward-Compositing Hashes and Arrays
 
 Whether Hashes or Arrays, the idea is the same. We call the Compositing Objects. They all work the same way (automatically):
@@ -71,7 +46,7 @@ Since CascadingConfiguration produces configurations for both singletons and ins
 
 The result is that extending will enable only the singleton, whereas including will enable both singleton and instances.
 
-=== Common Method Pattern
+=== Basic Examples
 
 Each module supports the same pattern for naming methods it provides.
 
@@ -83,31 +58,35 @@ Each module supports the same pattern for naming methods it provides.
 ** attr_local_[module_name] - non-cascading methods that will affect the instance declared on as well as instances of that instance, if applicable.
 ** attr_object_[module_name] - non-cascading methods that will affect only the instance declared on.
 
-=== Basic Examples
-
 ==== Inheritable Objects
 
-Provided by CascadingConfiguration::Setting:
+Inheritable Objects are values received from an ancestor:
 
-	module ModuleA
-	  include CascadingConfiguration::Setting
-	  attr_configuration  :some_setting
-	  self.some_setting = :some_value
-	end
+module ModuleA
+  include CascadingConfiguration::Setting
+  attr_configuration  :some_setting
+  self.some_setting = :some_value
+end
 
-	class ClassA
-	  include ModuleA
-	  self.some_setting = :some_other_value
-	end
+class ClassA
+  include ModuleA
+  self.some_setting = :some_other_value
+end
 
-	class ClassB < ClassA
-	  some_setting == :some_other_value
-	  self.some_setting = :another_value
-	end
+class ClassB < ClassA
+  some_setting == :some_other_value
+  self.some_setting = :another_value
+end
 
-	class ClassC < ClassB
-	  some_setting == :another_value
-	end
+class ClassC < ClassB
+  some_setting == :another_value
+end
+
+Simply put, the instance asked for the value will look up its ancestor chain until it finds an explicitly assigned value, which it returns.
+
+This is provided by:
+
+* CascadingConfiguration::Setting
 
 ==== Downward-Compositing Hashes and Arrays
 
