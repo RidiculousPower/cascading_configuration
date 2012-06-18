@@ -1,0 +1,7 @@
+
+== 6/18/2012
+
+Moved cascading-configuration-ancestors to a new independent gem: parallel-ancestry.
+Now with Less Magic™ and more Tasty Sandwiches™!
+Condensed cascading-configuration-variable, cascading-configuration-methods, cascading-configuration-definition, cascading-configuration-inheritance, cascading-configuration-module, cascading-configuration-setting, cascading-configuration-array, cascading-configuration-array-unique, cascading-configuration-array-sorted, cascading-configuration-sorted-unique, cascading-configuration-hash into a single gem with core support.
+Adding new modules is now incredibly easy, and all the old spaghetti internal code is gone.

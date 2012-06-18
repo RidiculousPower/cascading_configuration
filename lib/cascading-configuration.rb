@@ -1,21 +1,64 @@
 
-if $__cascading_configuration__spec__development
-  require_relative '../setting/lib/cascading-configuration-setting.rb'
-  require_relative '../settings-array/lib/cascading-configuration-array.rb'
-  require_relative '../settings-array-unique/lib/cascading-configuration-array-unique.rb'
-  require_relative '../settings-array-sorted/lib/cascading-configuration-array-sorted.rb'
-  require_relative '../settings-array-sorted-unique/lib/cascading-configuration-array-sorted-unique.rb'
-  require_relative '../settings-hash/lib/cascading-configuration-hash.rb'
-else
-  require 'cascading-configuration-setting'
-  require 'cascading-configuration-array'
-  require 'cascading-configuration-array-unique'
-  require 'cascading-configuration-array-sorted'
-  require 'cascading-configuration-array-sorted-unique'
-  require 'cascading-configuration-hash'
-end
+require 'to_camel_case'
+
+require 'accessor-utilities'
+
+#require 'parallel-ancestry'
+require_relative '../../parallel-ancestry/lib/parallel-ancestry.rb'
+
+require 'compositing-hash'
+
+require 'compositing-array-sorted-unique'
 
 module ::CascadingConfiguration
+  module Core
+    class InstanceController < ::Module
+      module Methods
+      end
+    end
+  end
 end
 
-require_relative 'cascading-configuration/CascadingConfiguration.rb'
+basepath = 'cascading-configuration/CascadingConfiguration'
+
+files = [
+    
+  'Core/EnableModuleSupport',
+  'Core/EnableInstanceSupport',
+  
+  'Core',
+  
+  'Core/Encapsulation',
+  
+  'Core/Module',
+  'Core/Module/InheritingValues',
+  'Core/Module/ExtendedConfigurations',
+  'Core/Module/ExtendedConfigurations/CompositingObjects',
+  'Core/Module/BlockConfigurations',
+  'Core/Module/BlockConfigurations/CascadingVariables',
+    
+  'Core/InstanceController/Methods/InstanceMethods',
+  'Core/InstanceController/Methods/LocalInstanceMethods',
+  'Core/InstanceController/Methods/SingletonAndInstanceMethods',
+  'Core/InstanceController/Methods/SingletonMethods',
+  'Core/InstanceController/Methods',
+  'Core/InstanceController/SupportModule',
+  'Core/InstanceController/ExtensionModule',
+  'Core/InstanceController',
+  
+  'Setting',
+  
+  'Hash',
+  
+  'Array',
+  'Array/Unique',
+  'Array/Sorted',
+  'Array/Sorted/Unique'
+  
+]
+
+files.each do |this_file|
+  require_relative( File.join( basepath, this_file ) + '.rb' )
+end
+
+require_relative( basepath + '.rb' )

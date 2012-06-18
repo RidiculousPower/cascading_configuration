@@ -175,7 +175,7 @@ class SomeClass
   include SomeModule
 
   respond_to?( :some_setting ).should == true
-  instance_methods.include?( :some_setting ).should == true
+  method_defined?( :some_setting ).should == true
 
   some_setting # => :some_value
 
@@ -186,7 +186,7 @@ SomeClass.new.some_setting # => :some_value
 
 ### :attr_instance_configuration ###
 
-:attr_instance_configuration works like :attr_configuration but is only defined in instances of defining object. This means Modules and Classes will have an instance method defined, and that Subclasses will inherit but value will not be resolved through ancestor chain.
+:attr_instance_configuration works like :attr_configuration but is only defined in instances of defining object. This means ::Modules and ::Classes will have an instance method defined, and that Subclasses will inherit but value will not be resolved through ancestor chain.
 
 ```ruby
 module SomeModule
@@ -208,7 +208,7 @@ class SomeClass
   include SomeModule
 
   respond_to?( :some_setting ).should == false
-  instance_methods.include?( :some_setting ).should == true
+  method_defined?( :some_setting ).should == true
 
 end
 
@@ -385,7 +385,7 @@ class SomeClass
   include SomeModule
 
   respond_to?( :some_array_setting ).should == true
-  instance_methods.include?( :some_array_setting ).should == true
+  method_defined?( :some_array_setting ).should == true
 
   some_array_setting # => [ :some_value ]
 
@@ -396,7 +396,7 @@ SomeClass.new.some_array_setting # => :some_value
 
 ### :attr_instance_configuration_array ###
 
-:attr_instance_configuration_array works like :attr_configuration_array but is only defined in instances of defining object. This means Modules and Classes will have an instance method defined, and that Subclasses will inherit but value will not be resolved through ancestor chain.
+:attr_instance_configuration_array works like :attr_configuration_array but is only defined in instances of defining object. This means ::Modules and ::Classes will have an instance method defined, and that Subclasses will inherit but value will not be resolved through ancestor chain.
 
 ```ruby
 module SomeModule
@@ -418,7 +418,7 @@ class SomeClass
   include SomeModule
 
   respond_to?( :some_array_setting ).should == false
-  instance_methods.include?( :some_array_setting ).should == true
+  method_defined?( :some_array_setting ).should == true
 
 end
 
@@ -999,7 +999,7 @@ class SomeClass
   include SomeModule
 
   respond_to?( :some_hash_setting ).should == true
-  instance_methods.include?( :some_hash_setting ).should == true
+  method_defined?( :some_hash_setting ).should == true
 
   some_hash_setting # => { :some_setting => :some_value }
 
@@ -1010,7 +1010,7 @@ SomeClass.new.some_hash_setting # => :some_value
 
 ### :attr_instance_configuration_hash ###
 
-:attr_instance_configuration_hash works like :attr_configuration_hash but is only defined in instances of defining object. This means Modules and Classes will have an instance method defined, and that Subclasses will inherit but value will not be resolved through ancestor chain.
+:attr_instance_configuration_hash works like :attr_configuration_hash but is only defined in instances of defining object. This means ::Modules and ::Classes will have an instance method defined, and that Subclasses will inherit but value will not be resolved through ancestor chain.
 
 ```ruby
 module SomeModule
@@ -1032,7 +1032,7 @@ class SomeClass
   include SomeModule
 
   respond_to?( :some_hash_setting ).should == false
-  instance_methods.include?( :some_hash_setting ).should == true
+  method_defined?( :some_hash_setting ).should == true
 
 end
 
