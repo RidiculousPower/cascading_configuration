@@ -14,21 +14,11 @@ Inheritable Objects and Downward-Compositing Hashes and Arrays; Downward-Transfo
 
 * sudo gem install cascading-configuration
 
-## Downward-Transforming Values ##
-
-Downward-Transforming Values are not yet 100% implemented, but the remainder is minimal and will be coming soon.
-
-Each time a child is registered, Downward-Transforming Values are processed via a block to produce the new value that the inheriting instance will receive. 
-
-Final details still being determined.
-
 # Usage #
 
 Since CascadingConfiguration produces configurations for both singletons and instances, include or extend of a CascadingConfiguration module (for instance CascadingConfiguration::Setting) also causes the including instance to be extended by module::ClassInstance (ie CascadingConfiguration::Setting::ClassInstance).
 
 The result is that extending will enable only the singleton, whereas including will enable both singleton and instances.
-
-## Basic Examples ##
 
 Each module supports the same pattern for naming methods it provides.
 
@@ -40,7 +30,7 @@ Each module supports the same pattern for naming methods it provides.
 *   attr_local_[module_name] - non-cascading methods that will affect the instance declared on as well as instances of that instance, if applicable.
 *   attr_object_[module_name] - non-cascading methods that will affect only the instance declared on.
 
-### Inheritable Objects ###
+## Inheritable Objects ##
 
 Inheritable Objects are values received from an ancestor:
 
@@ -72,7 +62,7 @@ This is provided by:
 
 * CascadingConfiguration::Setting
 
-### Downward-Compositing Hashes and Arrays ###
+## Downward-Compositing Hashes and Arrays ##
 
 Whether Hashes or Arrays, the idea is the same. We call the Compositing Objects. They all work the same way (automatically):
 
@@ -130,6 +120,15 @@ ClassB.some_array == [ :some_value, :another_value ]
 
 ClassA.some_array == [ :another_value ]
 ```
+
+## Downward-Transforming Values ##
+
+Downward-Transforming Values are not yet 100% implemented, but the remainder is minimal and will be coming soon.
+
+Each time a child is registered, Downward-Transforming Values are processed via a block to produce the new value that the inheriting instance will receive. 
+
+Final details still being determined.
+
 
 ## Configuration Modules ##
 
