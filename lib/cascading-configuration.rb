@@ -1,13 +1,8 @@
 
 require 'to_camel_case'
-
 require 'accessor-utilities'
-
-#require 'parallel-ancestry'
-require_relative '../../parallel-ancestry/lib/parallel-ancestry.rb'
-
+require 'parallel-ancestry'
 require 'compositing-hash'
-
 require 'compositing-array-sorted-unique'
 
 module ::CascadingConfiguration
