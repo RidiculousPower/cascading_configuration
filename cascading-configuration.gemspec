@@ -14,13 +14,9 @@ Gem::Specification.new do |spec|
   spec.homepage                  =  'http://rubygems.org/gems/cascading-configuration'
 
   spec.add_dependency            'module-cluster'
-
   spec.add_dependency            'to_camel_case'
-
   spec.add_dependency            'accessor-utilities'
-
   spec.add_dependency            'parallel-ancestry'
-
   spec.add_dependency            'compositing-hash'
   spec.add_dependency            'compositing-array-sorted-unique'
 
