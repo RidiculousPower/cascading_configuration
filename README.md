@@ -22,23 +22,37 @@ The result is that extending will enable only the singleton, whereas including w
 
 Each module supports the same pattern for naming methods it provides.
 
-* The module has a name, which is used in each of the method types (:setting, :hash, :array, :unique_array, :sorted_array, :sorted_unique_array).
-* There are 5 types of base methods:
-*   :attr\_[module\_name]
+The module has a name, which is used in each of the method types:
+* :setting
+* :hash
+* :array
+* :unique\_array
+* :sorted\_array
+* :sorted\_unique\_array
 
-    > a cascading method, which will affect instances according to include/extend pattern used.
-**   :attr\_module\_[module\_name] and attr\_class\_[module\_name]
+There are 5 types of base methods:
 
-    > cascading module/class methods, which will affect all module singletons according to include/extend pattern used.
-**   :attr\_instance\_[module\_name]
+## Base Method Naming Pattern ##
 
-    > cascading instance methods, which will affect instances of including modules according to include/extend pattern used.
-**   :attr\_local\_[module\_name]
+### :attr\_[module\_name] ###
 
-    > non-cascading methods that will affect the instance declared on as well as instances of that instance, if applicable.
-**   :attr\_object\_[module\_name]
+A cascading method, which will affect instances according to include/extend pattern used.
 
-    > non-cascading methods that will affect only the instance declared on.
+### :attr\_module\_[module\_name] and attr\_class\_[module\_name] ###
+
+Cascading module/class methods, which will affect all module singletons according to include/extend pattern used.
+
+### :attr\_instance\_[module\_name] ###
+
+Cascading instance methods, which will affect instances of including modules according to include/extend pattern used.
+
+### :attr\_local\_[module\_name] ###
+
+Non-cascading methods that will affect the instance declared on as well as instances of that instance, if applicable.
+
+### :attr\_object\_[module\_name] ###
+
+Non-cascading methods that will affect only the instance declared on.
 
 ## Inheritable Objects ##
 
