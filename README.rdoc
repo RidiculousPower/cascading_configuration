@@ -48,6 +48,28 @@ Each module supports the same pattern for naming methods it provides.
 ** attr_local_[module_name] - non-cascading methods that will affect the instance declared on as well as instances of that instance, if applicable.
 ** attr_object_[module_name] - non-cascading methods that will affect only the instance declared on.
 
+=== Base Method Naming Pattern
+
+==== :attr_[module_name]
+
+A cascading method, which will affect instances according to include/extend pattern used.
+
+==== :attr_module_[module_name] and attr_class_[module_name]
+
+Cascading module/class methods, which will affect all module singletons according to include/extend pattern used.
+
+==== :attr_instance_[module_name]
+
+Cascading instance methods, which will affect instances of including modules according to include/extend pattern used.
+
+==== :attr_local_[module_name]
+
+Non-cascading methods that will affect the instance declared on as well as instances of that instance, if applicable.
+
+==== :attr_object_[module_name]
+
+Non-cascading methods that will affect only the instance declared on.
+
 === Inheritable Objects
 
 Inheritable Objects are values received from an ancestor:
