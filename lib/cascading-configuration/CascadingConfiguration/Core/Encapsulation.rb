@@ -122,8 +122,9 @@ class ::CascadingConfiguration::Core::Encapsulation < ::Module
   def has_configuration?( instance, configuration_name )
 
     has_configuration = nil
-
-    unless has_configuration = configurations( instance ).has_key?( configuration_name )
+    
+    unless has_configuration = configurations( instance ).has_key?( configuration_name ) or 
+           instance == instance.class
       has_configuration = configurations( instance.class ).has_key?( configuration_name )
     end
 
@@ -182,12 +183,15 @@ class ::CascadingConfiguration::Core::Encapsulation < ::Module
   
   def parent_for_configuration( instance, configuration_name )
 
-    unless parent = parent_for_configuration_hash( instance )[ configuration_name ]
+    unless instance.equal?( Object ) or instance.equal?( Class ) or 
+           parent = parent_for_configuration_hash( instance )[ configuration_name ]
+
       instance_class = instance.class
       if has_configuration?( instance_class, configuration_name )
         parent = instance_class
       end
     end
+    $blah = nil
 
     return parent
 
