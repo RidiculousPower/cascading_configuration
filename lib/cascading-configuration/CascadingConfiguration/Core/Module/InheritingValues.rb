@@ -43,15 +43,17 @@ class ::CascadingConfiguration::Core::Module::InheritingValues < ::CascadingConf
 
     matching_ancestor = nil
 
+    did_match_ancestor = false
+
     matching_ancestor = encapsulation.match_parent( instance, configuration_name ) do |this_ancestor|
       if encapsulation.has_configuration_value?( this_ancestor, configuration_name )
-        true
+        did_match_ancestor = true
       else
         false
       end
     end
 
-    if matching_ancestor
+    if did_match_ancestor
       configuration_value = encapsulation.get_configuration( matching_ancestor, configuration_name )
     end
     
