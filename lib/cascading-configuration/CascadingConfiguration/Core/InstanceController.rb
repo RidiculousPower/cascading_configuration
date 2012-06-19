@@ -5,6 +5,26 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   
   @instance_controller = { }
 
+  #####################################
+  #  self.create_instance_controller  #
+  #####################################
+  
+  def self.create_instance_controller( instance,
+                                       default_encapsulation_or_name = ::CascadingConfiguration::Core::
+                                                                         Module::DefaultEncapsulation, 
+                                       constant = :Controller,
+                                       extending = false )
+    
+    instance_controller = nil
+    
+    unless instance_controller = @instance_controller[ instance ]
+      instance_controller = new( instance, default_encapsulation_or_name, constant, extending )
+    end
+    
+    return instance_controller
+    
+  end
+  
   ##############################
   #  self.instance_controller  #
   ##############################
@@ -287,8 +307,15 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
       # Includes/Extends
     
       if should_include
-        @instance.module_eval do
-          include support_module_instance
+        case @instance
+          # we can only include in modules
+          when ::Module
+            @instance.module_eval do
+              include support_module_instance
+            end
+          # but we might be told to create instance support on instances, in which case we need to extend
+          else
+            @instance.extend( support_module_instance )
         end
       end
         

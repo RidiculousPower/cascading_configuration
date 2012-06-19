@@ -683,5 +683,5 @@ describe CascadingConfiguration::Setting do
       instance_variables.empty?.should == true
     end
   end
-  
+    
 end

@@ -33,15 +33,19 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
     instance_controller = ::CascadingConfiguration::Core::InstanceController.nearest_instance_controller( encapsulation, 
                                                                                                           instance, 
                                                                                                           name )
-
-    extension_modules = instance_controller.extension_modules_upward( name, encapsulation )
-
-    unless extension_modules.empty?
-      # Modules are gathered from lowest ancestor upward. This means that they are already 
-      # in the proper order for include/extend (which usually we would have to reverse).
-      compositing_object.extend( *extension_modules )
-    end
+  
+    if instance_controller
+      
+      extension_modules = instance_controller.extension_modules_upward( name, encapsulation )
     
+      unless extension_modules.empty?
+        # Modules are gathered from lowest ancestor upward. This means that they are already 
+        # in the proper order for include/extend (which usually we would have to reverse).
+        compositing_object.extend( *extension_modules )
+      end
+    
+    end
+        
     encapsulation.set_configuration( instance, name, compositing_object )    
     
     initialize_compositing_configuration_for_parent( encapsulation, instance, name )

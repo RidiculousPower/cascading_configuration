@@ -15,4 +15,5 @@ Fixed parameters for alias methods on InstanceController.
 Changed inheritance for extends to behave like module inheritance. Now extending an instance with a CCM-enabled module will cause instance methods to be appended to extended instances eigenclass chain; singleton methods will not cascade for extend.
 Fixed Class instance configuration lookups.
 Fixed for FalseClass.
+Fixed for Object.
 
