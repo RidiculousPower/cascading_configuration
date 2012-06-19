@@ -11,7 +11,7 @@ module ::CascadingConfiguration::Core::EnableInstanceSupport
     
     # Ensure our instance has an instance controller
     unless instance_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( instance )
-      default_encapsulation = instance::ClassInstance.default_encapsulation
+      default_encapsulation = self::ClassInstance.default_encapsulation
       instance_controller = ::CascadingConfiguration::Core::InstanceController.new( instance, default_encapsulation )
     end
 
