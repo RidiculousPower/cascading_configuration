@@ -3,9 +3,9 @@ require_relative '../../lib/cascading-configuration.rb'
 
 describe CascadingConfiguration::Setting do
 
-  ########################
-  #  attr_configuration  #
-  ########################
+  ##################
+  #  attr_setting  #
+  ##################
   
   it 'can define a configuration setting, which is the primary interface' do
 
@@ -19,9 +19,10 @@ describe CascadingConfiguration::Setting do
     # * module extended with setting
     module ::CascadingConfiguration::Setting::ConfigurationMockExtended
       extend CascadingConfiguration::Setting
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_setting ).should == true
       respond_to?( :attr_configuration ).should == true
-      attr_configuration :some_configuration
+      attr_setting :some_configuration, :some_other_configuration
       respond_to?( :some_configuration ).should == true
       self.some_configuration = :our_setting_value
       some_configuration.should == :our_setting_value
@@ -59,16 +60,16 @@ describe CascadingConfiguration::Setting do
     # * module included with setting
     module ::CascadingConfiguration::Setting::ConfigurationMockIncluded
       include CascadingConfiguration::Setting
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       eigenclass = class << self ; self ; end
-      respond_to?( :attr_configuration ).should == true
-      attr_configuration :some_configuration
+      respond_to?( :attr_setting ).should == true
+      attr_setting :some_configuration
       respond_to?( :some_configuration ).should == true
       self.some_configuration = :our_setting_value
       some_configuration.should == :our_setting_value
       method_defined?( :some_configuration ).should == true
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Setting::ConfigurationMockIncluded
         method_defined?( :some_configuration ).should == true
@@ -78,7 +79,7 @@ describe CascadingConfiguration::Setting do
         some_configuration.should == :another_configuration
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Setting::ConfigurationMockIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -145,7 +146,7 @@ describe CascadingConfiguration::Setting do
 
     module SomeModule
       include CascadingConfiguration::Setting
-      attr_configuration :some_configuration
+      attr_setting :some_configuration
       self.some_configuration = :another_configuration
     end
     module OtherModule
@@ -162,10 +163,10 @@ describe CascadingConfiguration::Setting do
     
   end
   
-  ###############################
-  #  attr_module_configuration  #
-  #  attr_class_configuration   #
-  ###############################
+  #########################
+  #  attr_module_setting  #
+  #  attr_class_setting   #
+  #########################
   
   it 'can define a class configuration setting, which will not cascade to instances' do
 
@@ -180,6 +181,7 @@ describe CascadingConfiguration::Setting do
     module ::CascadingConfiguration::Setting::ClassConfigurationMockExtended
       extend CascadingConfiguration::Setting
       # => singleton gets attr_module_configuration and configurations
+      respond_to?( :attr_module_setting ).should == true
       respond_to?( :attr_module_configuration ).should == true
       method( :attr_module_configuration ).should == method( :attr_class_configuration )
       attr_module_configuration :some_configuration
@@ -302,9 +304,9 @@ describe CascadingConfiguration::Setting do
     
   end
   
-  ##############################
-  #  attr_local_configuration  #
-  ##############################
+  ########################
+  #  attr_local_setting  #
+  ########################
   
   it 'can define a local configuration setting, which cascades to the first class and instances' do
 
@@ -318,7 +320,8 @@ describe CascadingConfiguration::Setting do
     # * module extended with setting
     module ::CascadingConfiguration::Setting::LocalConfigurationMockExtended
       extend CascadingConfiguration::Setting
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_local_setting ).should == true
       respond_to?( :attr_local_configuration ).should == true
       attr_local_configuration :some_configuration
       respond_to?( :some_configuration ).should == true
@@ -358,7 +361,7 @@ describe CascadingConfiguration::Setting do
     # * module included with setting
     module ::CascadingConfiguration::Setting::LocalConfigurationMockIncluded
       include CascadingConfiguration::Setting
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       respond_to?( :attr_local_configuration ).should == true
       attr_local_configuration :some_configuration
       respond_to?( :some_configuration ).should == true
@@ -366,7 +369,7 @@ describe CascadingConfiguration::Setting do
       some_configuration.should == :our_setting_value
       method_defined?( :some_configuration ).should == true
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Setting::LocalConfigurationMockIncluded
         method_defined?( :some_configuration ).should == true
@@ -379,7 +382,7 @@ describe CascadingConfiguration::Setting do
         respond_to?( :some_configuration ).should == false
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Setting::LocalConfigurationMockIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -463,9 +466,9 @@ describe CascadingConfiguration::Setting do
     end
   end
 
-  #################################
-  #  attr_instance_configuration  #
-  #################################
+  ###########################
+  #  attr_instance_setting  #
+  ###########################
   
   it 'can define a configuration setting for the present instance, which will not cascade' do
 
@@ -473,7 +476,8 @@ describe CascadingConfiguration::Setting do
     # * module extended with setting
     module ::CascadingConfiguration::Setting::InstanceConfigurationMockExtended
       extend CascadingConfiguration::Setting
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_instance_setting ).should == true
       respond_to?( :attr_instance_configuration ).should == true
       method_defined?( :some_configuration ).should == false
       instance_variables.empty?.should == true
@@ -509,21 +513,21 @@ describe CascadingConfiguration::Setting do
     # * module included with setting
     module ::CascadingConfiguration::Setting::InstanceConfigurationMockIncluded
       include CascadingConfiguration::Setting
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       respond_to?( :attr_instance_configuration ).should == true
       respond_to?( :some_configuration ).should == false
       attr_instance_configuration :some_configuration
       respond_to?( :some_configuration ).should == false
       method_defined?( :some_configuration ).should == true
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Setting::InstanceConfigurationMockIncluded
         method_defined?( :some_configuration ).should == true
         respond_to?( :some_configuration ).should == false
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Setting::InstanceConfigurationMockIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -573,9 +577,9 @@ describe CascadingConfiguration::Setting do
     end
   end
   
-  ###############################
-  #  attr_object_configuration  #
-  ###############################
+  #########################
+  #  attr_object_setting  #
+  #########################
   
   it 'can define a configuration setting for the present instance, which will not cascade' do
 
@@ -583,7 +587,8 @@ describe CascadingConfiguration::Setting do
     # * module extended with setting
     module ::CascadingConfiguration::Setting::ObjectConfigurationMockExtended
       extend CascadingConfiguration::Setting
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_object_setting ).should == true
       respond_to?( :attr_object_configuration ).should == true
       attr_object_configuration :some_configuration
       respond_to?( :some_configuration ).should == true
@@ -623,7 +628,7 @@ describe CascadingConfiguration::Setting do
     # * module included with setting
     module ::CascadingConfiguration::Setting::ObjectConfigurationMockIncluded
       include CascadingConfiguration::Setting
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       respond_to?( :attr_object_configuration ).should == true
       attr_object_configuration :some_configuration
       respond_to?( :some_configuration ).should == true
@@ -631,14 +636,14 @@ describe CascadingConfiguration::Setting do
       some_configuration.should == :our_setting_value
       method_defined?( :some_configuration ).should == false
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Setting::ObjectConfigurationMockIncluded
         method_defined?( :some_configuration ).should == false
         respond_to?( :some_configuration ).should == false
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Setting::ObjectConfigurationMockIncluded
         # if we're extended then we want to use the eigenclass ancestor chain

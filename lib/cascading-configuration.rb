@@ -32,11 +32,6 @@ files = [
   'Core/Module/BlockConfigurations',
   'Core/Module/BlockConfigurations/CascadingVariables',
     
-  'Core/InstanceController/Methods/InstanceMethods',
-  'Core/InstanceController/Methods/LocalInstanceMethods',
-  'Core/InstanceController/Methods/SingletonAndInstanceMethods',
-  'Core/InstanceController/Methods/SingletonMethods',
-  'Core/InstanceController/Methods',
   'Core/InstanceController/SupportModule',
   'Core/InstanceController/ExtensionModule',
   'Core/InstanceController',

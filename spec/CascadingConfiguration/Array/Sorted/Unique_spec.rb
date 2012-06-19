@@ -3,29 +3,30 @@ require_relative '../../../../lib/cascading-configuration.rb'
 
 describe CascadingConfiguration::Array::Sorted::Unique do
     
-  ############################################
-  #  attr_configuration_sorted_unique_array  #
-  ############################################
-  
+  ##############################
+  #  attr_sorted_unique_array  #
+  ##############################
+
   it 'can define a configuration array, which is the primary interface' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Array::Sorted::Unique::ConfigurationMockModuleExtended
       extend CascadingConfiguration::Array::Sorted::Unique
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_sorted_unique_array ).should == true
       respond_to?( :attr_configuration_sorted_unique_array ).should == true
-      attr_configuration_sorted_unique_array :configuration_setting
+      attr_sorted_unique_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
@@ -64,16 +65,16 @@ describe CascadingConfiguration::Array::Sorted::Unique do
     # * module included with setting
     module ::CascadingConfiguration::Array::Sorted::Unique::ConfigurationMockModuleIncluded
       include CascadingConfiguration::Array::Sorted::Unique
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_configuration_sorted_unique_array ).should == true
-      attr_configuration_sorted_unique_array :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_sorted_unique_array ).should == true
+      attr_sorted_unique_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
       configuration_setting.should == [ :a_configuration ]
       method_defined?( :configuration_setting ).should == true
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Array::Sorted::Unique::ConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == true
@@ -83,7 +84,7 @@ describe CascadingConfiguration::Array::Sorted::Unique do
         configuration_setting.should == [ :a_configuration, :another_configuration ]
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Array::Sorted::Unique::ConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -178,31 +179,32 @@ describe CascadingConfiguration::Array::Sorted::Unique do
         
   end
 
-  ###################################################
-  #  attr_module_configuration_sorted_unique_array  #
-  #  attr_class_configuration_sorted_unique_array   #
-  ###################################################
+  #####################################
+  #  attr_module_sorted_unique_array  #
+  #  attr_class_sorted_unique_array   #
+  #####################################
   
   it 'can define a class configuration array, which will not cascade to instances' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Array::Sorted::Unique::ClassConfigurationMockModuleExtended
       extend CascadingConfiguration::Array::Sorted::Unique
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       respond_to?( :attr_module_configuration_sorted_unique_array ).should == true
-      method( :attr_module_configuration_sorted_unique_array ).should == method( :attr_class_configuration_sorted_unique_array )
-      attr_module_configuration_sorted_unique_array :configuration_setting
+      respond_to?( :attr_module_sorted_unique_array ).should == true
+      method( :attr_module_sorted_unique_array ).should == method( :attr_class_sorted_unique_array )
+      attr_module_sorted_unique_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
@@ -241,16 +243,16 @@ describe CascadingConfiguration::Array::Sorted::Unique do
     # * module included with setting
     module ::CascadingConfiguration::Array::Sorted::Unique::ClassConfigurationMockModuleIncluded
       include CascadingConfiguration::Array::Sorted::Unique
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_module_configuration_sorted_unique_array ).should == true
-      attr_module_configuration_sorted_unique_array :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_module_sorted_unique_array ).should == true
+      attr_module_sorted_unique_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
       configuration_setting.should == [ :a_configuration ]
       method_defined?( :configuration_setting ).should == false
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Array::Sorted::Unique::ClassConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == false
@@ -261,7 +263,7 @@ describe CascadingConfiguration::Array::Sorted::Unique do
         method_defined?( :configuration_setting ).should == false
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Array::Sorted::Unique::ClassConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -346,29 +348,30 @@ describe CascadingConfiguration::Array::Sorted::Unique do
         
   end
   
-  ##################################################
-  #  attr_local_configuration_sorted_unique_array  #
-  ##################################################
+  ####################################
+  #  attr_local_sorted_unique_array  #
+  ####################################
   
   it 'can define a local configuration array, which will not cascade' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Array::Sorted::Unique::LocalConfigurationMockModuleExtended
       extend CascadingConfiguration::Array::Sorted::Unique
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       respond_to?( :attr_local_configuration_sorted_unique_array ).should == true
-      attr_local_configuration_sorted_unique_array :configuration_setting
+      respond_to?( :attr_local_sorted_unique_array ).should == true
+      attr_local_sorted_unique_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
@@ -407,23 +410,23 @@ describe CascadingConfiguration::Array::Sorted::Unique do
     # * module included with setting
     module ::CascadingConfiguration::Array::Sorted::Unique::LocalConfigurationMockModuleIncluded
       include CascadingConfiguration::Array::Sorted::Unique
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_local_configuration_sorted_unique_array ).should == true
-      attr_local_configuration_sorted_unique_array :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_local_sorted_unique_array ).should == true
+      attr_local_sorted_unique_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
       configuration_setting.should == [ :a_configuration ]
       method_defined?( :configuration_setting ).should == true
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Array::Sorted::Unique::LocalConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == true
         respond_to?( :configuration_setting ).should == false
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Array::Sorted::Unique::LocalConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -480,27 +483,27 @@ describe CascadingConfiguration::Array::Sorted::Unique do
         
   end
   
-  #####################################################
-  #  attr_instance_configuration_sorted_unique_array  #
-  #####################################################
+  #######################################
+  #  attr_instance_sorted_unique_array  #
+  #######################################
   
   it 'can define an instance configuration array, which will not cascade' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Array::Sorted::Unique::InstanceConfigurationMockModuleExtended
       extend CascadingConfiguration::Array::Sorted::Unique
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       instance_variables.empty?.should == true
       # => including modules and classes get nothing
       module SubmoduleIncluding
@@ -534,13 +537,13 @@ describe CascadingConfiguration::Array::Sorted::Unique do
     # * module included with setting
     module ::CascadingConfiguration::Array::Sorted::Unique::InstanceConfigurationMockModuleIncluded
       include CascadingConfiguration::Array::Sorted::Unique
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_instance_configuration_sorted_unique_array ).should == true
-      attr_instance_configuration_sorted_unique_array :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_instance_sorted_unique_array ).should == true
+      attr_instance_sorted_unique_array :configuration_setting
       respond_to?( :configuration_setting ).should == false
       method_defined?( :configuration_setting ).should == true
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Array::Sorted::Unique::InstanceConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == true
@@ -548,7 +551,7 @@ describe CascadingConfiguration::Array::Sorted::Unique do
         method_defined?( :configuration_setting ).should == true
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Array::Sorted::Unique::InstanceConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -606,29 +609,30 @@ describe CascadingConfiguration::Array::Sorted::Unique do
   end
   
   
-  ###################################################
-  #  attr_object_configuration_sorted_unique_array  #
-  ###################################################
+  #####################################
+  #  attr_object_sorted_unique_array  #
+  #####################################
   
   it 'can define an object configuration array, which will not cascade' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Array::Sorted::Unique::ObjectConfigurationMockModuleExtended
       extend CascadingConfiguration::Array::Sorted::Unique
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       respond_to?( :attr_object_configuration_sorted_unique_array ).should == true
-      attr_object_configuration_sorted_unique_array :configuration_setting
+      respond_to?( :attr_object_sorted_unique_array ).should == true
+      attr_object_sorted_unique_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
@@ -667,16 +671,16 @@ describe CascadingConfiguration::Array::Sorted::Unique do
     # * module included with setting
     module ::CascadingConfiguration::Array::Sorted::Unique::ObjectConfigurationMockModuleIncluded
       include CascadingConfiguration::Array::Sorted::Unique
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_object_configuration_sorted_unique_array ).should == true
-      attr_object_configuration_sorted_unique_array :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_object_sorted_unique_array ).should == true
+      attr_object_sorted_unique_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
       configuration_setting.should == [ :a_configuration ]
       method_defined?( :configuration_setting ).should == false
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Array::Sorted::Unique::ObjectConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == false
@@ -684,7 +688,7 @@ describe CascadingConfiguration::Array::Sorted::Unique do
         method_defined?( :configuration_setting ).should == false
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Array::Sorted::Unique::ObjectConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain

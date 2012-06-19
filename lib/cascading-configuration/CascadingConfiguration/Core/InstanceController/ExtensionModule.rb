@@ -34,5 +34,5 @@ class ::CascadingConfiguration::Core::InstanceController::ExtensionModule < ::Mo
   ########################
   
   attr_reader :configuration_name
-    	
+      
 end

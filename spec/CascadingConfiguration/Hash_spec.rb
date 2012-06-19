@@ -3,29 +3,30 @@ require_relative '../../lib/cascading-configuration.rb'
 
 describe CascadingConfiguration::Hash do
   
-  #############################
-  #  attr_configuration_hash  #
-  #############################
+  ###############
+  #  attr_hash  #
+  ###############
   
   it 'can define a configuration hash, which is the primary interface' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Hash::ConfigurationMockModuleExtended
       extend CascadingConfiguration::Hash
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_hash ).should == true
       respond_to?( :attr_configuration_hash ).should == true
-      attr_configuration_hash :configuration_setting
+      attr_hash :configuration_setting, :some_other_hash
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == {}
       self.configuration_setting[ :a_configuration ] = :some_value
@@ -64,16 +65,16 @@ describe CascadingConfiguration::Hash do
     # * module included with setting
     module ::CascadingConfiguration::Hash::ConfigurationMockModuleIncluded
       include CascadingConfiguration::Hash
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_configuration_hash ).should == true
-      attr_configuration_hash :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_hash ).should == true
+      attr_hash :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == {}
       self.configuration_setting[ :a_configuration ] = :some_value
       configuration_setting.should == { :a_configuration => :some_value }
       method_defined?( :configuration_setting ).should == true
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Hash::ConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == true
@@ -86,7 +87,7 @@ describe CascadingConfiguration::Hash do
         configuration_setting.should == { :a_configuration => :some_value }
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Hash::ConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -174,13 +175,13 @@ describe CascadingConfiguration::Hash do
     # change ancestor setting
     CascadingConfiguration::Hash::ConfigurationMockClass.configuration_setting[ :a_yet_unused_configuration ] = :some_value
     CascadingConfiguration::Hash::ConfigurationMockClass.configuration_setting.should == { :a_configuration            => :some_value,
-                                                                              :a_yet_unused_configuration => :some_value }
+                                                                                           :a_yet_unused_configuration => :some_value }
     object_instance_one.configuration_setting.should == { :a_configuration            => :some_value,
                                                           :a_yet_unused_configuration => :some_value,
                                                           :some_other_configuration   => :some_value }
     CascadingConfiguration::Hash::ConfigurationMockClassSub1.configuration_setting.should == { :a_configuration            => :some_value,
-                                                                                  :a_yet_unused_configuration => :some_value,
-                                                                                  :another_configuration      => :some_value }
+                                                                                               :a_yet_unused_configuration => :some_value,
+                                                                                               :another_configuration      => :some_value }
     object_instance_two.configuration_setting.should == { :a_configuration            => :some_value,
                                                           :a_yet_unused_configuration => :some_value,
                                                           :another_configuration      => :some_value,
@@ -193,18 +194,18 @@ describe CascadingConfiguration::Hash do
                                                           :some_other_configuration   => :some_value }
     CascadingConfiguration::Hash::ConfigurationMockClassSub1.configuration_setting.freeze!
     CascadingConfiguration::Hash::ConfigurationMockClassSub1.configuration_setting.should == { :a_configuration            => :some_value,
-                                                                                  :a_yet_unused_configuration => :some_value,
-                                                                                  :another_configuration      => :some_value }
+                                                                                               :a_yet_unused_configuration => :some_value,
+                                                                                               :another_configuration      => :some_value }
     CascadingConfiguration::Hash::ConfigurationMockClass.configuration_setting[ :non_cascading_configuration ] = :some_value
     CascadingConfiguration::Hash::ConfigurationMockClass.configuration_setting.should == { :a_configuration             => :some_value,
-                                                                              :a_yet_unused_configuration  => :some_value,
-                                                                              :non_cascading_configuration => :some_value }
+                                                                                           :a_yet_unused_configuration  => :some_value,
+                                                                                           :non_cascading_configuration => :some_value }
     object_instance_one.configuration_setting.should == { :a_configuration            => :some_value,
                                                           :a_yet_unused_configuration => :some_value,
                                                           :some_other_configuration   => :some_value }
     CascadingConfiguration::Hash::ConfigurationMockClassSub1.configuration_setting.should == { :a_configuration            => :some_value,
-                                                                                  :a_yet_unused_configuration => :some_value,
-                                                                                  :another_configuration      => :some_value }
+                                                                                               :a_yet_unused_configuration => :some_value,
+                                                                                               :another_configuration      => :some_value }
     object_instance_two.configuration_setting.should == { :a_configuration            => :some_value,
                                                           :a_yet_unused_configuration => :some_value,
                                                           :another_configuration      => :some_value,
@@ -212,7 +213,7 @@ describe CascadingConfiguration::Hash do
 
     module ::CascadingConfiguration::Hash::ConfigurationMockModule
       include CascadingConfiguration::Hash
-      attr_configuration_hash :some_hash do
+      attr_hash :some_hash do
         def merge!( other_hash )
           other_hash.each do |key, foreign_value|
             if existing_value = self[ key ]
@@ -236,31 +237,32 @@ describe CascadingConfiguration::Hash do
     
   end
   
-  ####################################
-  #  attr_module_configuration_hash  #
-  #  attr_class_configuration_hash   #
-  ####################################
+  ######################
+  #  attr_module_hash  #
+  #  attr_class_hash   #
+  ######################
   
   it 'can define a class configuration hash, which will not cascade to instances' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Hash::ClassConfigurationMockModuleExtended
       extend CascadingConfiguration::Hash
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       respond_to?( :attr_module_configuration_hash ).should == true
-      method( :attr_module_configuration_hash ).should == method( :attr_class_configuration_hash )
-      attr_module_configuration_hash :configuration_setting
+      respond_to?( :attr_module_hash ).should == true
+      method( :attr_module_hash ).should == method( :attr_class_hash )
+      attr_module_hash :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == {}
       self.configuration_setting[ :a_configuration ] = :some_value
@@ -299,16 +301,16 @@ describe CascadingConfiguration::Hash do
     # * module included with setting
     module ::CascadingConfiguration::Hash::ClassConfigurationMockModuleIncluded
       include CascadingConfiguration::Hash
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_module_configuration_hash ).should == true
-      attr_module_configuration_hash :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_module_hash ).should == true
+      attr_module_hash :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == {}
       self.configuration_setting[ :a_configuration ] = :some_value
       configuration_setting.should == { :a_configuration => :some_value }
       method_defined?( :configuration_setting ).should == false
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Hash::ClassConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == false
@@ -321,7 +323,7 @@ describe CascadingConfiguration::Hash do
         configuration_setting.should == { :a_configuration => :some_value }
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Hash::ClassConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -405,25 +407,25 @@ describe CascadingConfiguration::Hash do
     CascadingConfiguration::Hash::ClassConfigurationMockClass.configuration_setting.should == { :a_configuration            => :some_value,
                                                                                                 :a_yet_unused_configuration => :some_value }
     CascadingConfiguration::Hash::ClassConfigurationMockClassSub1.configuration_setting.should == { :a_configuration            => :some_value,
-                                                                                  :a_yet_unused_configuration => :some_value,
-                                                                                  :another_configuration      => :some_value }
+                                                                                                    :a_yet_unused_configuration => :some_value,
+                                                                                                    :another_configuration      => :some_value }
 
     # freeze ancestor setting
     CascadingConfiguration::Hash::ClassConfigurationMockClassSub1.configuration_setting.freeze!
     CascadingConfiguration::Hash::ClassConfigurationMockClassSub1.configuration_setting.should == { :a_configuration            => :some_value,
-                                                                                  :a_yet_unused_configuration => :some_value,
-                                                                                  :another_configuration      => :some_value }
+                                                                                                    :a_yet_unused_configuration => :some_value,
+                                                                                                    :another_configuration      => :some_value }
     CascadingConfiguration::Hash::ClassConfigurationMockClass.configuration_setting[ :non_cascading_configuration ] = :some_value
     CascadingConfiguration::Hash::ClassConfigurationMockClass.configuration_setting.should == { :a_configuration             => :some_value,
-                                                                              :a_yet_unused_configuration  => :some_value,
-                                                                              :non_cascading_configuration => :some_value }
+                                                                                                :a_yet_unused_configuration  => :some_value,
+                                                                                                :non_cascading_configuration => :some_value }
     CascadingConfiguration::Hash::ClassConfigurationMockClassSub1.configuration_setting.should == { :a_configuration            => :some_value,
-                                                                                  :a_yet_unused_configuration => :some_value,
-                                                                                  :another_configuration      => :some_value }
+                                                                                                    :a_yet_unused_configuration => :some_value,
+                                                                                                    :another_configuration      => :some_value }
 
     module ::CascadingConfiguration::Hash::ClassConfigurationMockModule
       include CascadingConfiguration::Hash
-      attr_configuration_hash :some_hash do
+      attr_hash :some_hash do
         def merge!( other_hash )
           other_hash.each do |key, foreign_value|
             if existing_value = self[ key ]
@@ -447,29 +449,30 @@ describe CascadingConfiguration::Hash do
     
   end
   
-  ###################################
-  #  attr_local_configuration_hash  #
-  ###################################
+  #####################
+  #  attr_local_hash  #
+  #####################
   
   it 'can define a local configuration hash, which will not cascade' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Hash::LocalConfigurationMockModuleExtended
       extend CascadingConfiguration::Hash
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       respond_to?( :attr_local_configuration_hash ).should == true
-      attr_local_configuration_hash :configuration_setting
+      respond_to?( :attr_local_hash ).should == true
+      attr_local_hash :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == {}
       self.configuration_setting[ :a_configuration ] = :some_value
@@ -508,23 +511,23 @@ describe CascadingConfiguration::Hash do
     # * module included with setting
     module ::CascadingConfiguration::Hash::LocalConfigurationMockModuleIncluded
       include CascadingConfiguration::Hash
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_local_configuration_hash ).should == true
-      attr_local_configuration_hash :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_local_hash ).should == true
+      attr_local_hash :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == {}
       self.configuration_setting[ :a_configuration ] = :some_value
       configuration_setting.should == { :a_configuration => :some_value }
       method_defined?( :configuration_setting ).should == true
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Hash::LocalConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == true
         respond_to?( :configuration_setting ).should == false
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Hash::LocalConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -578,27 +581,27 @@ describe CascadingConfiguration::Hash do
 
   end
   
-  ######################################
-  #  attr_instance_configuration_hash  #
-  ######################################
+  ########################
+  #  attr_instance_hash  #
+  ########################
   
   it 'can define a local configuration hash, which will not cascade' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Hash::InstanceConfigurationMockModuleExtended
       extend CascadingConfiguration::Hash
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       method_defined?( :configuration_setting ).should == false
       instance_variables.empty?.should == true
       # => including modules and classes get nothing
@@ -633,20 +636,20 @@ describe CascadingConfiguration::Hash do
     # * module included with setting
     module ::CascadingConfiguration::Hash::InstanceConfigurationMockModuleIncluded
       include CascadingConfiguration::Hash
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_instance_configuration_hash ).should == true
-      attr_instance_configuration_hash :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_instance_hash ).should == true
+      attr_instance_hash :configuration_setting
       respond_to?( :configuration_setting ).should == false
       method_defined?( :configuration_setting ).should == true
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Hash::InstanceConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == true
         respond_to?( :configuration_setting ).should == false
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Hash::InstanceConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -700,29 +703,30 @@ describe CascadingConfiguration::Hash do
 
   end
   
-  ####################################
-  #  attr_object_configuration_hash  #
-  ####################################
+  ######################
+  #  attr_object_hash  #
+  ######################
   
   it 'can define a local configuration hash, which will not cascade' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Hash::ObjectConfigurationMockModuleExtended
       extend CascadingConfiguration::Hash
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       respond_to?( :attr_object_configuration_hash ).should == true
-      attr_object_configuration_hash :configuration_setting
+      respond_to?( :attr_object_hash ).should == true
+      attr_object_hash :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == {}
       self.configuration_setting[ :a_configuration ] = :some_value
@@ -761,23 +765,23 @@ describe CascadingConfiguration::Hash do
     # * module included with setting
     module ::CascadingConfiguration::Hash::ObjectConfigurationMockModuleIncluded
       include CascadingConfiguration::Hash
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_object_configuration_hash ).should == true
-      attr_object_configuration_hash :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_object_hash ).should == true
+      attr_object_hash :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == {}
       self.configuration_setting[ :a_configuration ] = :some_value
       configuration_setting.should == { :a_configuration => :some_value }
       method_defined?( :configuration_setting ).should == false
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Hash::ObjectConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == false
         respond_to?( :configuration_setting ).should == false
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Hash::ObjectConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain

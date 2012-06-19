@@ -12,7 +12,7 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations do
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
       Encapsulation = ::CascadingConfiguration::Core::Module::DefaultEncapsulation
-      CCM = ::CascadingConfiguration::Core::Module::ExtendedConfigurations.new( :configuration, :default, '' )
+      CCM = ::CascadingConfiguration::Core::Module::ExtendedConfigurations.new( :setting, :default, '' )
       module ModuleA
       end
       module ModuleB

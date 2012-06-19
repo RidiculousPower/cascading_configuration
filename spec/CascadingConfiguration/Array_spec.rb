@@ -3,29 +3,30 @@ require_relative '../../lib/cascading-configuration.rb'
 
 describe CascadingConfiguration::Array do
     
-  ##############################
-  #  attr_configuration_array  #
-  ##############################
+  ################
+  #  attr_array  #
+  ################
   
   it 'can define a configuration array, which is the primary interface' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Array::ConfigurationMockModuleExtended
       extend CascadingConfiguration::Array
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_array ).should == true
       respond_to?( :attr_configuration_array ).should == true
-      attr_configuration_array :configuration_setting
+      attr_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
@@ -64,16 +65,16 @@ describe CascadingConfiguration::Array do
     # * module included with setting
     module ::CascadingConfiguration::Array::ConfigurationMockModuleIncluded
       include CascadingConfiguration::Array
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_configuration_array ).should == true
-      attr_configuration_array :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_array ).should == true
+      attr_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
       configuration_setting.should == [ :a_configuration ]
       method_defined?( :configuration_setting ).should == true
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Array::ConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == true
@@ -83,7 +84,7 @@ describe CascadingConfiguration::Array do
         configuration_setting.should == [ :a_configuration, :another_configuration ]
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Array::ConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -178,31 +179,32 @@ describe CascadingConfiguration::Array do
         
   end
 
-  #####################################
-  #  attr_module_configuration_array  #
-  #  attr_class_configuration_array   #
-  #####################################
+  #######################
+  #  attr_module_array  #
+  #  attr_class_array   #
+  #######################
   
   it 'can define a class configuration array, which will not cascade to instances' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Array::ClassConfigurationMockModuleExtended
       extend CascadingConfiguration::Array
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       respond_to?( :attr_module_configuration_array ).should == true
-      method( :attr_module_configuration_array ).should == method( :attr_class_configuration_array )
-      attr_module_configuration_array :configuration_setting
+      respond_to?( :attr_module_array ).should == true
+      method( :attr_module_array ).should == method( :attr_class_array )
+      attr_module_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
@@ -241,16 +243,16 @@ describe CascadingConfiguration::Array do
     # * module included with setting
     module ::CascadingConfiguration::Array::ClassConfigurationMockModuleIncluded
       include CascadingConfiguration::Array
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_module_configuration_array ).should == true
-      attr_module_configuration_array :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_module_array ).should == true
+      attr_module_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
       configuration_setting.should == [ :a_configuration ]
       method_defined?( :configuration_setting ).should == false
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Array::ClassConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == false
@@ -261,7 +263,7 @@ describe CascadingConfiguration::Array do
         method_defined?( :configuration_setting ).should == false
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Array::ClassConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -346,29 +348,30 @@ describe CascadingConfiguration::Array do
         
   end
   
-  ####################################
-  #  attr_local_configuration_array  #
-  ####################################
+  ######################
+  #  attr_local_array  #
+  ######################
   
   it 'can define a local configuration array, which will not cascade' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Array::LocalConfigurationMockModuleExtended
       extend CascadingConfiguration::Array
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       respond_to?( :attr_local_configuration_array ).should == true
-      attr_local_configuration_array :configuration_setting
+      respond_to?( :attr_local_array ).should == true
+      attr_local_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
@@ -407,23 +410,23 @@ describe CascadingConfiguration::Array do
     # * module included with setting
     module ::CascadingConfiguration::Array::LocalConfigurationMockModuleIncluded
       include CascadingConfiguration::Array
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_local_configuration_array ).should == true
-      attr_local_configuration_array :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_local_array ).should == true
+      attr_local_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
       configuration_setting.should == [ :a_configuration ]
       method_defined?( :configuration_setting ).should == true
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Array::LocalConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == true
         respond_to?( :configuration_setting ).should == false
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Array::LocalConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -480,27 +483,27 @@ describe CascadingConfiguration::Array do
         
   end
   
-  #######################################
-  #  attr_instance_configuration_array  #
-  #######################################
+  #########################
+  #  attr_instance_array  #
+  #########################
   
   it 'can define an instance configuration array, which will not cascade' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Array::InstanceConfigurationMockModuleExtended
       extend CascadingConfiguration::Array
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       instance_variables.empty?.should == true
       # => including modules and classes get nothing
       module SubmoduleIncluding
@@ -534,13 +537,13 @@ describe CascadingConfiguration::Array do
     # * module included with setting
     module ::CascadingConfiguration::Array::InstanceConfigurationMockModuleIncluded
       include CascadingConfiguration::Array
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_instance_configuration_array ).should == true
-      attr_instance_configuration_array :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_instance_array ).should == true
+      attr_instance_array :configuration_setting
       respond_to?( :configuration_setting ).should == false
       method_defined?( :configuration_setting ).should == true
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Array::InstanceConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == true
@@ -548,7 +551,7 @@ describe CascadingConfiguration::Array do
         method_defined?( :configuration_setting ).should == true
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Array::InstanceConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -606,29 +609,30 @@ describe CascadingConfiguration::Array do
   end
   
   
-  #####################################
-  #  attr_object_configuration_array  #
-  #####################################
+  #######################
+  #  attr_object_array  #
+  #######################
   
   it 'can define an object configuration array, which will not cascade' do
 
     # possibilities:
     # * module extended with setting
-    # => singleton gets attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
     # => including modules and classes get nothing
     # => extending modules and classes get nothing
     # => instances of including and extending classes get nothing
     # * module included with setting
-    # => singleton gets attr_configuration and configurations
-    # => including modules and classes get attr_configuration and configurations
+    # => singleton gets attr_setting and configurations
+    # => including modules and classes get attr_setting and configurations
     # => instances of including classes get configurations
-    # => extending modules and classes get attr_configuration and configurations
+    # => extending modules and classes get attr_setting and configurations
     # => instances of extending classes get nothing
     module ::CascadingConfiguration::Array::ObjectConfigurationMockModuleExtended
       extend CascadingConfiguration::Array
-      # => singleton gets attr_configuration and configurations
+      # => singleton gets attr_setting and configurations
       respond_to?( :attr_object_configuration_array ).should == true
-      attr_object_configuration_array :configuration_setting
+      respond_to?( :attr_object_array ).should == true
+      attr_object_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
@@ -667,16 +671,16 @@ describe CascadingConfiguration::Array do
     # * module included with setting
     module ::CascadingConfiguration::Array::ObjectConfigurationMockModuleIncluded
       include CascadingConfiguration::Array
-      # => singleton gets attr_configuration and configurations
-      respond_to?( :attr_object_configuration_array ).should == true
-      attr_object_configuration_array :configuration_setting
+      # => singleton gets attr_setting and configurations
+      respond_to?( :attr_object_array ).should == true
+      attr_object_array :configuration_setting
       respond_to?( :configuration_setting ).should == true
       configuration_setting.should == []
       configuration_setting.push( :a_configuration )
       configuration_setting.should == [ :a_configuration ]
       method_defined?( :configuration_setting ).should == false
       instance_variables.empty?.should == true
-      # => including modules and classes get attr_configuration and configurations
+      # => including modules and classes get attr_setting and configurations
       module SubmoduleIncluding
         include CascadingConfiguration::Array::ObjectConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == false
@@ -684,7 +688,7 @@ describe CascadingConfiguration::Array do
         method_defined?( :configuration_setting ).should == false
         instance_variables.empty?.should == true
       end
-      # => extending modules and classes get attr_configuration and configurations
+      # => extending modules and classes get attr_setting and configurations
       module SubmoduleExtending
         extend CascadingConfiguration::Array::ObjectConfigurationMockModuleIncluded
         # if we're extended then we want to use the eigenclass ancestor chain
@@ -741,9 +745,9 @@ describe CascadingConfiguration::Array do
         
   end
 
-  #########################################
-  #  attr_configuration_array with hooks  #
-  #########################################
+  ###########################
+  #  attr_array with hooks  #
+  ###########################
   
   it 'can define a configuration array with hooks' do
     module ::CascadingConfiguration::Array::HooksMock
@@ -753,10 +757,10 @@ describe CascadingConfiguration::Array do
           super( 2 )
         end
       end
-      attr_configuration_array :configuration_setting, ExtensionModule
+      attr_array :configuration_setting, ExtensionModule
       configuration_setting.push( 1 )
       configuration_setting[ 0 ].should == 2
-      attr_configuration_array :other_configuration_setting do
+      attr_array :other_configuration_setting do
         def push( arg )
           super( 2 )
         end

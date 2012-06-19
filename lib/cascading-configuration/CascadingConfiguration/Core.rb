@@ -1,10 +1,12 @@
 
+# @private
 module ::CascadingConfiguration::Core
   
   #################
   #  self.enable  #
   #################
   
+  # @private
   def self.enable( instance, ccm )
     
     instance.const_set( :ClassInstance, ccm )

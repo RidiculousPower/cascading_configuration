@@ -144,7 +144,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   
   def define_configurations( instance_controller, encapsulation, method_types, *names, & definer_block )
 
-    instance_controller.define_configuration_methods( self, encapsulation, method_types, *names, & definer_block )
+    instance_controller.define_configuration_methods( self, encapsulation, method_types, names, & definer_block )
     
     instance = instance_controller.instance
     

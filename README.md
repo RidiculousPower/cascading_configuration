@@ -23,20 +23,34 @@ The result is that extending will enable only the singleton, whereas including w
 Each module supports the same pattern for naming methods it provides.
 
 The module has a name, which is used in each of the method types:
-* :setting
-* :hash
-* :array
-* :unique\_array
-* :sorted\_array
-* :sorted\_unique\_array
 
-There are 5 types of base methods:
+```ruby
+:setting                # =>  :attr_setting
+:hash                   # =>  :attr_hash
+:array                  # =>  :attr_array
+:unique_array           # =>  :attr_unique_array
+:sorted_array           # =>  :attr_sorted_array
+:sorted_unique_array    # =>  :attr_sorted_unique_array
+```
+
+For backwards compatibility, these methods are also available:
+
+```ruby
+:attr_configuration
+:attr_configuration_hash
+:attr_configuration_array
+:attr_configuration_unique_array
+:attr_configuration_sorted_array
+:attr_configuration_sorted_unique_array
+```
 
 ## Base Method Naming Pattern ##
 
+There are 5 types of base methods:
+
 ### :attr\_[module\_name] ###
 
-A cascading method, which will affect instances according to include/extend pattern used.
+Cascading methods, which will affect instances according to include/extend pattern used.
 
 ### :attr\_module\_[module\_name] and attr\_class\_[module\_name] ###
 
@@ -61,7 +75,7 @@ Inheritable Objects are values received from an ancestor:
 ```ruby
 module ModuleA
   include CascadingConfiguration::Setting
-  attr_configuration  :some_setting
+  attr_setting  :some_setting
   self.some_setting = :some_value
 end
 

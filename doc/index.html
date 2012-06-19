@@ -1,0 +1,288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.8.2.1
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!" + escape(window.location.href);
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><div id='filecontents'><h1>Cascading Configuration</h1>
+
+<p><a href="http://rubygems.org/gems/cascading-configuration">http://rubygems.org/gems/cascading-configuration</a></p>
+
+<h1>Summary</h1>
+
+<p>Provides inheritable values across Ruby inheritance hierarchy or across arbitrary declared inheritance relations.</p>
+
+<h1>Description</h1>
+
+<p>Inheritable Objects and Downward-Compositing Hashes and Arrays; Downward-Transforming Values coming soon.</p>
+
+<h1>Install</h1>
+
+<ul>
+<li>sudo gem install cascading-configuration</li>
+</ul>
+
+<h1>Usage</h1>
+
+<p>Since CascadingConfiguration produces configurations for both singletons and instances, include or extend of a CascadingConfiguration module (for instance CascadingConfiguration::Setting) also causes the including instance to be extended by module::ClassInstance (ie CascadingConfiguration::Setting::ClassInstance).</p>
+
+<p>The result is that extending will enable only the singleton, whereas including will enable both singleton and instances.</p>
+
+<p>Each module supports the same pattern for naming methods it provides.</p>
+
+<p>The module has a name, which is used in each of the method types:</p>
+
+<pre class="code ruby"><code><span class='symbol'>:setting</span>                <span class='comment'># =&gt;  :attr_setting
+</span><span class='symbol'>:hash</span>                   <span class='comment'># =&gt;  :attr_hash
+</span><span class='symbol'>:array</span>                  <span class='comment'># =&gt;  :attr_array
+</span><span class='symbol'>:unique_array</span>           <span class='comment'># =&gt;  :attr_unique_array
+</span><span class='symbol'>:sorted_array</span>           <span class='comment'># =&gt;  :attr_sorted_array
+</span><span class='symbol'>:sorted_unique_array</span>    <span class='comment'># =&gt;  :attr_sorted_unique_array
+</span></code></pre>
+
+<p>For backwards compatibility, these methods are also available:</p>
+
+<pre class="code ruby"><code><span class='symbol'>:attr_configuration</span>
+<span class='symbol'>:attr_configuration_hash</span>
+<span class='symbol'>:attr_configuration_array</span>
+<span class='symbol'>:attr_configuration_unique_array</span>
+<span class='symbol'>:attr_configuration_sorted_array</span>
+<span class='symbol'>:attr_configuration_sorted_unique_array</span>
+</code></pre>
+
+<h2>Base Method Naming Pattern</h2>
+
+<p>There are 5 types of base methods:</p>
+
+<h3>:attr_[module_name]</h3>
+
+<p>Cascading methods, which will affect instances according to include/extend pattern used.</p>
+
+<h3>:attr_module_[module_name] and attr_class_[module_name]</h3>
+
+<p>Cascading module/class methods, which will affect all module singletons according to include/extend pattern used.</p>
+
+<h3>:attr_instance_[module_name]</h3>
+
+<p>Cascading instance methods, which will affect instances of including modules according to include/extend pattern used.</p>
+
+<h3>:attr_local_[module_name]</h3>
+
+<p>Non-cascading methods that will affect the instance declared on as well as instances of that instance, if applicable.</p>
+
+<h3>:attr_object_[module_name]</h3>
+
+<p>Non-cascading methods that will affect only the instance declared on.</p>
+
+<h2>Inheritable Objects</h2>
+
+<p>Inheritable Objects are values received from an ancestor:</p>
+
+<pre class="code ruby"><code><span class='kw'>module</span> <span class='const'>ModuleA</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'>CascadingConfiguration</span><span class='op'>::</span><span class='const'>Setting</span>
+  <span class='id identifier rubyid_attr_setting'>attr_setting</span>  <span class='symbol'>:some_setting</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_some_setting'>some_setting</span> <span class='op'>=</span> <span class='symbol'>:some_value</span>
+<span class='kw'>end</span>
+
+<span class='kw'>class</span> <span class='const'>ClassA</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'>ModuleA</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_some_setting'>some_setting</span> <span class='op'>=</span> <span class='symbol'>:some_other_value</span>
+<span class='kw'>end</span>
+
+<span class='kw'>class</span> <span class='const'>ClassB</span> <span class='op'>&lt;</span> <span class='const'>ClassA</span>
+  <span class='id identifier rubyid_some_setting'>some_setting</span> <span class='op'>==</span> <span class='symbol'>:some_other_value</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_some_setting'>some_setting</span> <span class='op'>=</span> <span class='symbol'>:another_value</span>
+<span class='kw'>end</span>
+
+<span class='kw'>class</span> <span class='const'>ClassC</span> <span class='op'>&lt;</span> <span class='const'>ClassB</span>
+  <span class='id identifier rubyid_some_setting'>some_setting</span> <span class='op'>==</span> <span class='symbol'>:another_value</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>Simply put, the instance asked for the value will look up its ancestor chain until it finds an explicitly assigned value, which it returns.</p>
+
+<p>This is provided by:</p>
+
+<ul>
+<li>CascadingConfiguration::Setting</li>
+</ul>
+
+<h2>Downward-Compositing Hashes and Arrays</h2>
+
+<p>Whether Hashes or Arrays, the idea is the same. We call the Compositing Objects. They all work the same way (automatically):</p>
+
+<ol>
+<li>The compositing object is initialized with a reference to the configuration instance it is attached to.</li>
+<li>The compositing object is initialized (separately) for its immediate parent object.</li>
+<li>Whenever an update occurs, the compositing object updates its registered child object with the update.</li>
+</ol>
+
+<p>This way the lower objects are kept in sync with parent elements. Overriding hooked methods (provided by HookedArray from the hooked-array gem) provides a great deal of flexible functionality, permitting elements to be transformed as they are passed down the ancestor hierarchy.</p>
+
+<p>Right now there are 5 types of Compositing Objects:</p>
+
+<ul>
+<li>CascadingConfiguration::Hash</li>
+<li>CascadingConfiguration::Array</li>
+<li>CascadingConfiguration::Array::Unique</li>
+<li>CascadingConfiguration::Array::Sorted</li>
+<li>CascadingConfiguration::Array::Sorted::Unique</li>
+</ul>
+
+<p>All work the same with the exception of differing compositing object types. All declarations of compositing object configurations also accept extension modules and/or a block that will be used to create an extension module. Extension modules will be used to extend the compositing object; extension modules automatically cascade along the ancestor hierarchy for a given configuration. </p>
+
+<pre class="code ruby"><code><span class='kw'>module</span> <span class='const'>ModuleA</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'>CascadingConfiguration</span><span class='op'>::</span><span class='const'>Array</span>
+  <span class='id identifier rubyid_attr_array'>attr_array</span>  <span class='symbol'>:some_array</span>
+  <span class='id identifier rubyid_some_array'>some_array</span> <span class='op'>==</span> <span class='lbracket'>[</span> <span class='rbracket'>]</span>
+  <span class='id identifier rubyid_some_array'>some_array</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span> <span class='symbol'>:some_value</span> <span class='rparen'>)</span>
+  <span class='id identifier rubyid_some_array'>some_array</span> <span class='op'>==</span> <span class='lbracket'>[</span> <span class='symbol'>:some_value</span> <span class='rbracket'>]</span>
+<span class='kw'>end</span>
+
+<span class='kw'>class</span> <span class='const'>ClassA</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'>ModuleA</span>
+  <span class='id identifier rubyid_some_array'>some_array</span> <span class='op'>==</span> <span class='lbracket'>[</span> <span class='symbol'>:some_value</span> <span class='rbracket'>]</span>
+<span class='kw'>end</span>
+
+<span class='kw'>class</span> <span class='const'>ClassB</span> <span class='op'>&lt;</span> <span class='const'>ClassA</span>
+  <span class='id identifier rubyid_some_array'>some_array</span> <span class='op'>==</span> <span class='lbracket'>[</span> <span class='symbol'>:some_value</span> <span class='rbracket'>]</span>
+  <span class='id identifier rubyid_some_array'>some_array</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span> <span class='symbol'>:another_value</span> <span class='rparen'>)</span>
+  <span class='id identifier rubyid_some_array'>some_array</span> <span class='op'>==</span> <span class='lbracket'>[</span> <span class='symbol'>:some_value</span><span class='comma'>,</span> <span class='symbol'>:another_value</span> <span class='rbracket'>]</span>
+<span class='kw'>end</span>
+
+<span class='kw'>class</span> <span class='const'>ClassC</span> <span class='op'>&lt;</span> <span class='const'>ClassB</span>
+  <span class='id identifier rubyid_some_setting'>some_setting</span> <span class='op'>==</span> <span class='symbol'>:another_value</span>
+  <span class='id identifier rubyid_some_array'>some_array</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span> <span class='symbol'>:some_value</span> <span class='rparen'>)</span>
+  <span class='id identifier rubyid_some_array'>some_array</span> <span class='op'>==</span> <span class='lbracket'>[</span> <span class='symbol'>:another_value</span> <span class='rbracket'>]</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>The end result:</p>
+
+<pre class="code ruby"><code><span class='const'>ModuleA</span><span class='period'>.</span><span class='id identifier rubyid_some_array'>some_array</span> <span class='op'>==</span> <span class='lbracket'>[</span> <span class='symbol'>:some_value</span> <span class='rbracket'>]</span>
+
+<span class='const'>ClassA</span><span class='period'>.</span><span class='id identifier rubyid_some_array'>some_array</span> <span class='op'>==</span> <span class='lbracket'>[</span> <span class='symbol'>:some_value</span> <span class='rbracket'>]</span>
+
+<span class='const'>ClassB</span><span class='period'>.</span><span class='id identifier rubyid_some_array'>some_array</span> <span class='op'>==</span> <span class='lbracket'>[</span> <span class='symbol'>:some_value</span><span class='comma'>,</span> <span class='symbol'>:another_value</span> <span class='rbracket'>]</span>
+
+<span class='const'>ClassA</span><span class='period'>.</span><span class='id identifier rubyid_some_array'>some_array</span> <span class='op'>==</span> <span class='lbracket'>[</span> <span class='symbol'>:another_value</span> <span class='rbracket'>]</span>
+</code></pre>
+
+<h2>Downward-Transforming Values</h2>
+
+<p>Downward-Transforming Values are not yet 100% implemented, but the remainder is minimal and will be coming soon.</p>
+
+<p>Each time a child is registered, Downward-Transforming Values are processed via a block to produce the new value that the inheriting instance will receive. </p>
+
+<p>Final details still being determined.</p>
+
+<h2>Configuration Modules</h2>
+
+<p>Including or extending CascadingConfiguration includes or extends all of its configuration modules:</p>
+
+<ul>
+<li>CascadingConfiguration::Setting</li>
+<li>CascadingConfiguration::Hash</li>
+<li>CascadingConfiguration::Array</li>
+<li>CascadingConfiguration::Array::Unique</li>
+<li>CascadingConfiguration::Array::Sorted</li>
+<li>CascadingConfiguration::Array::Sorted::Unique</li>
+</ul>
+
+<p>These modules can also be used individually in the same way (simply include or extend).</p>
+
+<h1>Check Out the Code</h1>
+
+<p>CascadingConfiguration is, in my opinion, a strong showing of what one can do with Ruby. Of particular interest is its demonstrated use of the parallel-ancestry gem. More very real world examples coming soon.</p>
+
+<h1>License</h1>
+
+<p>(The MIT License)</p>
+
+<p>Copyright (c) Asher</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  &#39;Software&#39;), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED &#39;AS IS&#39;, WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+</div></div>
+
+    <div id="footer">
+  Generated on Tue Jun 19 06:40:48 2012 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.2.1 (ruby-1.9.3).
+</div>
+
+  </body>
+</html>

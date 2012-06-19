@@ -9,12 +9,12 @@ describe ::CascadingConfiguration::Core::Module do
 
   it 'can initialize with a base name for a default encapsulation and with aliases' do
     module ::CascadingConfiguration::Core::Module::InitializeMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
       CCM::ClassInstance.default_encapsulation.should == ::CascadingConfiguration::Core::Module::DefaultEncapsulation
-      CCM::ClassInstance.ccm_name.should == :configuration
+      CCM::ClassInstance.ccm_name.should == :setting
       CCM::ClassInstance.ccm_aliases.should == [ '' ]
     end
   end
@@ -25,7 +25,7 @@ describe ::CascadingConfiguration::Core::Module do
   
   it 'can return a cascading method name for a base name' do
     module ::CascadingConfiguration::Core::Module::CascadingMethodNameMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
@@ -41,7 +41,7 @@ describe ::CascadingConfiguration::Core::Module do
 
   it 'can return a module method name for a base name' do
     module ::CascadingConfiguration::Core::Module::ModuleMethodNameMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
@@ -57,7 +57,7 @@ describe ::CascadingConfiguration::Core::Module do
 
   it 'can return a class method name for a base name' do
     module ::CascadingConfiguration::Core::Module::ClassMethodNameMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
@@ -73,7 +73,7 @@ describe ::CascadingConfiguration::Core::Module do
 
   it 'can return an instance method name for a base name' do
     module ::CascadingConfiguration::Core::Module::InstanceMethodNameMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
@@ -89,7 +89,7 @@ describe ::CascadingConfiguration::Core::Module do
 
   it 'can return a local instance method name for a base name' do
     module ::CascadingConfiguration::Core::Module::LocalInstanceMethodNameMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
@@ -105,7 +105,7 @@ describe ::CascadingConfiguration::Core::Module do
 
   it 'can return an object method name for a base name' do
     module ::CascadingConfiguration::Core::Module::ObjectMethodNameMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
@@ -121,7 +121,7 @@ describe ::CascadingConfiguration::Core::Module do
 
   it 'can define cascading configuration methods' do
     module ::CascadingConfiguration::Core::Module::DefineMethodWithExtensionModulesMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' ) do
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' ) do
         def self.create_configuration( encapsulation, instance, name )
           super
           @called_create_configuration = true
@@ -222,7 +222,7 @@ describe ::CascadingConfiguration::Core::Module do
   
   it 'can define cascading configuration methods that define cascading configurations' do
     module ::CascadingConfiguration::Core::Module::DefineCascadingDefinitionMethodMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
@@ -253,7 +253,7 @@ describe ::CascadingConfiguration::Core::Module do
 
   it 'can define cascading configuration methods that define module configurations' do
     module ::CascadingConfiguration::Core::Module::DefineModuleDefinitionMethodMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
@@ -284,7 +284,7 @@ describe ::CascadingConfiguration::Core::Module do
 
   it 'can define cascading configuration methods that define instance configurations' do
     module ::CascadingConfiguration::Core::Module::DefineInstanceDefinitionMethodMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
@@ -317,7 +317,7 @@ describe ::CascadingConfiguration::Core::Module do
   
   it 'can define cascading configuration methods that define local configurations' do
     module ::CascadingConfiguration::Core::Module::DefineLocalInstanceDefinitionMethodMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
@@ -350,7 +350,7 @@ describe ::CascadingConfiguration::Core::Module do
 
   it 'can define cascading configuration methods that define object configurations' do
     module ::CascadingConfiguration::Core::Module::DefineObjectDefinitionMethodMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
@@ -384,7 +384,7 @@ describe ::CascadingConfiguration::Core::Module do
   
   it 'can define cascading configuration methods that define all types of cascading configuration methods' do
     module ::CascadingConfiguration::Core::Module::DefineDefinitionMethodsMock
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
@@ -479,7 +479,7 @@ describe ::CascadingConfiguration::Core::Module do
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
       Encapsulation = ::CascadingConfiguration::Core::Module::DefaultEncapsulation
-      ClassInstance = ::CascadingConfiguration::Core::Module.new( :configuration, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
