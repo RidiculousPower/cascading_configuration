@@ -246,10 +246,7 @@ describe CascadingConfiguration::Setting do
         # if we're extended then we want to use the eigenclass ancestor chain
         # - the first ancestor will be the extending module
         # - the rest of the ancestors will be the extending module's include chain
-        respond_to?( :some_configuration ).should == true
-        some_configuration.should == :our_setting_value
-        self.some_configuration = :some_other_configuration
-        some_configuration.should == :some_other_configuration
+        respond_to?( :some_configuration ).should == false
         method_defined?( :some_configuration ).should == false
         instance_variables.empty?.should == true
       end
@@ -269,10 +266,7 @@ describe CascadingConfiguration::Setting do
       # => instances of extending classes get nothing
       class ClassExtending
         extend CascadingConfiguration::Setting::ClassConfigurationMockIncluded
-        respond_to?( :some_configuration ).should == true
-        some_configuration.should == :our_setting_value
-        self.some_configuration = :some_other_configuration
-        some_configuration.should == :some_other_configuration
+        respond_to?( :some_configuration ).should == false
         method_defined?( :some_configuration ).should == false
         instance_variables.empty?.should == true
       end

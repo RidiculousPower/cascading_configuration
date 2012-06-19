@@ -269,10 +269,7 @@ describe CascadingConfiguration::Array::Sorted do
         # if we're extended then we want to use the eigenclass ancestor chain
         # - the first ancestor will be the extending module
         # - the rest of the ancestors will be the extending module's include chain
-        respond_to?( :configuration_setting ).should == true
-        configuration_setting.should == [ :a_configuration ]
-        configuration_setting.push( :some_other_configuration )
-        configuration_setting.should == [ :a_configuration, :some_other_configuration ]
+        respond_to?( :configuration_setting ).should == false
         method_defined?( :configuration_setting ).should == false
         instance_variables.empty?.should == true
       end
@@ -293,10 +290,7 @@ describe CascadingConfiguration::Array::Sorted do
       class ClassExtending
         extend CascadingConfiguration::Array::Sorted::ClassConfigurationMockModuleIncluded
         method_defined?( :configuration_setting ).should == false
-        respond_to?( :configuration_setting ).should == true
-        configuration_setting.should == [ :a_configuration ]
-        configuration_setting.push( :some_other_configuration )
-        configuration_setting.should == [ :a_configuration, :some_other_configuration ]
+        respond_to?( :configuration_setting ).should == false
         instance_variables.empty?.should == true
       end
       setting_class_including_instance = ClassExtending.new

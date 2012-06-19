@@ -26,7 +26,7 @@ module ::CascadingConfiguration::Hash
 
   ###
   # Cascading hash attribute module/class methods, which will affect all module singletons 
-  # according to include/extend pattern used.
+  #   according to include/extend pattern used.
   #
   # @method attr_module_hash
   #
@@ -44,7 +44,7 @@ module ::CascadingConfiguration::Hash
 
   ###
   # Cascading hash instance methods, which will affect instances of including modules according to 
-  # include/extend pattern used.
+  #   include/extend pattern used.
   #
   # @method attr_instance_hash
   #
@@ -62,7 +62,7 @@ module ::CascadingConfiguration::Hash
 
   ###
   # Non-cascading hash methods that will affect the instance declared on as well as instances of that instance, 
-  # if applicable.
+  #   if applicable.
   #
   # @method attr_local_hash
   #

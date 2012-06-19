@@ -11,6 +11,7 @@ module ::CascadingConfiguration::Core
     
     instance.const_set( :ClassInstance, ccm )
 
+    # Enable module instance so that when included it creates instance support
     instance.extend( ::CascadingConfiguration::Core::EnableInstanceSupport )
 
     instance.extend( ::ModuleCluster )

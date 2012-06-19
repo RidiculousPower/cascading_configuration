@@ -26,7 +26,7 @@ module ::CascadingConfiguration::Array::Sorted::Unique
 
   ###
   # Cascading array attribute module/class methods, which will affect all module singletons 
-  # according to include/extend pattern used.
+  #   according to include/extend pattern used.
   #
   # @method attr_module_sorted_unique_array
   #
@@ -44,7 +44,7 @@ module ::CascadingConfiguration::Array::Sorted::Unique
 
   ###
   # Cascading array instance methods, which will affect instances of including modules according to 
-  # include/extend pattern used.
+  #   include/extend pattern used.
   #
   # @method attr_instance_sorted_unique_array
   #
@@ -62,7 +62,7 @@ module ::CascadingConfiguration::Array::Sorted::Unique
 
   ###
   # Non-cascading array methods that will affect the instance declared on as well as instances of that instance, 
-  # if applicable.
+  #   if applicable.
   #
   # @method attr_local_sorted_unique_array
   #

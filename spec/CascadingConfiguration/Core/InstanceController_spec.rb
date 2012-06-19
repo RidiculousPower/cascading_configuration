@@ -189,7 +189,8 @@ describe ::CascadingConfiguration::Core::InstanceController do
       AnotherModule_ExtendA = ::Module.new do
         extend ForInstance
         eigenclass = class << self ; self ; end
-        eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == true
+        eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == false
+        eigenclass.ancestors.include?( ModuleInstance_CascadeIncludes ).should == true
       end
       AnotherModule_ExtendB = ::Module.new do
         extend AnotherModule_ExtendA

@@ -107,14 +107,17 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     
     # subclass eigenclass inheritance is automatic; re-extending will only mess it up
     unless for_subclass
-      # Included modules automatically cascade - we only need to manually cascade extends.
       unless @cascade_extends.empty?
-        # We collect cascade extends in accumulating order (oldest => youngest), which means we need to reverse
-        # prior to including/extending (we need youngest => oldest).
-        instance.extend( *@cascade_extends.reverse )
+        unless is_extending
+          # We collect cascade extends in accumulating order (oldest => youngest), which means we need to reverse
+          # prior to including/extending (we need youngest => oldest).
+          instance.extend( *@cascade_extends.reverse )
+        end
       end
-      unless is_extending or @cascade_includes.empty?
-        if instance.is_a?( ::Module )
+      unless @cascade_includes.empty?
+        if is_extending
+          instance.extend( *@cascade_includes.reverse )
+        elsif instance.is_a?( ::Module )
           cascade_includes = @cascade_includes
           instance.module_eval do
             # We collect cascade includes in accumulating order (oldest => youngest), which means we need to reverse
@@ -273,8 +276,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     
       # Cascades
     
-      if should_cascade_includes
-        @cascade_includes.push( support_module_instance )      
+      if should_cascade_includes and ! should_include
+        @cascade_includes.push( support_module_instance ) 
       end
     
       if should_cascade_extends
@@ -389,6 +392,251 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
       define_getter( ccm, this_name, this_name, method_types, encapsulation )
       define_setter( ccm, this_name, this_write_name, method_types, encapsulation )
     end
+    
+  end
+
+  #############################
+  #  define_singleton_method  #
+  #############################
+
+  def define_singleton_method( name, 
+                               encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation, 
+                               & method_proc )
+
+    return create_singleton_support( encapsulation_or_name ).define_method( name, & method_proc )
+
+  end 
+
+  #########################
+  #  alias_module_method  #
+  #########################
+  
+  def alias_module_method( alias_name, 
+                           name, 
+                           encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+
+    aliased_method = false
+    
+    if singleton_support = singleton_support( encapsulation_or_name )
+      aliased_method = singleton_support.alias_method( alias_name, name )
+    end
+    
+    return aliased_method
+
+  end
+
+  ##########################
+  #  remove_module_method  #
+  ##########################
+
+  def remove_module_method( name, encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+
+    removed_method = false
+
+    if singleton_support = singleton_support( encapsulation_or_name )
+      removed_method = singleton_support.remove_method( name )
+    end
+    
+    return removed_method
+    
+  end
+
+  #########################
+  #  undef_module_method  #
+  #########################
+
+  def undef_module_method( name, encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+
+    undefined_method = false
+
+    if singleton_support = singleton_support( encapsulation_or_name )
+      undefined_method = singleton_support.undef_method( name )
+    end
+    
+    return undefined_method
+    
+  end
+
+  ############################
+  #  define_instance_method  #
+  ############################
+
+  def define_instance_method( name, 
+                              encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation, 
+                              & method_proc )
+
+    return create_instance_support( encapsulation_or_name ).define_method( name, & method_proc )
+    
+  end
+
+  ############################
+  #  remove_instance_method  #
+  ############################
+
+  def remove_instance_method( name, 
+                              encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+
+    removed_method = false
+
+    if instance_support = instance_support( encapsulation_or_name )
+      removed_method = instance_support.remove_method( name )
+    end
+    
+    return removed_method
+    
+  end
+
+  ###########################
+  #  undef_instance_method  #
+  ###########################
+
+  def undef_instance_method( name, 
+                             encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+
+    undefined_method = false
+
+    if instance_support = instance_support( encapsulation_or_name )
+      undefined_method = instance_support.undef_method( name )
+    end
+    
+    return undefined_method
+    
+  end
+
+  #######################################
+  #  define_instance_method_if_support  #
+  #######################################
+  
+  def define_instance_method_if_support( name, 
+                                         encapsulation_or_name = ::CascadingConfiguration::Core::
+                                                                   Module::DefaultEncapsulation, 
+                                         & method_proc )
+
+    if instance_support = instance_support( encapsulation_or_name )
+      instance_support.define_method( name, & method_proc )
+    end 
+    
+    return self
+    
+  end
+  
+  ###########################
+  #  alias_instance_method  #
+  ###########################
+  
+  def alias_instance_method( alias_name, 
+                             name, 
+                             encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+
+    aliased_method = false
+    
+    if instance_support = instance_support( encapsulation_or_name )
+      aliased_method = instance_support.alias_method( alias_name, name )
+    end
+    
+    return aliased_method
+
+  end
+
+  ##################################
+  #  define_local_instance_method  #
+  ##################################
+
+  def define_local_instance_method( name, 
+                                    encapsulation_or_name = ::CascadingConfiguration::Core::
+                                                              Module::DefaultEncapsulation, 
+                                    & method_proc )
+
+    return create_local_instance_support( encapsulation_or_name ).define_method( name, & method_proc )
+
+  end
+
+  #################################
+  #  alias_local_instance_method  #
+  #################################
+  
+  def alias_local_instance_method( alias_name, 
+                                   name, 
+                                   encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+
+    aliased_method = false
+    
+    if local_instance_support = local_instance_support( encapsulation_or_name )
+      aliased_method = local_instance_support.alias_method( alias_name, name, encapsulation_or_name )
+    end
+    
+    return aliased_method
+
+  end
+  
+  ##################################
+  #  remove_local_instance_method  #
+  ##################################
+
+  def remove_local_instance_method( name, 
+                                    encapsulation_or_name = ::CascadingConfiguration::Core::
+                                                              Module::DefaultEncapsulation )
+
+    removed_method = false
+
+    if local_instance_support = local_instance_support( encapsulation_or_name )
+      removed_method = local_instance_support.remove_method( name )
+    end
+    
+    return removed_method
+    
+  end
+  
+  #################################
+  #  undef_local_instance_method  #
+  #################################
+
+  def undef_local_instance_method( name, 
+                                   encapsulation_or_name = ::CascadingConfiguration::Core::
+                                                             Module::DefaultEncapsulation )
+
+    undefined_method = false
+
+    if local_instance_support = local_instance_support( encapsulation_or_name )
+      undefined_method = local_instance_support.undef_method( name )
+    end
+    
+    return undefined_method
+    
+  end
+
+  ###########################################
+  #  define_singleton_and_instance_methods  #
+  ###########################################
+
+  def define_singleton_and_instance_methods( name, encapsulation_or_name, & method_proc )
+
+    define_singleton_method( name, encapsulation_or_name, & method_proc )
+    define_instance_method( name, encapsulation_or_name, & method_proc )
+
+  end
+
+  ############################################################
+  #  define_singleton_method_and_instance_method_if_support  #
+  ############################################################
+
+  def define_singleton_method_and_instance_method_if_support( name, encapsulation_or_name, & method_proc )
+
+    define_singleton_method( name, encapsulation_or_name, & method_proc )
+    define_instance_method_if_support( name, encapsulation_or_name, & method_proc )
+
+  end
+
+  #######################################
+  #  alias_module_and_instance_methods  #
+  #######################################
+  
+  def alias_module_and_instance_methods( alias_name, 
+                                         name, 
+                                         encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+    
+    alias_module_method( alias_name, name, encapsulation_or_name )
+    alias_instance_method( alias_name, name, encapsulation_or_name )
     
   end
 
@@ -533,248 +781,6 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     end
     
     return self
-    
-  end
-
-  #############################
-  #  define_singleton_method  #
-  #############################
-
-  def define_singleton_method( name, 
-                               encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation, 
-                               & method_proc )
-
-    return create_singleton_support( encapsulation_or_name ).define_method( name, & method_proc )
-
-  end 
-
-  #########################
-  #  alias_module_method  #
-  #########################
-  
-  def alias_module_method( alias_name, 
-                           name, 
-                           encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
-
-    aliased_method = false
-    
-    if singleton_support = singleton_support( encapsulation_or_name )
-      aliased_method = singleton_support.alias_method( alias_name, name )
-    end
-    
-    return aliased_method
-
-  end
-
-  ##########################
-  #  remove_module_method  #
-  ##########################
-
-  def remove_module_method( name, encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
-
-    removed_method = false
-
-    if singleton_support = singleton_support( encapsulation_or_name )
-      removed_method = singleton_support.remove_method( name )
-    end
-    
-    return removed_method
-    
-  end
-
-  #########################
-  #  undef_module_method  #
-  #########################
-
-  def undef_module_method( name, encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
-
-    undefined_method = false
-
-    if singleton_support = singleton_support( encapsulation_or_name )
-      undefined_method = singleton_support.undef_method( name )
-    end
-    
-    return undefined_method
-    
-  end
-
-  ############################
-  #  define_instance_method  #
-  ############################
-
-  def define_instance_method( name, 
-                              encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation, 
-                              & method_proc )
-
-    return create_instance_support( encapsulation_or_name ).define_method( name, & method_proc )
-    
-  end
-
-  ############################
-  #  remove_instance_method  #
-  ############################
-
-  def remove_instance_method( name, 
-                              encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
-
-    removed_method = false
-
-    if instance_support = instance_support( encapsulation_or_name )
-      removed_method = instance_support.remove_method( name )
-    end
-    
-    return removed_method
-    
-  end
-
-  ###########################
-  #  undef_instance_method  #
-  ###########################
-
-  def undef_instance_method( name, 
-                             encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
-
-    undefined_method = false
-
-    if instance_support = instance_support( encapsulation_or_name )
-      undefined_method = instance_support.undef_method( name )
-    end
-    
-    return undefined_method
-    
-  end
-
-  #######################################
-  #  define_instance_method_if_support  #
-  #######################################
-  
-  def define_instance_method_if_support( name, 
-                                         encapsulation_or_name = ::CascadingConfiguration::Core::
-                                                                   Module::DefaultEncapsulation, 
-                                         & method_proc )
-
-    if instance_support = instance_support( encapsulation_or_name )
-      instance_support.define_method( name, & method_proc )
-    end 
-    
-    return self
-    
-  end
-  
-  ###########################
-  #  alias_instance_method  #
-  ###########################
-  
-  def alias_instance_method( encapsulation_or_name, alias_name, name )
-
-    aliased_method = false
-    
-    if instance_support = instance_support( encapsulation_or_name )
-      aliased_method = instance_support.alias_method( alias_name, name )
-    end
-    
-    return aliased_method
-
-  end
-
-  ##################################
-  #  define_local_instance_method  #
-  ##################################
-
-  def define_local_instance_method( name, 
-                                    encapsulation_or_name = ::CascadingConfiguration::Core::
-                                                              Module::DefaultEncapsulation, 
-                                    & method_proc )
-
-    return create_local_instance_support( encapsulation_or_name ).define_method( name, & method_proc )
-
-  end
-
-  #################################
-  #  alias_local_instance_method  #
-  #################################
-  
-  def alias_local_instance_method( alias_name, 
-                                   name, 
-                                   encapsulation_or_name = ::CascadingConfiguration::Core::
-                                                             Module::DefaultEncapsulation )
-
-    aliased_method = false
-    
-    if local_instance_support = local_instance_support( encapsulation_or_name )
-      aliased_method = local_instance_support.alias_method( alias_name, name, encapsulation_or_name )
-    end
-    
-    return aliased_method
-
-  end
-  
-  ##################################
-  #  remove_local_instance_method  #
-  ##################################
-
-  def remove_local_instance_method( name, 
-                                    encapsulation_or_name = ::CascadingConfiguration::Core::
-                                                              Module::DefaultEncapsulation )
-
-    removed_method = false
-
-    if local_instance_support = local_instance_support( encapsulation_or_name )
-      removed_method = local_instance_support.remove_method( name )
-    end
-    
-    return removed_method
-    
-  end
-  
-  #################################
-  #  undef_local_instance_method  #
-  #################################
-
-  def undef_local_instance_method( name, 
-                                   encapsulation_or_name = ::CascadingConfiguration::Core::
-                                                             Module::DefaultEncapsulation )
-
-    undefined_method = false
-
-    if local_instance_support = local_instance_support( encapsulation_or_name )
-      undefined_method = local_instance_support.undef_method( name )
-    end
-    
-    return undefined_method
-    
-  end
-
-  ###########################################
-  #  define_singleton_and_instance_methods  #
-  ###########################################
-
-  def define_singleton_and_instance_methods( name, encapsulation_or_name, & method_proc )
-
-    define_singleton_method( name, encapsulation_or_name, & method_proc )
-    define_instance_method( name, encapsulation_or_name, & method_proc )
-
-  end
-
-  ############################################################
-  #  define_singleton_method_and_instance_method_if_support  #
-  ############################################################
-
-  def define_singleton_method_and_instance_method_if_support( name, encapsulation_or_name, & method_proc )
-
-    define_singleton_method( name, encapsulation_or_name, & method_proc )
-    define_instance_method_if_support( name, encapsulation_or_name, & method_proc )
-
-  end
-
-  #######################################
-  #  alias_module_and_instance_methods  #
-  #######################################
-  
-  def alias_module_and_instance_methods( encapsulation_or_name, alias_name, name )
-    
-    alias_module_method( encapsulation_or_name, alias_name, name )
-    alias_instance_method( encapsulation_or_name, alias_name, name )
     
   end
   

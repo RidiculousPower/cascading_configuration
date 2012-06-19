@@ -329,13 +329,7 @@ describe CascadingConfiguration::Hash do
         # if we're extended then we want to use the eigenclass ancestor chain
         # - the first ancestor will be the extending module
         # - the rest of the ancestors will be the extending module's include chain
-        respond_to?( :configuration_setting ).should == true
-        configuration_setting.should == { :a_configuration => :some_value }
-        configuration_setting[ :other_setting ] = :some_value
-        configuration_setting.should == { :a_configuration => :some_value,
-                                          :other_setting   => :some_value }
-        configuration_setting.delete( :other_setting ).should == :some_value
-        configuration_setting.should == { :a_configuration => :some_value }
+        respond_to?( :configuration_setting ).should == false
         method_defined?( :configuration_setting ).should == false
         instance_variables.empty?.should == true
       end
@@ -357,14 +351,8 @@ describe CascadingConfiguration::Hash do
       setting_class_including_instance.instance_variables.empty?.should == true
       class ClassExtending
         extend CascadingConfiguration::Hash::ClassConfigurationMockModuleIncluded
-        respond_to?( :configuration_setting ).should == true
+        respond_to?( :configuration_setting ).should == false
         method_defined?( :configuration_setting ).should == false
-        configuration_setting.should == { :a_configuration => :some_value }
-        configuration_setting[ :other_setting ] = :some_value
-        configuration_setting.should == { :a_configuration => :some_value,
-                                          :other_setting   => :some_value }
-        configuration_setting.delete( :other_setting ).should == :some_value
-        configuration_setting.should == { :a_configuration => :some_value }
         instance_variables.empty?.should == true
       end
       setting_class_including_instance = ClassExtending.new
