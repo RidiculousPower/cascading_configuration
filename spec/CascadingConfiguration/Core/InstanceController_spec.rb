@@ -82,6 +82,8 @@ describe ::CascadingConfiguration::Core::InstanceController do
       CCMMock = ::Module.new do
         def self.create_configuration( encapsulation, instance, this_name )
         end
+        def self.initialize_configuration( encapsulation, instance, this_name )
+        end
       end
 
       Instance_A = ::Module.new
@@ -130,7 +132,7 @@ describe ::CascadingConfiguration::Core::InstanceController do
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
 
       # should_include
-      ModuleInstance_Include = InstanceController.create_support( :some_type1, Encapsulation, true, false, false, false )
+      ModuleInstance_Include = InstanceController.create_support( :some_type1, Encapsulation, nil, true, false, false, false )
       InstanceController.support( :some_type1 ).should == ModuleInstance_Include
       ForInstance.ancestors.include?( ModuleInstance_Include ).should == true
       ForInstance.is_a?( ModuleInstance_Include ).should == false
@@ -138,7 +140,7 @@ describe ::CascadingConfiguration::Core::InstanceController do
       InstanceController.cascade_extends.include?( ModuleInstance_Include ).should == false
       
       # should_extend
-      ModuleInstance_Extend = InstanceController.create_support( :some_type2, Encapsulation, false, true, false, false )
+      ModuleInstance_Extend = InstanceController.create_support( :some_type2, Encapsulation, false, nil, true, false, false )
       InstanceController.support( :some_type2 ).should == ModuleInstance_Extend
       ForInstance.ancestors.include?( ModuleInstance_Extend ).should == false
       ForInstance.is_a?( ModuleInstance_Extend ).should == true
@@ -146,7 +148,7 @@ describe ::CascadingConfiguration::Core::InstanceController do
       InstanceController.cascade_extends.include?( ModuleInstance_Extend ).should == false
       
       # should_cascade_includes
-      ModuleInstance_CascadeIncludes = InstanceController.create_support( :some_type3, Encapsulation, false, false, true, false )
+      ModuleInstance_CascadeIncludes = InstanceController.create_support( :some_type3, Encapsulation, false, nil, false, true, false )
       InstanceController.support( :some_type3 ).should == ModuleInstance_CascadeIncludes
       ForInstance.ancestors.include?( ModuleInstance_CascadeIncludes ).should == false
       ForInstance.is_a?( ModuleInstance_CascadeIncludes ).should == false
@@ -154,7 +156,7 @@ describe ::CascadingConfiguration::Core::InstanceController do
       InstanceController.cascade_extends.include?( ModuleInstance_CascadeIncludes ).should == false
       
       # should_cascade_extends
-      ModuleInstance_CascadeExtends = InstanceController.create_support( :some_type4, Encapsulation, false, false, false, true )
+      ModuleInstance_CascadeExtends = InstanceController.create_support( :some_type4, Encapsulation, nil, false, false, false, true )
       InstanceController.support( :some_type4 ).should == ModuleInstance_CascadeExtends
       ForInstance.ancestors.include?( ModuleInstance_CascadeExtends ).should == false
       ForInstance.is_a?( ModuleInstance_CascadeExtends ).should == false

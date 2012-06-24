@@ -31,6 +31,8 @@ describe ::CascadingConfiguration::Core::Encapsulation do
       CCMMock = ::Module.new do
         def self.create_configuration( encapsulation, instance, this_name )
         end
+        def self.initialize_configuration( encapsulation, instance, this_name )
+        end
       end
       Encapsulation.instance_eval do
         has_configurations?( ForInstance ).should == false
@@ -59,6 +61,8 @@ describe ::CascadingConfiguration::Core::Encapsulation do
       Encapsulation = ::CascadingConfiguration::Core::Module::DefaultEncapsulation
       CCMMock = ::Module.new do
         def self.create_configuration( encapsulation, instance, this_name )
+        end
+        def self.initialize_configuration( encapsulation, instance, this_name )
         end
       end
       Parent = ::Module.new
@@ -89,6 +93,8 @@ describe ::CascadingConfiguration::Core::Encapsulation do
 
       CCMMock = ::Module.new do
         def self.create_configuration( encapsulation, instance, this_name )
+        end
+        def self.initialize_configuration( encapsulation, instance, this_name )
         end
       end
     

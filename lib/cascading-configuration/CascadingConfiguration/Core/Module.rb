@@ -138,6 +138,16 @@ class ::CascadingConfiguration::Core::Module < ::Module
     
   end
 
+  ##############################
+  #  initialize_configuration  #
+  ##############################
+  
+  def initialize_configuration( encapsulation, instance, name )
+    
+    # Nothing here - for subclasses to define.
+    
+  end
+
   ###########################
   #  define_configurations  #
   ###########################

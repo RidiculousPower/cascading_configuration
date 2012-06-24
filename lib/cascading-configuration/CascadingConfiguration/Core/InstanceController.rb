@@ -127,12 +127,10 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     
     # subclass eigenclass inheritance is automatic; re-extending will only mess it up
     unless for_subclass
-      unless @cascade_extends.empty?
-        unless is_extending
-          # We collect cascade extends in accumulating order (oldest => youngest), which means we need to reverse
-          # prior to including/extending (we need youngest => oldest).
-          instance.extend( *@cascade_extends.reverse )
-        end
+      unless is_extending or @cascade_extends.empty?
+        # We collect cascade extends in accumulating order (oldest => youngest), which means we need to reverse
+        # prior to including/extending (we need youngest => oldest).
+        instance.extend( *@cascade_extends.reverse )
       end
       unless @cascade_includes.empty?
         if is_extending
@@ -222,7 +220,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  extension_modules  #
   #######################
 
-  def extension_modules( name = nil, encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def extension_modules( name = nil, 
+                         encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
     
     encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( encapsulation_or_name )
     
@@ -242,7 +241,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  extension_modules_upward  #
   ##############################
   
-  def extension_modules_upward( name, encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def extension_modules_upward( name, 
+                                encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
     
     extension_modules = [ ]
     
@@ -252,8 +252,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     
     begin
       
-      if ancestor_instance_controller = self.class.instance_controller( this_ancestor ) and
-         these_modules = ancestor_instance_controller.extension_modules( name, encapsulation )
+      if ancestor_controller = self.class.instance_controller( this_ancestor ) and
+         these_modules = ancestor_controller.extension_modules( name, encapsulation )
         
         extension_modules.concat( these_modules )
       
@@ -271,6 +271,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   
   def create_support( module_type_name,
                       encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation,
+                      support_module_class = ::CascadingConfiguration::Core::InstanceController::SupportModule,
                       should_include = false, 
                       should_extend = false, 
                       should_cascade_includes = false, 
@@ -278,7 +279,10 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
                       module_constant_name = module_type_name.to_s.to_camel_case )
 
     encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( encapsulation_or_name )
-
+    
+    # permit nil for support_module_class to default
+    support_module_class ||= ::CascadingConfiguration::Core::InstanceController::SupportModule
+    
     unless encapsulation_supports_hash = @support_modules[ encapsulation ]
       encapsulation_supports_hash = { }
       @support_modules[ encapsulation ] = encapsulation_supports_hash
@@ -288,7 +292,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
 
       # New Instance
     
-      support_module_instance = self.class::SupportModule.new( self, encapsulation, module_type_name )
+      support_module_instance = support_module_class.new( self, encapsulation, module_type_name )
     
       const_set( module_constant_name, support_module_instance )
 
@@ -296,7 +300,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     
       # Cascades
     
-      if should_cascade_includes and ! should_include
+      if should_cascade_includes
         @cascade_includes.push( support_module_instance ) 
       end
     
@@ -353,7 +357,13 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   
   def create_singleton_support( encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
 
-    return create_support( :singleton, encapsulation_or_name, false, true, false, true )
+    return create_support( :singleton, 
+                           encapsulation_or_name, 
+                           self.class::SupportModule::SingletonSupportModule, 
+                           false, 
+                           true, 
+                           false, 
+                           true )
 
   end
 
@@ -373,7 +383,13 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
 
   def create_instance_support( encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
 
-    return create_support( :instance, encapsulation_or_name, true, false, true, false )
+    return create_support( :instance, 
+                           encapsulation_or_name, 
+                           self.class::SupportModule::InstanceSupportModule, 
+                           true, 
+                           false, 
+                           true, 
+                           false )
 
   end
 
@@ -391,9 +407,10 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  create_local_instance_support  #
   ###################################
 
-  def create_local_instance_support( encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def create_local_instance_support( encapsulation_or_name = ::CascadingConfiguration::Core::
+                                                               Module::DefaultEncapsulation )
 
-    return create_support( :local_instance, encapsulation_or_name, false, true, false, false )
+    return create_support( :local_instance, encapsulation_or_name, nil, false, true, false, false )
 
   end
 
@@ -660,7 +677,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   
   def alias_module_and_instance_methods( alias_name, 
                                          name, 
-                                         encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+                                         encapsulation_or_name = ::CascadingConfiguration::Core::
+                                                                   Module::DefaultEncapsulation )
     
     alias_module_method( alias_name, name, encapsulation_or_name )
     alias_instance_method( alias_name, name, encapsulation_or_name )

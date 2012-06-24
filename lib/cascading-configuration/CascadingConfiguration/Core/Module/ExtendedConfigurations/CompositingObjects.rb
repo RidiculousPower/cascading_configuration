@@ -23,34 +23,46 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
   ##########################
 
   def create_configuration( encapsulation, instance, name )
-
-    super
-
-    # initialize without initializing for parents
-    # we will initialize for parents after initializing all instances for inheritance
-    compositing_object = @compositing_object_class.new( nil, instance )
-
-    instance_controller = ::CascadingConfiguration::Core::InstanceController.nearest_instance_controller( encapsulation, 
-                                                                                                          instance, 
-                                                                                                          name )
-  
-    if instance_controller
-      
-      extension_modules = instance_controller.extension_modules_upward( name, encapsulation )
     
-      unless extension_modules.empty?
-        # Modules are gathered from lowest ancestor upward. This means that they are already 
-        # in the proper order for include/extend (which usually we would have to reverse).
-        compositing_object.extend( *extension_modules )
+    unless compositing_object = encapsulation.get_configuration( instance, name )
+    
+      super
+
+      # initialize without initializing for parents
+      # we will initialize for parents after initializing all instances for inheritance
+      compositing_object = @compositing_object_class.new( nil, instance )
+
+      instance_controller = ::CascadingConfiguration::Core::InstanceController.nearest_instance_controller( encapsulation, 
+                                                                                                            instance, 
+                                                                                                            name )
+  
+      if instance_controller
+      
+        extension_modules = instance_controller.extension_modules_upward( name, encapsulation )
+    
+        unless extension_modules.empty?
+          # Modules are gathered from lowest ancestor upward. This means that they are already 
+          # in the proper order for include/extend (which usually we would have to reverse).
+          compositing_object.extend( *extension_modules )
+        end
+    
       end
+        
+      encapsulation.set_configuration( instance, name, compositing_object )    
     
     end
-        
-    encapsulation.set_configuration( instance, name, compositing_object )    
-    
-    initialize_compositing_configuration_for_parent( encapsulation, instance, name )
     
     return compositing_object
+    
+  end
+
+  ##############################
+  #  initialize_configuration  #
+  ##############################
+  
+  def initialize_configuration( encapsulation, instance, name )
+    
+    initialize_compositing_configuration_for_parent( encapsulation, instance, name )
     
   end
 

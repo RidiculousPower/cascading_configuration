@@ -30,6 +30,8 @@ describe ::CascadingConfiguration::Core::InstanceController::SupportModule do
       CCMMock = ::Module.new do
         def self.create_configuration( encapsulation, instance, this_name )
         end
+        def self.initialize_configuration( encapsulation, instance, this_name )
+        end
       end
 
       # set up hierarchy

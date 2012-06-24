@@ -151,16 +151,22 @@ class ::CascadingConfiguration::Core::Encapsulation < ::Module
     super
     
     # Modules already have configurations and if parent already has configurations 
-    unless parent.is_a?( ::Module ) or parents( parent ).include?( parent.class )
+    unless parent.is_a?( ::Module ) or has_parents?( parent )
       register_child_for_parent( parent, parent.class )
     end
+    
+    parent_configurations = configurations( parent )
   
-    configurations( parent ).each do |this_name, this_configuration_module|
-      register_parent_for_configuration( child, parent, this_name )
+    parent_configurations.each do |this_name, this_configuration_module|
       register_configuration( child, this_name, this_configuration_module )
+      register_parent_for_configuration( child, parent, this_name )
       this_configuration_module.create_configuration( self, child, this_name )
     end
 
+    parent_configurations.each do |this_name, this_configuration_module|
+      this_configuration_module.initialize_configuration( self, child, this_name )
+    end
+    
   end
 
   #######################################
@@ -183,7 +189,7 @@ class ::CascadingConfiguration::Core::Encapsulation < ::Module
   
   def parent_for_configuration( instance, configuration_name )
 
-    unless instance.equal?( Class ) or 
+    unless instance.equal?( ::Class ) or 
            parent = parent_for_configuration_hash( instance )[ configuration_name ]
 
       instance_class = instance.class

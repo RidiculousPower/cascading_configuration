@@ -60,49 +60,90 @@ class ::CascadingConfiguration::Core::InstanceController::SupportModule < ::Modu
     
   end
 
+  ###############
+  #  included?  #
+  ###############
+
+  def included?( class_or_module )
+
+    return @included.include?( class_or_module )
+    
+  end
+  
+  ###############
+  #  extended?  #
+  ###############
+  
+  def extended?( class_or_module_or_instance )
+
+    return @extended.include?( class_or_module_or_instance )
+    
+  end
+
   ###################
   #  super_modules  #
   ###################
   
   def super_modules
     
-    ancestor_instance_controller = nil
+    ancestor_controller = nil
 
     return @encapsulation.lowest_parents( @instance_controller.instance ) do |this_parent|
 
-      ancestor_instance_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_parent )
+      ancestor_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_parent )
 
-      if ancestor_instance_controller and 
-         ancestor_instance_controller.support( @module_type_name, @encapsulation )
+      if ancestor_controller and 
+         ancestor_support = ancestor_controller.support( @module_type_name, @encapsulation ) and
+         is_super_module?( ancestor_support )
+        
         true
+        
       else
+        
         false
+
       end
 
     end.collect do |this_ancestor|
 
-      ancestor_instance_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_ancestor )
+      ancestor_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_ancestor )
 
-      ancestor_instance_controller.support( @module_type_name, @encapsulation )
+      ancestor_controller.support( @module_type_name, @encapsulation )
 
     end.uniq
     
   end
 
+  ######################
+  #  is_super_module?  #
+  ######################
+  
+  def is_super_module?( module_instance )
+    
+    is_super_module = false
+    
+    if module_instance.is_a?( self.class )
+      is_super_module = true
+    end
+    
+    return is_super_module
+    
+  end
+  
   ###################
   #  child_modules  #
   ###################
   
   def child_modules
 
-    ancestor_instance_controller = nil
+    ancestor_controller = nil
     
     return @encapsulation.highest_children( @instance_controller.instance ) do |this_child|
 
-      ancestor_instance_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_child )
+      ancestor_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_child )
 
-      if ancestor_instance_controller and
-         ancestor_instance_controller.support( @module_type_name, @encapsulation )
+      if ancestor_controller and
+         ancestor_controller.support( @module_type_name, @encapsulation )
         true
       else
         false
@@ -110,9 +151,9 @@ class ::CascadingConfiguration::Core::InstanceController::SupportModule < ::Modu
 
     end.collect do |this_ancestor|
 
-      ancestor_instance_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_ancestor )
+      ancestor_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_ancestor )
 
-      ancestor_instance_controller.support( @module_type_name, @encapsulation )
+      ancestor_controller.support( @module_type_name, @encapsulation )
 
     end.uniq
     

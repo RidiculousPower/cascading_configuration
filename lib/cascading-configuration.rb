@@ -33,6 +33,8 @@ files = [
   'Core/Module/BlockConfigurations/CascadingVariables',
     
   'Core/InstanceController/SupportModule',
+  'Core/InstanceController/SupportModule/InstanceSupportModule',
+  'Core/InstanceController/SupportModule/SingletonSupportModule',
   'Core/InstanceController/ExtensionModule',
   'Core/InstanceController',
   
