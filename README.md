@@ -1,6 +1,6 @@
 # Cascading Configuration #
 
-http://rubygems.org/gems/cascading-configuration
+http://rubygems.org/gems/cascading_configuration
 
 # Summary #
 
@@ -12,7 +12,7 @@ Inheritable Objects and Downward-Compositing Hashes and Arrays; Downward-Transfo
 
 # Install #
 
-* sudo gem install cascading-configuration
+* sudo gem install cascading_configuration
 
 # Usage #
 

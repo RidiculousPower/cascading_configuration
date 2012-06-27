@@ -1,11 +1,11 @@
 
 ## 6/18/2012 ##
 
-Moved cascading-configuration-ancestors to a new independent gem: parallel-ancestry.
+Moved cascading_configuration-ancestors to a new independent gem: parallel-ancestry.
 
 Now with Less Magic™ and more Tasty Sandwiches™!
 
-Condensed cascading-configuration-variable, cascading-configuration-methods, cascading-configuration-definition, cascading-configuration-inheritance, cascading-configuration-module, cascading-configuration-setting, cascading-configuration-array, cascading-configuration-array-unique, cascading-configuration-array-sorted, cascading-configuration-sorted-unique, cascading-configuration-hash into a single gem with core support.
+Condensed cascading_configuration-variable, cascading_configuration-methods, cascading_configuration-definition, cascading_configuration-inheritance, cascading_configuration-module, cascading_configuration-setting, cascading_configuration-array, cascading_configuration-array-unique, cascading_configuration-array-sorted, cascading_configuration-sorted-unique, cascading_configuration-hash into a single gem with core support.
 
 Adding new modules is now incredibly easy, and all the old spaghetti internal code is gone.
 
@@ -33,3 +33,6 @@ Added Instance and Singleton support module subclasses - fixes case where single
 
 Added :initialize_configuration to CascadingConfiguration::Core::Module; subclasses override to perform object initialization post-creation. This is so that objects are initialized only after all objects have been instantiated.
 
+## 6/27/2012 ##
+
+Renamed project from cascading-configuration to cascading_configuration to match Rubygems guidelines for gem naming.
