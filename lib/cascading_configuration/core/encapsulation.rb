@@ -156,7 +156,7 @@ class ::CascadingConfiguration::Core::Encapsulation < ::Module
     end
     
     parent_configurations = configurations( parent )
-  
+
     parent_configurations.each do |this_name, this_configuration_module|
       register_configuration( child, this_name, this_configuration_module )
       register_parent_for_configuration( child, parent, this_name )
@@ -169,16 +169,47 @@ class ::CascadingConfiguration::Core::Encapsulation < ::Module
     
   end
 
+  ##################################
+  #  is_parent_for_configuration?  #
+  ##################################
+  
+  def is_parent_for_configuration?( existing_parent, configuration_name, parent )
+    
+    is_parent_for_configuration = false
+    
+    this_parent = existing_parent
+    
+    begin
+      
+      if this_parent.equal?( parent )
+        is_parent_for_configuration = true
+      end
+      
+    end while this_parent = parent_for_configuration( this_parent, configuration_name )
+    
+    return is_parent_for_configuration
+    
+  end
+  
   #######################################
   #  register_parent_for_configuration  #
   #######################################
   
   def register_parent_for_configuration( child, parent, configuration_name )
     
-    parent_for_configuration_hash( child )[ configuration_name ] = parent
+    parents_hash = parent_for_configuration_hash( child )
     
-    parents( child ).push( parent )
+    # if we already have a parent, check to see if new parent is an ancestor of it
+    # if so, keep existing parent
+    unless existing_parent = parents_hash[ configuration_name ] and
+           is_parent_for_configuration?( existing_parent, configuration_name, parent )
+
+      parents_hash[ configuration_name ] = parent
     
+      parents( child ).unshift( parent )
+      
+    end
+        
     return self
     
   end

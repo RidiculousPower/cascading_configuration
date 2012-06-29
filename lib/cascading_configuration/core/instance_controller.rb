@@ -134,7 +134,11 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
       end
       unless @cascade_includes.empty?
         if is_extending
-          instance.extend( *@cascade_includes.reverse )
+          @cascade_includes.each do |this_include|
+            unless instance.ancestors.include?( this_include )
+              include.extend( this_include )
+            end
+          end
         elsif instance.is_a?( ::Module )
           cascade_includes = @cascade_includes
           instance.module_eval do

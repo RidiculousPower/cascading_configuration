@@ -32,9 +32,8 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
       # we will initialize for parents after initializing all instances for inheritance
       compositing_object = @compositing_object_class.new( nil, instance )
 
-      instance_controller = ::CascadingConfiguration::Core::InstanceController.nearest_instance_controller( encapsulation, 
-                                                                                                            instance, 
-                                                                                                            name )
+      instance_controller = ::CascadingConfiguration::Core::
+                              InstanceController.nearest_instance_controller( encapsulation, instance, name )
   
       if instance_controller
       
@@ -146,14 +145,22 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
       # We can break at the first ancestor that we hit that has initialized for parent
       # or if we run out of ancestors.
 
+      parent_composite_object = encapsulation.get_configuration( parent, configuration_name )
+      parent_composite_object2 = nil
+      if parent2 = encapsulation.parent_for_configuration( parent, configuration_name )
+        parent_composite_object2 = encapsulation.get_configuration( parent2, configuration_name )
+      end
+      
       # if first parent for configuration isn't initialized yet, initialize it
-      unless parent_composite_object = encapsulation.get_configuration( parent, configuration_name )
+      unless parent_composite_object and
+             parent_composite_object.parent_composite_object.equal?( parent_composite_object2 )
+
         parent_composite_object = initialize_compositing_configuration_for_parent( encapsulation, 
                                                                                    parent, 
                                                                                    configuration_name )
       end
-      
-      unless compositing_object.parent_composite_object == parent_composite_object
+
+      unless compositing_object.parent_composite_object.equal?( parent_composite_object )
         compositing_object.initialize_for_parent( parent_composite_object )
       end
       

@@ -4,6 +4,8 @@ require 'parallel-ancestry'
 require 'compositing-hash'
 require 'compositing-array-sorted-unique'
 
+#require_relative '../../compositing_objects/compositing-hash/lib/compositing-hash.rb'
+
 basepath = 'cascading_configuration'
 
 files = [
