@@ -36,3 +36,5 @@ Added :initialize_configuration to CascadingConfiguration::Core::Module; subclas
 ## 6/27/2012 ##
 
 Renamed project from cascading-configuration to cascading_configuration to match Rubygems guidelines for gem naming.
+Ensured configurations don't re-register parents that are higher in the ancestor chain than the ones already registered.
+
