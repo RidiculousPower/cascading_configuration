@@ -149,7 +149,7 @@ class ::CascadingConfiguration::Core::Encapsulation < ::Module
   def register_child_for_parent( child, parent )
 
     super
-    
+
     # Modules already have configurations and if parent already has configurations 
     unless parent.is_a?( ::Module ) or has_parents?( parent )
       register_child_for_parent( parent, parent.class )

@@ -21,8 +21,8 @@ class ::CascadingConfiguration::Core::InstanceController::SupportModule < ::Modu
     @encapsulation = encapsulation
     @module_type_name = module_type_name
 
-    @included = ::UniqueArray.new( self )
-    @extended = ::UniqueArray.new( self )
+    @included = ::Array::Unique.new( self )
+    @extended = ::Array::Unique.new( self )
 
     # include modules like ourselves above us
     existing_super_modules = super_modules

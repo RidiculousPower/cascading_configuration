@@ -97,7 +97,7 @@ module ::CascadingConfiguration::Array::Sorted::Unique
 
   sorted_unique_array_module = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::
                                  CompositingObjects.new( :sorted_unique_array, 
-                                                         ::CompositingArray::Sorted::Unique, 
+                                                         ::Array::Sorted::Unique::Compositing, 
                                                          :default, 
                                                          :unique_sorted_array,
                                                          :configuration_sorted_unique_array,

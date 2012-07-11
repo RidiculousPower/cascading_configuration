@@ -103,8 +103,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     # We also support arbitrary additional encapsulations.
     @encapsulations = { }
     
-    @cascade_includes = ::UniqueArray.new( self )
-    @cascade_extends = ::UniqueArray.new( self )
+    @cascade_includes = ::Array::Unique.new( self )
+    @cascade_extends = ::Array::Unique.new( self )
     
     @support_modules = { }
     
@@ -119,7 +119,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   def initialize_inheriting_instance( parent_instance, instance, for_subclass = false, is_extending = false )
 
     super
-    
+
     initialize_encapsulation_for_inheriting_instance( @default_encapsulation, parent_instance, instance )
     @encapsulations.each do |this_encapsulation_name, this_encapsulation|
       initialize_encapsulations_for_inheriting_instance( this_encapsulation, parent_instance, instance )
@@ -135,8 +135,13 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
       unless @cascade_includes.empty?
         if is_extending
           @cascade_includes.each do |this_include|
-            unless instance.ancestors.include?( this_include )
-              include.extend( this_include )
+            case instance
+              when ::Module
+                unless instance.ancestors.include?( this_include )
+                  instance.extend( this_include )
+                end
+              else
+                instance.extend( this_include )
             end
           end
         elsif instance.is_a?( ::Module )

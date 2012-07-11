@@ -97,7 +97,7 @@ module ::CascadingConfiguration::Array::Unique
 
   unique_array_module = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::
                           CompositingObjects.new( :unique_array, 
-                                                  ::CompositingArray::Unique, 
+                                                  ::Array::Unique::Compositing, 
                                                   :default, 
                                                   :configuration_unique_array )
   

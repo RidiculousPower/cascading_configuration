@@ -10,14 +10,14 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Composi
   
   it 'can initialize with a compositing object class' do
     module ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects::InitializeMock
-      ClassInstance = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects.new( :setting, ::CompositingArray, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects.new( :setting, ::Array::Compositing, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
       CCM::ClassInstance.default_encapsulation.should == ::CascadingConfiguration::Core::Module::DefaultEncapsulation
       CCM::ClassInstance.ccm_name.should == :setting
       CCM::ClassInstance.ccm_aliases.should == [ '' ]
-      CCM::ClassInstance.compositing_object_class.should == ::CompositingArray
+      CCM::ClassInstance.compositing_object_class.should == ::Array::Compositing
     end
   end
   
@@ -29,7 +29,7 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Composi
   it 'ensures objects are initialized for each level in hiearchy' do
     module ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects::CreateConfigurationMock
 
-      ClassInstance = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects.new( :setting, ::CompositingArray, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects.new( :setting, ::Array::Compositing, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
@@ -41,42 +41,42 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Composi
         include CCM
         attr_setting :some_configuration
       end
-      Encapsulation.get_configuration( Module1, :some_configuration ).is_a?( ::CompositingArray ).should == true
+      Encapsulation.get_configuration( Module1, :some_configuration ).is_a?( ::Array::Compositing ).should == true
     
       # module 2
       Module2 = ::Module.new do
         include Module1
       end
-      Encapsulation.get_configuration( Module2, :some_configuration ).is_a?( ::CompositingArray ).should == true
+      Encapsulation.get_configuration( Module2, :some_configuration ).is_a?( ::Array::Compositing ).should == true
     
       # module 3
       Module3 = ::Module.new do
         include Module2
       end
-      Encapsulation.get_configuration( Module3, :some_configuration ).is_a?( ::CompositingArray ).should == true
+      Encapsulation.get_configuration( Module3, :some_configuration ).is_a?( ::Array::Compositing ).should == true
     
       # class 1
       Class1 = ::Class.new do
         include Module3
       end
-      Encapsulation.get_configuration( Class1, :some_configuration ).is_a?( ::CompositingArray ).should == true
+      Encapsulation.get_configuration( Class1, :some_configuration ).is_a?( ::Array::Compositing ).should == true
     
       # subclass 1
       Class2 = ::Class.new( Class1 )
-      Encapsulation.get_configuration( Class2, :some_configuration ).is_a?( ::CompositingArray ).should == true
+      Encapsulation.get_configuration( Class2, :some_configuration ).is_a?( ::Array::Compositing ).should == true
     
       # instance
       Instance = Class2.new
       Encapsulation.get_configuration( Instance, :some_configuration ).nil?.should == true
-      Instance.some_configuration.is_a?( ::CompositingArray ).should == true
+      Instance.some_configuration.is_a?( ::Array::Compositing ).should == true
 
       RandomInstance = ::Object.new
       Encapsulation.register_child_for_parent( RandomInstance, Instance )
-      Encapsulation.get_configuration( RandomInstance, :some_configuration ).is_a?( ::CompositingArray ).should == true
+      Encapsulation.get_configuration( RandomInstance, :some_configuration ).is_a?( ::Array::Compositing ).should == true
 
       RandomInstance2 = ::Object.new
       Encapsulation.register_child_for_parent( RandomInstance2, RandomInstance )
-      Encapsulation.get_configuration( RandomInstance2, :some_configuration ).is_a?( ::CompositingArray ).should == true
+      Encapsulation.get_configuration( RandomInstance2, :some_configuration ).is_a?( ::Array::Compositing ).should == true
       
     end
     
@@ -92,7 +92,7 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Composi
   it 'can set and get values' do
     module ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects::SetterGetterMock
       
-      ClassInstance = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects.new( :setting, ::CompositingArray, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects.new( :setting, ::Array::Compositing, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end

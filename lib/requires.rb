@@ -1,10 +1,10 @@
-require 'to_camel_case'
-require 'accessor-utilities'
-require 'parallel-ancestry'
-require 'compositing-hash'
-require 'compositing-array-sorted-unique'
+begin ; require 'development' ; rescue ::LoadError ; end
 
-#require_relative '../../compositing_objects/compositing-hash/lib/compositing-hash.rb'
+require 'to_camel_case'
+require 'accessor_utilities'
+require 'parallel_ancestry'
+require 'hash'
+require 'array'
 
 basepath = 'cascading_configuration'
 

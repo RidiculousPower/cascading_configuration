@@ -132,79 +132,87 @@ describe ::CascadingConfiguration::Core::InstanceController do
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
 
       # should_include
-      ModuleInstance_Include = InstanceController.create_support( :some_type1, Encapsulation, nil, true, false, false, false )
-      InstanceController.support( :some_type1 ).should == ModuleInstance_Include
+      ModuleInstance_Include = InstanceController.create_support( :include, Encapsulation, nil, true, false, false, false )
+      InstanceController.support( :include ).should == ModuleInstance_Include
       ForInstance.ancestors.include?( ModuleInstance_Include ).should == true
       ForInstance.is_a?( ModuleInstance_Include ).should == false
       InstanceController.cascade_includes.include?( ModuleInstance_Include ).should == false
       InstanceController.cascade_extends.include?( ModuleInstance_Include ).should == false
       
       # should_extend
-      ModuleInstance_Extend = InstanceController.create_support( :some_type2, Encapsulation, false, nil, true, false, false )
-      InstanceController.support( :some_type2 ).should == ModuleInstance_Extend
+      ModuleInstance_Extend = InstanceController.create_support( :extend, Encapsulation, false, nil, true, false, false )
+      InstanceController.support( :extend ).should == ModuleInstance_Extend
       ForInstance.ancestors.include?( ModuleInstance_Extend ).should == false
       ForInstance.is_a?( ModuleInstance_Extend ).should == true
       InstanceController.cascade_includes.include?( ModuleInstance_Extend ).should == false
       InstanceController.cascade_extends.include?( ModuleInstance_Extend ).should == false
       
       # should_cascade_includes
-      ModuleInstance_CascadeIncludes = InstanceController.create_support( :some_type3, Encapsulation, false, nil, false, true, false )
-      InstanceController.support( :some_type3 ).should == ModuleInstance_CascadeIncludes
+      ModuleInstance_CascadeIncludes = InstanceController.create_support( :cascade_includes, Encapsulation, false, nil, false, true, false )
+      InstanceController.support( :cascade_includes ).should == ModuleInstance_CascadeIncludes
       ForInstance.ancestors.include?( ModuleInstance_CascadeIncludes ).should == false
       ForInstance.is_a?( ModuleInstance_CascadeIncludes ).should == false
       InstanceController.cascade_includes.include?( ModuleInstance_CascadeIncludes ).should == true
       InstanceController.cascade_extends.include?( ModuleInstance_CascadeIncludes ).should == false
       
       # should_cascade_extends
-      ModuleInstance_CascadeExtends = InstanceController.create_support( :some_type4, Encapsulation, nil, false, false, false, true )
-      InstanceController.support( :some_type4 ).should == ModuleInstance_CascadeExtends
+      ModuleInstance_CascadeExtends = InstanceController.create_support( :cascade_extends, Encapsulation, nil, false, false, false, true )
+      InstanceController.support( :cascade_extends ).should == ModuleInstance_CascadeExtends
       ForInstance.ancestors.include?( ModuleInstance_CascadeExtends ).should == false
       ForInstance.is_a?( ModuleInstance_CascadeExtends ).should == false
       InstanceController.cascade_includes.include?( ModuleInstance_CascadeExtends ).should == false
       InstanceController.cascade_extends.include?( ModuleInstance_CascadeExtends ).should == true
       
-      AnotherModule_IncludeA = ::Module.new do
+      AnotherModule_IncludeA = ::Module.new
+      AnotherModule_IncludeA.instance_eval do
         include ForInstance
         ancestors.include?( ModuleInstance_CascadeIncludes ).should == true
         eigenclass = class << self ; self ; end
         eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == true
       end
-      AnotherModule_IncludeB = ::Module.new do
+      AnotherModule_IncludeB = ::Module.new
+      AnotherModule_IncludeB.instance_eval do
         include AnotherModule_IncludeA
         ancestors.include?( ModuleInstance_CascadeIncludes ).should == true
         eigenclass = class << self ; self ; end
         eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == true
       end
-      AnotherModule_IncludeC = ::Module.new do
+      AnotherModule_IncludeC = ::Module.new
+      AnotherModule_IncludeC.instance_eval do
         include AnotherModule_IncludeB
         ancestors.include?( ModuleInstance_CascadeIncludes ).should == true
         eigenclass = class << self ; self ; end
         eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == true
       end
-      AnotherModule_ClassInclude = ::Class.new do
+      AnotherModule_ClassInclude = ::Class.new
+      AnotherModule_ClassInclude.instance_eval do
         include AnotherModule_IncludeC
         ancestors.include?( ModuleInstance_CascadeIncludes ).should == true
         eigenclass = class << self ; self ; end
         eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == true
       end
 
-      AnotherModule_ExtendA = ::Module.new do
+      AnotherModule_ExtendA = ::Module.new
+      AnotherModule_ExtendA.instance_eval do
         extend ForInstance
         eigenclass = class << self ; self ; end
         eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == false
         eigenclass.ancestors.include?( ModuleInstance_CascadeIncludes ).should == true
       end
-      AnotherModule_ExtendB = ::Module.new do
+      AnotherModule_ExtendB = ::Module.new
+      AnotherModule_ExtendB.instance_eval do
         extend AnotherModule_ExtendA
         eigenclass = class << self ; self ; end
         eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == false
       end
-      AnotherModule_ExtendC = ::Module.new do
+      AnotherModule_ExtendC = ::Module.new
+      AnotherModule_ExtendC.instance_eval do
         extend AnotherModule_ExtendB
         eigenclass = class << self ; self ; end
         eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == false
       end
-      AnotherModule_ClassExtend = ::Class.new do
+      AnotherModule_ClassExtend = ::Class.new
+      AnotherModule_ClassExtend.instance_eval do
         extend AnotherModule_ExtendC
         eigenclass = class << self ; self ; end
         eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == false

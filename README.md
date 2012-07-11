@@ -108,7 +108,7 @@ Whether Hashes or Arrays, the idea is the same. We call the Compositing Objects.
 2. The compositing object is initialized (separately) for its immediate parent object.
 3. Whenever an update occurs, the compositing object updates its registered child object with the update.
 
-This way the lower objects are kept in sync with parent elements. Overriding hooked methods (provided by HookedArray from the hooked-array gem) provides a great deal of flexible functionality, permitting elements to be transformed as they are passed down the ancestor hierarchy.
+This way the lower objects are kept in sync with parent elements. Overriding hooked methods (provided by Array::Hooked from the array-hooked gem) provides a great deal of flexible functionality, permitting elements to be transformed as they are passed down the ancestor hierarchy.
 
 Right now there are 5 types of Compositing Objects:
 

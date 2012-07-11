@@ -96,7 +96,7 @@ module ::CascadingConfiguration::Array
   #
 
   array_module = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::
-                   CompositingObjects.new( :array, ::CompositingArray, :default, :configuration_array )
+                   CompositingObjects.new( :array, ::Array::Compositing, :default, :configuration_array )
   
   ::CascadingConfiguration::Core.enable( self, array_module )
 

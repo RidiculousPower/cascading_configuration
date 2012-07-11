@@ -96,7 +96,7 @@ module ::CascadingConfiguration::Hash
   #
 
   hash_module = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::
-                  CompositingObjects.new( :hash, ::CompositingHash, :default, :configuration_hash )
+                  CompositingObjects.new( :hash, ::Hash::Compositing, :default, :configuration_hash )
   
   ::CascadingConfiguration::Core.enable( self, hash_module )
 

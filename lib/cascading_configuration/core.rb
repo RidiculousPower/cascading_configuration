@@ -14,9 +14,10 @@ module ::CascadingConfiguration::Core
     # Enable module instance so that when included it creates instance support
     instance.extend( ::CascadingConfiguration::Core::EnableInstanceSupport )
 
-    instance.extend( ::ModuleCluster )
+    instance.extend( ::Module::Cluster )
 
-    instance.include_or_extend_also_extends( instance::ClassInstance )
+    instance.cluster( :cascading_configuration ).after_include.extend( instance::ClassInstance )
+    instance.cluster( :cascading_configuration ).after_extend.extend( instance::ClassInstance )
     
   end
   

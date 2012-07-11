@@ -97,7 +97,7 @@ module ::CascadingConfiguration::Array::Sorted
 
   sorted_array_module = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::
                           CompositingObjects.new( :sorted_array, 
-                                                  ::CompositingArray::Sorted, 
+                                                  ::Array::Sorted::Compositing, 
                                                   :default, 
                                                   :configuration_sorted_array )
   
