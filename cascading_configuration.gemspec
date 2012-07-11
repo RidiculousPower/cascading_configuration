@@ -4,7 +4,7 @@ Gem::Specification.new do |spec|
 
   spec.name                      =  'cascading_configuration'
   spec.rubyforge_project         =  'cascading_configuration'
-  spec.version                   =  '1.0.2'
+  spec.version                   =  '1.0.1'
 
   spec.summary                   =  "Provides inheritable values across Ruby inheritance hierarchy or across arbitrary declared inheritance relations."
   spec.description               =  "Inheritable Objects and Downward-Compositing Hashes and Arrays; Downward-Transforming Values coming soon."
