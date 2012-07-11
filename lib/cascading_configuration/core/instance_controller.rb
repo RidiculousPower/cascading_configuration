@@ -769,7 +769,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
         when ::Hash
         
           this_name.each do |this_accessor_name, this_write_accessor_name|
-            accessors[ this_accessor_name ] = this_write_accessor_name
+            accessors[ this_accessor_name.accessor_name ] = this_write_accessor_name.write_accessor_name
           end
         
         else
