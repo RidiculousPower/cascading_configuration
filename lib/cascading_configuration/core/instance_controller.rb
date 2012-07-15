@@ -127,31 +127,81 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     
     # subclass eigenclass inheritance is automatic; re-extending will only mess it up
     unless for_subclass
-      unless is_extending or @cascade_extends.empty?
-        # We collect cascade extends in accumulating order (oldest => youngest), which means we need to reverse
-        # prior to including/extending (we need youngest => oldest).
-        instance.extend( *@cascade_extends.reverse )
+      initialize_inheriting_instance_includes_extends( parent_instance, instance, is_extending )
+    end
+    
+  end
+
+  #####################################################
+  #  initialize_inheriting_instance_includes_extends  #
+  #####################################################
+  
+  def initialize_inheriting_instance_includes_extends( parent_instance, instance, is_extending = false )
+
+    unless is_extending or @cascade_extends.empty?
+      initialize_inheriting_instance_extends( parent_instance, instance )
+    end
+    
+    unless @cascade_includes.empty?
+
+      if is_extending
+        initialize_inheriting_instance_includes_for_extend_crossover( parent_instance, instance )
+      else
+        initialize_inheriting_instance_includes( parent_instance, instance )
       end
-      unless @cascade_includes.empty?
-        if is_extending
-          @cascade_includes.each do |this_include|
-            case instance
-              when ::Module
-                unless instance.ancestors.include?( this_include )
-                  instance.extend( this_include )
-                end
-              else
-                instance.extend( this_include )
-            end
+
+    end
+    
+  end
+
+  #############################################
+  #  initialize_inheriting_instance_includes  #
+  #############################################
+
+  def initialize_inheriting_instance_includes( parent_instance, instance )
+    
+    cascade_includes = @cascade_includes
+    instance.module_eval do
+      # We collect cascade extends in accumulating order (oldest => youngest), 
+      # which means we need to reverse prior to including/extending 
+      # (we need youngest => oldest).
+      include( *cascade_includes.reverse )
+    end
+    
+  end
+
+  ############################################
+  #  initialize_inheriting_instance_extends  #
+  ############################################
+
+  def initialize_inheriting_instance_extends( parent_instance, instance )
+  
+    # We collect cascade extends in accumulating order (oldest => youngest), 
+    # which means we need to reverse prior to including/extending 
+    # (we need youngest => oldest).
+    instance.extend( *@cascade_extends.reverse )
+  
+  end
+  
+  ##################################################################
+  #  initialize_inheriting_instance_includes_for_extend_crossover  #
+  ##################################################################
+  
+  ###
+  # Normally we have module => module cascading where instance methods remain instance methods,
+  #   and singleton methods remain singleton methods. When a module extends another, however,
+  #   instance methods become singleton methods.
+  #
+  def initialize_inheriting_instance_includes_for_extend_crossover( parent_instance, instance )
+
+    @cascade_includes.each do |this_include|
+      case instance
+        when ::Module
+          unless instance.ancestors.include?( this_include )
+            instance.extend( this_include )
           end
-        elsif instance.is_a?( ::Module )
-          cascade_includes = @cascade_includes
-          instance.module_eval do
-            # We collect cascade includes in accumulating order (oldest => youngest), which means we need to reverse
-            # prior to including/extending (we need youngest => oldest).
-            include( *cascade_includes.reverse )
-          end
-        end
+        else
+          instance.extend( this_include )
       end
     end
     
