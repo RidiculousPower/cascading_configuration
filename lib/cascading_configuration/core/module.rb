@@ -5,7 +5,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   DefaultEncapsulation = ::CascadingConfiguration::Core::Encapsulation.new( DefaultEncapsulationName )
   
   include ::CascadingConfiguration::Core::EnableModuleSupport
-
+  
   ################
   #  initialize  #
   ################
@@ -22,7 +22,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
     
     @ccm_name = ccm_name
     @ccm_aliases = ccm_aliases
-        
+    
     define_definition_methods( @ccm_name, *@ccm_aliases )
         
   end
@@ -44,7 +44,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #################
   
   attr_reader :ccm_aliases
-  
+
   ###############################
   #  define_definition_methods  #
   ###############################
