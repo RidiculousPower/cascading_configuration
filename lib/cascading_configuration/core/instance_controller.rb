@@ -80,14 +80,12 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     @instance = instance.extend( self )
     
     if @instance.is_a?( ::Module )
-      @instance.const_set( constant, self )
+      initialize_constant_in_instance( constant )
       unless extending
         initialize_inheritance( @instance )
       end
     else
-      hex_id_string = '0x%x' % ( @instance.__id__ << 1 )
-      constant = 'ID_' << hex_id_string
-      self.class.const_set( constant, self )
+      initialize_constant_in_self
     end
 
     # We manage reference to self in singleton from here to avoid duplicative efforts.
@@ -110,6 +108,30 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     
     @extension_modules = { }
         
+  end
+
+  #################################
+  #  initialize_constant_in_self  #
+  #################################
+  
+  def initialize_constant_in_instance( constant )
+
+    @instance.const_set( constant, self )
+
+  end
+  
+  #################################
+  #  initialize_constant_in_self  #
+  #################################
+  
+  def initialize_constant_in_self
+    
+    hex_id_string = '0x%x' % ( @instance.__id__ << 1 )
+    constant = 'ID_' << hex_id_string
+    self.class.const_set( constant, self )
+    
+    return self
+    
   end
   
   ####################################
