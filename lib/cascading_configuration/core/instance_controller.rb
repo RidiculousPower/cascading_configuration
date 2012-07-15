@@ -183,6 +183,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   def initialize_inheriting_instance_includes( parent_instance, instance )
     
     cascade_includes = @cascade_includes
+    
     instance.module_eval do
       # We collect cascade extends in accumulating order (oldest => youngest), 
       # which means we need to reverse prior to including/extending 
@@ -234,7 +235,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   ######################################################
   
   def initialize_encapsulation_for_inheriting_instance( encapsulation, parent_instance, instance )
-    
+
     encapsulation.register_child_for_parent( instance, parent_instance )
     
   end
