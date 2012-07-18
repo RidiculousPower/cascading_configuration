@@ -15,7 +15,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     instance_controller = nil
     
     unless instance_controller = @instance_controller[ instance ]
-      instance_controller = new( instance, default_encapsulation_or_name, constant, extending )
+      instance_controller = new( instance, default_encapsulation_or_name, extending )
     end
     
     return instance_controller
@@ -118,7 +118,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     
     hex_id_string = '0x%x' % ( @instance.__id__ << 1 )
     constant = 'ID_' << hex_id_string
-    self.class.const_set( constant, self )
+    self.class.const_set( :Controller, self )
     
     return self
     
