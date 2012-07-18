@@ -136,32 +136,24 @@ describe ::CascadingConfiguration::Core::InstanceController do
       InstanceController.support( :include ).should == ModuleInstance_Include
       ForInstance.ancestors.include?( ModuleInstance_Include ).should == true
       ForInstance.is_a?( ModuleInstance_Include ).should == false
-      InstanceController.cascade_includes.include?( ModuleInstance_Include ).should == false
-      InstanceController.cascade_extends.include?( ModuleInstance_Include ).should == false
       
       # should_extend
       ModuleInstance_Extend = InstanceController.create_support( :extend, Encapsulation, false, nil, true, false, false )
       InstanceController.support( :extend ).should == ModuleInstance_Extend
       ForInstance.ancestors.include?( ModuleInstance_Extend ).should == false
       ForInstance.is_a?( ModuleInstance_Extend ).should == true
-      InstanceController.cascade_includes.include?( ModuleInstance_Extend ).should == false
-      InstanceController.cascade_extends.include?( ModuleInstance_Extend ).should == false
       
       # should_cascade_includes
       ModuleInstance_CascadeIncludes = InstanceController.create_support( :cascade_includes, Encapsulation, false, nil, false, true, false )
       InstanceController.support( :cascade_includes ).should == ModuleInstance_CascadeIncludes
       ForInstance.ancestors.include?( ModuleInstance_CascadeIncludes ).should == false
       ForInstance.is_a?( ModuleInstance_CascadeIncludes ).should == false
-      InstanceController.cascade_includes.include?( ModuleInstance_CascadeIncludes ).should == true
-      InstanceController.cascade_extends.include?( ModuleInstance_CascadeIncludes ).should == false
       
       # should_cascade_extends
       ModuleInstance_CascadeExtends = InstanceController.create_support( :cascade_extends, Encapsulation, nil, false, false, false, true )
       InstanceController.support( :cascade_extends ).should == ModuleInstance_CascadeExtends
       ForInstance.ancestors.include?( ModuleInstance_CascadeExtends ).should == false
       ForInstance.is_a?( ModuleInstance_CascadeExtends ).should == false
-      InstanceController.cascade_includes.include?( ModuleInstance_CascadeExtends ).should == false
-      InstanceController.cascade_extends.include?( ModuleInstance_CascadeExtends ).should == true
       
       AnotherModule_IncludeA = ::Module.new
       AnotherModule_IncludeA.instance_eval do
@@ -197,7 +189,6 @@ describe ::CascadingConfiguration::Core::InstanceController do
         extend ForInstance
         eigenclass = class << self ; self ; end
         eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == false
-        eigenclass.ancestors.include?( ModuleInstance_CascadeIncludes ).should == true
       end
       AnotherModule_ExtendB = ::Module.new
       AnotherModule_ExtendB.instance_eval do

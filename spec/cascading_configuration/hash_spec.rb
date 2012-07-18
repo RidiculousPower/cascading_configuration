@@ -37,7 +37,7 @@ describe CascadingConfiguration::Hash do
       module SubmoduleIncluding
         include CascadingConfiguration::Hash::ConfigurationMockModuleExtended
         method_defined?( :configuration_setting ).should == false
-        respond_to?( :configuration_setting ).should == false
+        respond_to?( :configuration_setting ).should == true
         instance_variables.empty?.should == true
       end
       # => extending modules and classes get nothing
@@ -51,7 +51,7 @@ describe CascadingConfiguration::Hash do
       class ClassIncluding
         include CascadingConfiguration::Hash::ConfigurationMockModuleExtended
         method_defined?( :configuration_setting ).should == false
-        respond_to?( :configuration_setting ).should == false
+        respond_to?( :configuration_setting ).should == true
         instance_variables.empty?.should == true
       end
       class ClassExtending
@@ -273,7 +273,7 @@ describe CascadingConfiguration::Hash do
       module SubmoduleIncluding
         include CascadingConfiguration::Hash::ClassConfigurationMockModuleExtended
         method_defined?( :configuration_setting ).should == false
-        respond_to?( :configuration_setting ).should == false
+        respond_to?( :configuration_setting ).should == true
         instance_variables.empty?.should == true
       end
       # => extending modules and classes get nothing
@@ -287,7 +287,7 @@ describe CascadingConfiguration::Hash do
       class ClassIncluding
         include CascadingConfiguration::Hash::ClassConfigurationMockModuleExtended
         method_defined?( :configuration_setting ).should == false
-        respond_to?( :configuration_setting ).should == false
+        respond_to?( :configuration_setting ).should == true
         instance_variables.empty?.should == true
       end
       class ClassExtending

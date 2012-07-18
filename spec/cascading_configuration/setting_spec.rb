@@ -32,7 +32,7 @@ describe CascadingConfiguration::Setting do
       module SubmoduleIncluding
         include CascadingConfiguration::Setting::ConfigurationMockExtended
         method_defined?( :some_configuration ).should == false
-        respond_to?( :some_configuration ).should == false
+        respond_to?( :some_configuration ).should == true
         instance_variables.empty?.should == true
       end
       # => extending modules and classes get nothing
@@ -46,7 +46,7 @@ describe CascadingConfiguration::Setting do
       class ClassIncluding
         include CascadingConfiguration::Setting::ConfigurationMockExtended
         method_defined?( :some_configuration ).should == false
-        respond_to?( :some_configuration ).should == false
+        respond_to?( :some_configuration ).should == true
         instance_variables.empty?.should == true
       end
       class ClassExtending
@@ -194,7 +194,7 @@ describe CascadingConfiguration::Setting do
       module SubmoduleIncluding
         include CascadingConfiguration::Setting::ClassConfigurationMockExtended
         method_defined?( :some_configuration ).should == false
-        respond_to?( :some_configuration ).should == false
+        respond_to?( :some_configuration ).should == true
         instance_variables.empty?.should == true
       end
       # => extending modules and classes get nothing
@@ -208,7 +208,7 @@ describe CascadingConfiguration::Setting do
       class ClassIncluding
         include CascadingConfiguration::Setting::ClassConfigurationMockExtended
         method_defined?( :some_configuration ).should == false
-        respond_to?( :some_configuration ).should == false
+        respond_to?( :some_configuration ).should == true
         instance_variables.empty?.should == true
       end
       class ClassExtending

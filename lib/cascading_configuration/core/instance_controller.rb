@@ -1,8 +1,6 @@
 
 class ::CascadingConfiguration::Core::InstanceController < ::Module
   
-  include ::ParallelAncestry::Inheritance
-  
   @instance_controller = { }
 
   #####################################
@@ -12,7 +10,6 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   def self.create_instance_controller( instance,
                                        default_encapsulation_or_name = ::CascadingConfiguration::Core::
                                                                          Module::DefaultEncapsulation, 
-                                       constant = :Controller,
                                        extending = false )
     
     instance_controller = nil
@@ -71,19 +68,12 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   
   def initialize( instance, 
                   default_encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation, 
-                  constant = :Controller,
                   extending = false )
 
-    # Call to super is necessary for ParallelAncestry support.
-    super()
-    
-    @instance = instance.extend( self )
+    @instance = instance.extend( ::Module::Cluster )
     
     if @instance.is_a?( ::Module )
-      initialize_constant_in_instance( constant )
-      unless extending
-        initialize_inheritance( @instance )
-      end
+      initialize_constant_in_instance
     else
       initialize_constant_in_self
     end
@@ -101,22 +91,22 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     # We also support arbitrary additional encapsulations.
     @encapsulations = { }
     
-    @cascade_includes = ::Array::Unique.new( self )
-    @cascade_extends = ::Array::Unique.new( self )
-    
     @support_modules = { }
     
     @extension_modules = { }
+    
+    # create a cascading block to register configurations for parent at include/extend
+    initialize_inheritance_for_instance( @instance, extending )
         
   end
-
+  
   #################################
   #  initialize_constant_in_self  #
   #################################
   
-  def initialize_constant_in_instance( constant )
+  def initialize_constant_in_instance
 
-    @instance.const_set( constant, self )
+    @instance.const_set( :Controller, self )
 
   end
   
@@ -133,103 +123,62 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     return self
     
   end
+
+  #########################################
+  #  initialize_inheritance_for_instance  #
+  #########################################
+  
+  def initialize_inheritance_for_instance( instance, extending = false )
+
+    unless instance.is_a?( ::Module::Cluster ) and instance.has_cluster?( :cascading_configuration_inheritance )
+      
+      instance.extend( ::Module::Cluster )
+      
+      reference_to_self = self
+      
+      case instance
+      
+        when ::Class
+        
+          instance.cluster( :cascading_configuration_inheritance ).subclass do |inheriting_instance|
+            reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
+          end
+      
+        when ::Module
+        
+          unless extending
+
+            instance.cluster( :cascading_configuration_inheritance ).after_include do |inheriting_instance|
+              reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
+              reference_to_self.initialize_inheritance_for_instance( inheriting_instance )
+            end
+
+            instance.cluster( :cascading_configuration_inheritance ).after_extend do |inheriting_instance|
+              reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
+            end
+
+          end
+          
+      end
+
+    end
+    
+  end
   
   ####################################
   #  initialize_inheriting_instance  #
   ####################################
 
-  def initialize_inheriting_instance( parent_instance, instance, for_subclass = false, is_extending = false )
-
-    super
-
+  def initialize_inheriting_instance( parent_instance, instance )
+    
     initialize_encapsulation_for_inheriting_instance( @default_encapsulation, parent_instance, instance )
+
     @encapsulations.each do |this_encapsulation_name, this_encapsulation|
       initialize_encapsulations_for_inheriting_instance( this_encapsulation, parent_instance, instance )
     end
     
-    # subclass eigenclass inheritance is automatic; re-extending will only mess it up
-    unless for_subclass
-      initialize_inheriting_instance_includes_extends( parent_instance, instance, is_extending )
-    end
-    
   end
 
-  #####################################################
-  #  initialize_inheriting_instance_includes_extends  #
-  #####################################################
-  
-  def initialize_inheriting_instance_includes_extends( parent_instance, instance, is_extending = false )
-
-    unless is_extending or @cascade_extends.empty?
-      initialize_inheriting_instance_extends( parent_instance, instance )
-    end
-    
-    unless @cascade_includes.empty?
-
-      if is_extending
-        initialize_inheriting_instance_includes_for_extend_crossover( parent_instance, instance )
-      else
-        initialize_inheriting_instance_includes( parent_instance, instance )
-      end
-
-    end
-    
-  end
-
-  #############################################
-  #  initialize_inheriting_instance_includes  #
-  #############################################
-
-  def initialize_inheriting_instance_includes( parent_instance, instance )
-    
-    cascade_includes = @cascade_includes
-    
-    instance.module_eval do
-      # We collect cascade extends in accumulating order (oldest => youngest), 
-      # which means we need to reverse prior to including/extending 
-      # (we need youngest => oldest).
-      include( *cascade_includes.reverse )
-    end
-    
-  end
-
-  ############################################
-  #  initialize_inheriting_instance_extends  #
-  ############################################
-
-  def initialize_inheriting_instance_extends( parent_instance, instance )
-  
-    # We collect cascade extends in accumulating order (oldest => youngest), 
-    # which means we need to reverse prior to including/extending 
-    # (we need youngest => oldest).
-    instance.extend( *@cascade_extends.reverse )
-  
-  end
-  
-  ##################################################################
-  #  initialize_inheriting_instance_includes_for_extend_crossover  #
-  ##################################################################
-  
-  ###
-  # Normally we have module => module cascading where instance methods remain instance methods,
-  #   and singleton methods remain singleton methods. When a module extends another, however,
-  #   instance methods become singleton methods.
-  #
-  def initialize_inheriting_instance_includes_for_extend_crossover( parent_instance, instance )
-
-    @cascade_includes.each do |this_include|
-      case instance
-        when ::Module
-          unless instance.ancestors.include?( this_include )
-            instance.extend( this_include )
-          end
-        else
-          instance.extend( this_include )
-      end
-    end
-    
-  end
-  
   ######################################################
   #  initialize_encapsulation_for_inheriting_instance  #
   ######################################################
@@ -252,18 +201,6 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   
   attr_reader :instance
   
-  ######################
-  #  cascade_includes  #
-  ######################
-
-  attr_reader :cascade_includes
-
-  #####################
-  #  cascade_extends  #
-  #####################
-
-  attr_reader :cascade_extends
-
   ###########################
   #  add_extension_modules  #
   ###########################
@@ -383,11 +320,11 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
       # Cascades
     
       if should_cascade_includes
-        @cascade_includes.push( support_module_instance ) 
+        @instance.cluster( :cascading_configuration ).after_include.cascade.include( support_module_instance )
       end
     
       if should_cascade_extends
-        @cascade_extends.push( support_module_instance )      
+        @instance.cluster( :cascading_configuration ).after_include.cascade.extend( support_module_instance )
       end
     
       # Includes/Extends
@@ -687,7 +624,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   
   def alias_local_instance_method( alias_name, 
                                    name, 
-                                   encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+                                   encapsulation_or_name = ::CascadingConfiguration::Core::
+                                                             Module::DefaultEncapsulation )
 
     aliased_method = false
     

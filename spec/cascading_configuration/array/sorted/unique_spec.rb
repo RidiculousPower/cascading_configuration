@@ -37,7 +37,7 @@ describe CascadingConfiguration::Array::Sorted::Unique do
       module SubmoduleIncluding
         include CascadingConfiguration::Array::Sorted::Unique::ConfigurationMockModuleExtended
         method_defined?( :configuration_setting ).should == false
-        respond_to?( :configuration_setting ).should == false
+        respond_to?( :configuration_setting ).should == true
         instance_variables.empty?.should == true
       end
       # => extending modules and classes get nothing
@@ -51,7 +51,7 @@ describe CascadingConfiguration::Array::Sorted::Unique do
       class ClassIncluding
         include CascadingConfiguration::Array::Sorted::Unique::ConfigurationMockModuleExtended
         method_defined?( :configuration_setting ).should == false
-        respond_to?( :configuration_setting ).should == false
+        respond_to?( :configuration_setting ).should == true
         instance_variables.empty?.should == true
       end
       class ClassExtending
@@ -215,7 +215,7 @@ describe CascadingConfiguration::Array::Sorted::Unique do
       module SubmoduleIncluding
         include CascadingConfiguration::Array::Sorted::Unique::ClassConfigurationMockModuleExtended
         method_defined?( :configuration_setting ).should == false
-        respond_to?( :configuration_setting ).should == false
+        respond_to?( :configuration_setting ).should == true
         instance_variables.empty?.should == true
       end
       # => extending modules and classes get nothing
@@ -229,7 +229,7 @@ describe CascadingConfiguration::Array::Sorted::Unique do
       class ClassIncluding
         include CascadingConfiguration::Array::Sorted::Unique::ClassConfigurationMockModuleExtended
         method_defined?( :configuration_setting ).should == false
-        respond_to?( :configuration_setting ).should == false
+        respond_to?( :configuration_setting ).should == true
         instance_variables.empty?.should == true
       end
       class ClassExtending
