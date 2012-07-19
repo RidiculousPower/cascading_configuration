@@ -91,15 +91,15 @@ class ::CascadingConfiguration::Core::InstanceController::SupportModule < ::Modu
     return @encapsulation.lowest_parents( @instance_controller.instance ) do |this_parent|
 
       ancestor_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_parent )
-
+      
       if ancestor_controller and 
          ancestor_support = ancestor_controller.support( @module_type_name, @encapsulation ) and
          is_super_module?( ancestor_support )
-        
+
         true
         
       else
-        
+
         false
 
       end

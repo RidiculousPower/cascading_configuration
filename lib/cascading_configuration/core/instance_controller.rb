@@ -148,12 +148,12 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
         
           unless extending
 
-            instance.cluster( :cascading_configuration_inheritance ).after_include do |inheriting_instance|
+            instance.cluster( :cascading_configuration_inheritance ).before_include do |inheriting_instance|
               reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
               reference_to_self.initialize_inheritance_for_instance( inheriting_instance )
             end
 
-            instance.cluster( :cascading_configuration_inheritance ).after_extend do |inheriting_instance|
+            instance.cluster( :cascading_configuration_inheritance ).before_extend do |inheriting_instance|
               reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
             end
 
