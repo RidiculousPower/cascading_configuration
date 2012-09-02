@@ -140,7 +140,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
       
         when ::Class
         
-          instance.cluster( :cascading_configuration_inheritance ).subclass do |inheriting_instance|
+          instance.cluster( :cascading_configuration_inheritance ).subclass.cascade do |inheriting_instance|
             reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
           end
       
@@ -726,7 +726,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( encapsulation_or_name )
     
     module_proc = ::Proc.new do
-      return ccm.getter( encapsulation, self, name )
+      return ccm.instance_getter( encapsulation, self, name )
     end
 
     instance_proc = ::Proc.new do
@@ -752,7 +752,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( encapsulation_or_name )
 
     module_proc = ::Proc.new do |value|
-      return ccm.setter( encapsulation, self, name, value )
+      return ccm.instance_setter( encapsulation, self, name, value )
     end
 
     instance_proc = ::Proc.new do |value|

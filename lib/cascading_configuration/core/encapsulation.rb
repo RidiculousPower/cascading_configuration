@@ -160,13 +160,13 @@ class ::CascadingConfiguration::Core::Encapsulation < ::Module
     parent_configurations.each do |this_name, this_configuration_module|
       register_configuration( child, this_name, this_configuration_module )
       register_parent_for_configuration( child, parent, this_name )
-      this_configuration_module.create_configuration( self, child, this_name )
+#      this_configuration_module.create_configuration( self, child, this_name )
     end
 
-    parent_configurations.each do |this_name, this_configuration_module|
-      this_configuration_module.initialize_configuration( self, child, this_name )
-    end
-    
+#    parent_configurations.each do |this_name, this_configuration_module|
+#      this_configuration_module.initialize_configuration( self, child, this_name )
+#    end
+#    
   end
 
   ##################################
