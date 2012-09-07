@@ -27,6 +27,16 @@ class ::CascadingConfiguration::Core::Module < ::Module
         
   end
 
+  ###############################
+  #  permits_multiple_parents?  #
+  ###############################
+  
+  def permits_multiple_parents?
+    
+    return false
+    
+  end
+
   ###########################
   #  default_encapsulation  #
   ###########################

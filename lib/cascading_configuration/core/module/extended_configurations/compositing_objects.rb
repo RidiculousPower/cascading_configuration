@@ -18,6 +18,16 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
     
   end
 
+  ###############################
+  #  permits_multiple_parents?  #
+  ###############################
+  
+  def permits_multiple_parents?
+    
+    return true
+    
+  end
+
   ##########################
   #  create_configuration  #
   ##########################
@@ -153,15 +163,15 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
       
       # if first parent for configuration isn't initialized yet, initialize it
       unless parent_composite_object and
-             parent_composite_object.parent_composite_object.equal?( parent_composite_object2 )
+             parent_composite_object.has_parent?( parent_composite_object2 )
 
         parent_composite_object = initialize_compositing_configuration_for_parent( encapsulation, 
                                                                                    parent, 
                                                                                    configuration_name )
       end
 
-      unless compositing_object.parent_composite_object.equal?( parent_composite_object )
-        compositing_object.initialize_for_parent( parent_composite_object )
+      unless compositing_object.has_parent?( parent_composite_object )
+        compositing_object.register_parent( parent_composite_object )
       end
       
     end

@@ -74,12 +74,62 @@ describe ::CascadingConfiguration::Core::InstanceController do
   #  extension_modules_upward  #
   ##############################
 
-  it 'can get an array of extension modules ' do
-    module ::CascadingConfiguration::Core::InstanceController::ExtensionModulesUpwardMock
+  it 'can get an array of extension modules when a single parent is permitted' do
+    module ::CascadingConfiguration::Core::InstanceController::ExtensionModulesUpwardSingleParentMock
 
       Encapsulation = ::CascadingConfiguration::Core::Module::DefaultEncapsulation
 
       CCMMock = ::Module.new do
+        def self.permits_multiple_parents?
+          return false
+        end
+        def self.create_configuration( encapsulation, instance, this_name )
+        end
+        def self.initialize_configuration( encapsulation, instance, this_name )
+        end
+      end
+
+      Instance_A = ::Module.new
+      InstanceController_A = ::CascadingConfiguration::Core::InstanceController.new( Instance_A )
+      Encapsulation.register_configuration( Instance_A, :some_configuration, CCMMock )
+      ExtensionModule_A1 = ::Module.new
+      ExtensionModule_A2 = ::Module.new
+      InstanceController_A.add_extension_modules( :some_configuration, Encapsulation, ExtensionModule_A1, ExtensionModule_A2 ) do
+        def some_other_stuff
+        end        
+      end
+      InstanceController_A.extension_modules( :some_configuration ).count.should == 3
+      InstanceController_A.extension_modules_upward( :some_configuration ).should == [ InstanceController_A::Default_some_configuration, ExtensionModule_A2, ExtensionModule_A1 ]
+
+
+      Instance_B = ::Module.new
+      Encapsulation.register_child_for_parent( Instance_B, Instance_A )
+  
+      Instance_C = ::Module.new
+      InstanceController_C = ::CascadingConfiguration::Core::InstanceController.new( Instance_C )
+      Encapsulation.register_child_for_parent( Instance_C, Instance_B )
+      ExtensionModule_C1 = ::Module.new
+      InstanceController_C.add_extension_modules( :some_configuration, Encapsulation, ExtensionModule_C1 ) do
+        def some_other_stuff
+        end        
+      end
+      InstanceController_C.extension_modules_upward( :some_configuration ).should == [ InstanceController_C::Default_some_configuration, ExtensionModule_C1, InstanceController_A::Default_some_configuration, ExtensionModule_A2, ExtensionModule_A1 ]
+
+      InstanceController_B = ::CascadingConfiguration::Core::InstanceController.new( Instance_B )
+      InstanceController_B.extension_modules_upward( :some_configuration ).should == [ InstanceController_A::Default_some_configuration, ExtensionModule_A2, ExtensionModule_A1 ]
+      
+    end
+  end
+
+  it 'can get an array of extension modules when multiple parents are permitted' do
+    module ::CascadingConfiguration::Core::InstanceController::ExtensionModulesUpwardMultipleParentMock
+
+      Encapsulation = ::CascadingConfiguration::Core::Module::DefaultEncapsulation
+
+      CCMMock = ::Module.new do
+        def self.permits_multiple_parents?
+          return true
+        end
         def self.create_configuration( encapsulation, instance, this_name )
         end
         def self.initialize_configuration( encapsulation, instance, this_name )

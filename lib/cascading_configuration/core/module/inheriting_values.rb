@@ -1,6 +1,16 @@
 
 class ::CascadingConfiguration::Core::Module::InheritingValues < ::CascadingConfiguration::Core::Module
   
+  ###############################
+  #  permits_multiple_parents?  #
+  ###############################
+  
+  def permits_multiple_parents?
+    
+    return false
+    
+  end
+
   ############
   #  setter  #
   ############
@@ -45,7 +55,7 @@ class ::CascadingConfiguration::Core::Module::InheritingValues < ::CascadingConf
 
     did_match_ancestor = false
 
-    matching_ancestor = encapsulation.match_parent( instance, configuration_name ) do |this_ancestor|
+    matching_ancestor = encapsulation.match_parent_for_configuration( instance, configuration_name ) do |this_ancestor|
       if encapsulation.has_configuration_value?( this_ancestor, configuration_name )
         did_match_ancestor = true
       else

@@ -1,7 +1,7 @@
 
 class ::CascadingConfiguration::Core::InstanceController < ::Module
   
-  @instance_controller = { }
+  @instance_controllers = { }
 
   #####################################
   #  self.create_instance_controller  #
@@ -14,7 +14,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     
     instance_controller = nil
     
-    unless instance_controller = @instance_controller[ instance ]
+    unless instance_controller = @instance_controllers[ instance ]
       instance_controller = new( instance, default_encapsulation_or_name, extending )
     end
     
@@ -30,7 +30,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     
     instance_controller_instance = nil
     
-    unless instance_controller_instance = @instance_controller[ instance ]
+    unless instance_controller_instance = @instance_controllers[ instance ]
       if ensure_exists
         exception_string = 'No module controller defined for :' << instance.to_s
         exception_string << '.'
@@ -46,12 +46,34 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  self.nearest_instance_controller  #
   ######################################
   
+  ###
+  # Get the closest instance controller.
+  #   Used in context where only one parent is permitted.
+  #
+  # @param encapsulation
+  #
+  #        Looking in encapsulation instance.
+  #
+  # @param instance
+  #
+  #        Instance for which we want the nearest controller.
+  #
+  # @param name
+  #
+  #        Name of configuration for which we want to find the controller.
+  #
+  # @return [nil,::CascadingConfiguration::CascadingConfiguration::InstanceController]
+  #
+  #         Requested controller(s). Multiple controllers are returned only if configuration
+  #         module used for configuration name supports multiple parents, in which case
+  #         return will always be an Array.
+  #
   def self.nearest_instance_controller( encapsulation, instance, name )
     
     instance_controller = nil
     
     this_parent = instance
-
+    
     begin
 
       break if instance_controller = instance_controller( this_parent )
@@ -81,7 +103,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     # We manage reference to self in singleton from here to avoid duplicative efforts.
     reference_to_self = self
     self.class.class_eval do
-      @instance_controller[ instance ] = reference_to_self
+      @instance_controllers[ instance ] = reference_to_self
     end
     
     # We need an encapsulation to manage automatic inheritance relations.
