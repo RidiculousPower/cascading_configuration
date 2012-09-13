@@ -28,6 +28,9 @@ describe ::CascadingConfiguration::Core::InstanceController::SupportModule do
       Encapsulation = ::CascadingConfiguration::Core::Module::DefaultEncapsulation
 
       CCMMock = ::Module.new do
+        def self.permits_multiple_parents?
+          return false
+        end
         def self.create_configuration( encapsulation, instance, this_name )
         end
         def self.initialize_configuration( encapsulation, instance, this_name )

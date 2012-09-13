@@ -45,3 +45,9 @@ Added support in extension modules for aliasing methods that will exist in objec
 ## 7/19/2012 ##
 
 Register for parent needs to happen before not after include/extend.
+
+## 9/7/2012 ##
+
+Updated for multiple parents for compositing objects. 
+First parent is treated as parent for purpose of extension modules, etc.
+Extension modules for other parents must be added manually - functions coming for that but not implemented yet.
