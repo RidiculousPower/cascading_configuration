@@ -11,7 +11,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ################
   
   def initialize( ccm_name, 
-                  default_encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation, 
+                  default_encapsulation_or_name = :default, 
                   *ccm_aliases )
     
     super()

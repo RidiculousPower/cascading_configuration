@@ -46,4 +46,26 @@ module ::CascadingConfiguration
     
   end
   
+  ###
+  # Runs #register_parent_for_configuration for each configuration in parent.
+  #
+  #
+  def self.register_parent( child, parent, encapsulation = :default )
+    
+  end
+  
+  def self.register_parent_for_configuration( child, parent, configuration_name )
+    
+  end
+  
+  def self.replace_parent_for_configuration
+    
+  end
+  
+  def self.remove_parent_for_configuration
+    
+  end
+  
+  
+  
 end

@@ -8,8 +8,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #####################################
   
   def self.create_instance_controller( instance,
-                                       default_encapsulation_or_name = ::CascadingConfiguration::Core::
-                                                                         Module::DefaultEncapsulation, 
+                                       default_encapsulation_or_name = :default, 
                                        extending = false )
     
     instance_controller = nil
@@ -88,9 +87,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  initialize  #
   ################
   
-  def initialize( instance, 
-                  default_encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation, 
-                  extending = false )
+  def initialize( instance, default_encapsulation_or_name = :default, extending = false )
 
     @instance = instance.extend( ::Module::Cluster )
     
@@ -152,7 +149,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   
   def initialize_inheritance_for_instance( instance, extending = false )
 
-    unless instance.is_a?( ::Module::Cluster ) and instance.has_cluster?( :cascading_configuration_inheritance )
+    unless instance.is_a?( ::Module::Cluster ) and 
+           instance.has_cluster?( :cascading_configuration_inheritance )
       
       instance.extend( ::Module::Cluster )
       
@@ -193,10 +191,14 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
 
   def initialize_inheriting_instance( parent_instance, instance )
     
-    initialize_encapsulation_for_inheriting_instance( @default_encapsulation, parent_instance, instance )
+    initialize_encapsulation_for_inheriting_instance( @default_encapsulation, 
+                                                      parent_instance, 
+                                                      instance )
 
     @encapsulations.each do |this_encapsulation_name, this_encapsulation|
-      initialize_encapsulations_for_inheriting_instance( this_encapsulation, parent_instance, instance )
+      initialize_encapsulations_for_inheriting_instance( this_encapsulation, 
+                                                         parent_instance, 
+                                                         instance )
     end
     
   end
@@ -228,7 +230,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   ###########################
 
   def add_extension_modules( name, 
-                             encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation, 
+                             encapsulation_or_name = :default, 
                              *extension_modules, 
                              & definer_block )
 
@@ -261,8 +263,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  extension_modules  #
   #######################
 
-  def extension_modules( name = nil, 
-                         encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def extension_modules( name = nil, encapsulation_or_name = :default )
     
     encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( encapsulation_or_name )
     
@@ -282,8 +283,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  extension_modules_upward  #
   ##############################
   
-  def extension_modules_upward( name, 
-                                encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def extension_modules_upward( name, encapsulation_or_name = :default )
     
     extension_modules = [ ]
     
@@ -311,7 +311,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   ####################
   
   def create_support( module_type_name,
-                      encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation,
+                      encapsulation_or_name = :default,
                       support_module_class = ::CascadingConfiguration::Core::InstanceController::SupportModule,
                       should_include = false, 
                       should_extend = false, 
@@ -378,7 +378,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  support  #
   #############
   
-  def support( module_type_name, encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def support( module_type_name, encapsulation_or_name = :default )
     
     support_instance = nil
     
@@ -396,7 +396,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  create_singleton_support  #
   ##############################
   
-  def create_singleton_support( encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def create_singleton_support( encapsulation_or_name = :default )
 
     return create_support( :singleton, 
                            encapsulation_or_name, 
@@ -412,7 +412,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  singleton_support  #
   #######################
   
-  def singleton_support( encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def singleton_support( encapsulation_or_name = :default )
 
     return support( :singleton, encapsulation_or_name )
 
@@ -422,7 +422,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  create_instance_support  #
   #############################
 
-  def create_instance_support( encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def create_instance_support( encapsulation_or_name = :default )
 
     return create_support( :instance, 
                            encapsulation_or_name, 
@@ -438,7 +438,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  instance_support  #
   ######################
 
-  def instance_support( encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def instance_support( encapsulation_or_name = :default )
 
     return support( :instance, encapsulation_or_name )
 
@@ -448,8 +448,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  create_local_instance_support  #
   ###################################
 
-  def create_local_instance_support( encapsulation_or_name = ::CascadingConfiguration::Core::
-                                                               Module::DefaultEncapsulation )
+  def create_local_instance_support( encapsulation_or_name = :default )
 
     return create_support( :local_instance, encapsulation_or_name, nil, false, true, false, false )
 
@@ -459,7 +458,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  local_instance_support  #
   ############################
 
-  def local_instance_support( encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def local_instance_support( encapsulation_or_name = :default )
 
     return support( :local_instance, encapsulation_or_name )
 
@@ -488,9 +487,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  define_singleton_method  #
   #############################
 
-  def define_singleton_method( name, 
-                               encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation, 
-                               & method_proc )
+  def define_singleton_method( name, encapsulation_or_name = :default, & method_proc )
 
     return create_singleton_support( encapsulation_or_name ).define_method( name, & method_proc )
 
@@ -500,9 +497,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  alias_module_method  #
   #########################
   
-  def alias_module_method( alias_name, 
-                           name, 
-                           encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def alias_module_method( alias_name, name, encapsulation_or_name = :default )
 
     aliased_method = false
     
@@ -518,7 +513,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  remove_module_method  #
   ##########################
 
-  def remove_module_method( name, encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def remove_module_method( name, encapsulation_or_name = :default )
 
     removed_method = false
 
@@ -534,7 +529,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  undef_module_method  #
   #########################
 
-  def undef_module_method( name, encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def undef_module_method( name, encapsulation_or_name = :default )
 
     undefined_method = false
 
@@ -550,9 +545,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  define_instance_method  #
   ############################
 
-  def define_instance_method( name, 
-                              encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation, 
-                              & method_proc )
+  def define_instance_method( name, encapsulation_or_name = :default, & method_proc )
 
     return create_instance_support( encapsulation_or_name ).define_method( name, & method_proc )
     
@@ -562,8 +555,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  remove_instance_method  #
   ############################
 
-  def remove_instance_method( name, 
-                              encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def remove_instance_method( name, encapsulation_or_name = :default )
 
     removed_method = false
 
@@ -579,8 +571,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  undef_instance_method  #
   ###########################
 
-  def undef_instance_method( name, 
-                             encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+  def undef_instance_method( name, encapsulation_or_name = :default )
 
     undefined_method = false
 
@@ -597,8 +588,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #######################################
   
   def define_instance_method_if_support( name, 
-                                         encapsulation_or_name = ::CascadingConfiguration::Core::
-                                                                   Module::DefaultEncapsulation, 
+                                         encapsulation_or_name = :default, 
                                          & method_proc )
 
     if instance_support = instance_support( encapsulation_or_name )
@@ -615,7 +605,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   
   def alias_instance_method( alias_name, 
                              name, 
-                             encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+                             encapsulation_or_name = :default )
 
     aliased_method = false
     
@@ -632,8 +622,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   ##################################
 
   def define_local_instance_method( name, 
-                                    encapsulation_or_name = ::CascadingConfiguration::Core::
-                                                              Module::DefaultEncapsulation, 
+                                    encapsulation_or_name = :default, 
                                     & method_proc )
 
     return create_local_instance_support( encapsulation_or_name ).define_method( name, & method_proc )
@@ -646,8 +635,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   
   def alias_local_instance_method( alias_name, 
                                    name, 
-                                   encapsulation_or_name = ::CascadingConfiguration::Core::
-                                                             Module::DefaultEncapsulation )
+                                   encapsulation_or_name = :default )
 
     aliased_method = false
     
@@ -664,8 +652,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   ##################################
 
   def remove_local_instance_method( name, 
-                                    encapsulation_or_name = ::CascadingConfiguration::Core::
-                                                              Module::DefaultEncapsulation )
+                                    encapsulation_or_name = :default )
 
     removed_method = false
 
@@ -682,8 +669,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #################################
 
   def undef_local_instance_method( name, 
-                                   encapsulation_or_name = ::CascadingConfiguration::Core::
-                                                             Module::DefaultEncapsulation )
+                                   encapsulation_or_name = :default )
 
     undefined_method = false
 
@@ -710,7 +696,9 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  define_singleton_method_and_instance_method_if_support  #
   ############################################################
 
-  def define_singleton_method_and_instance_method_if_support( name, encapsulation_or_name, & method_proc )
+  def define_singleton_method_and_instance_method_if_support( name, 
+                                                              encapsulation_or_name,
+                                                              & method_proc )
 
     define_singleton_method( name, encapsulation_or_name, & method_proc )
     define_instance_method_if_support( name, encapsulation_or_name, & method_proc )
@@ -723,8 +711,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   
   def alias_module_and_instance_methods( alias_name, 
                                          name, 
-                                         encapsulation_or_name = ::CascadingConfiguration::Core::
-                                                                   Module::DefaultEncapsulation )
+                                         encapsulation_or_name = :default )
     
     alias_module_method( alias_name, name, encapsulation_or_name )
     alias_instance_method( alias_name, name, encapsulation_or_name )
@@ -743,7 +730,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
                      name, 
                      accessor_name, 
                      method_types, 
-                     encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+                     encapsulation_or_name = :default )
     
     encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( encapsulation_or_name )
     
@@ -769,7 +756,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
                      name, 
                      accessor_name, 
                      method_types, 
-                     encapsulation_or_name = ::CascadingConfiguration::Core::Module::DefaultEncapsulation )
+                     encapsulation_or_name = :default )
 
     encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( encapsulation_or_name )
 
