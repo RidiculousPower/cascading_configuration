@@ -12,7 +12,7 @@ describe ::CascadingConfiguration::Core::InstanceController::ExtensionModule do
 
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
-      Encapsulation = ::CascadingConfiguration::Core::Module::DefaultEncapsulation
+      Encapsulation = :default
 
       Module_instance = ::CascadingConfiguration::Core::InstanceController::ExtensionModule.new( InstanceController, Encapsulation, :some_configuration )
 
@@ -32,7 +32,7 @@ describe ::CascadingConfiguration::Core::InstanceController::ExtensionModule do
       
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
-      Encapsulation = ::CascadingConfiguration::Core::Module::DefaultEncapsulation
+      Encapsulation = :default
 
       Module_instance = ::CascadingConfiguration::Core::InstanceController::ExtensionModule.new( InstanceController, Encapsulation, :some_configuration )
       

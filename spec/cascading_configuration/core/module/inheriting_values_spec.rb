@@ -10,7 +10,7 @@ describe ::CascadingConfiguration::Core::Module::InheritingValues do
   it 'can get the first defined configuration searching up the module configuration inheritance chain' do
     module ::CascadingConfiguration::Core::Module::InheritingValues::GetConfigurationSearchingUpwardMock
       
-      Encapsulation = ::CascadingConfiguration::Core::Module::DefaultEncapsulation
+      Encapsulation = :default
       
       CCM = ::CascadingConfiguration::Core::Module::InheritingValues.new( 'configuration' )
             
@@ -67,7 +67,7 @@ describe ::CascadingConfiguration::Core::Module::InheritingValues do
   it 'can set and get values' do
     module ::CascadingConfiguration::Core::Module::InheritingValues::SetterGetterMock
       
-      Encapsulation = ::CascadingConfiguration::Core::Module::DefaultEncapsulation
+      Encapsulation = :default
       
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )

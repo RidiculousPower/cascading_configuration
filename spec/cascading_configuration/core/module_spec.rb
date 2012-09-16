@@ -478,7 +478,7 @@ describe ::CascadingConfiguration::Core::Module do
     module ::CascadingConfiguration::Core::Module::CreateConfigurationMock
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
-      Encapsulation = ::CascadingConfiguration::Core::Module::DefaultEncapsulation
+      Encapsulation = :default
       ClassInstance = ::CascadingConfiguration::Core::Module.new( :setting, :default, '' )
       CCM = ::Module.new do
         ::CascadingConfiguration::Core.enable( self, ClassInstance )

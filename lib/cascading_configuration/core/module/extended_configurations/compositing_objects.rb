@@ -8,8 +8,7 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
   
   def initialize( ccm_name, 
                   compositing_object_class = nil,
-                  default_encapsulation_or_encapsulation_name = ::CascadingConfiguration::Core::
-                                                                  Module::DefaultEncapsulation, 
+                  default_encapsulation_or_encapsulation_name = :default, 
                   *ccm_aliases )
     
     super( ccm_name, default_encapsulation_or_encapsulation_name, *ccm_aliases )

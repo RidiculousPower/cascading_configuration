@@ -11,7 +11,7 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations do
     module ::CascadingConfiguration::Core::Module::ParseExtensionModulesMock
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
-      Encapsulation = ::CascadingConfiguration::Core::Module::DefaultEncapsulation
+      Encapsulation = :default
       CCM = ::CascadingConfiguration::Core::Module::ExtendedConfigurations.new( :setting, :default, '' )
       module ModuleA
       end
