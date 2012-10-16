@@ -26,7 +26,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
   
   it 'can hold configurations' do
     module ::CascadingConfiguration::Core::Encapsulation::ConfigurationsMock
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       ForInstance = ::Module.new
       CCMMock = ::Module.new do
         def self.create_configuration( encapsulation, instance, this_name )
@@ -56,7 +56,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
 
   it 'can register children for parents when a single parent is permitted' do
     module ::CascadingConfiguration::Core::Encapsulation::RegisterChildForSingleParentMock
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       CCMMock = ::Module.new do
         def self.permits_multiple_parents?
           return false
@@ -86,7 +86,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
 
   it 'can register children for parents when multiple parents are permitted' do
     module ::CascadingConfiguration::Core::Encapsulation::RegisterChildForMultipleParentMock
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       CCMMock = ::Module.new do
         def self.permits_multiple_parents?
           return true
@@ -121,7 +121,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
   
   it 'can register children for parents when a single parent is permitted' do
     module ::CascadingConfiguration::Core::Encapsulation::ParentForConfigurationSingleParentMock
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       CCMMock = ::Module.new do
         def self.permits_multiple_parents?
           return false
@@ -151,7 +151,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
 
   it 'can register children for parents when multiple parents are permitted' do
     module ::CascadingConfiguration::Core::Encapsulation::ParentForConfigurationMultipleParentMock
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       CCMMock = ::Module.new do
         def self.permits_multiple_parents?
           return false
@@ -186,7 +186,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
 
   it 'can register children for parents when multiple parents are permitted' do
     module ::CascadingConfiguration::Core::Encapsulation::ParentsForConfigurationMock
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       CCMMock = ::Module.new do
         def self.permits_multiple_parents?
           return true
@@ -222,7 +222,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
   it 'can find the next ancestor for a configuration name when a single parent is permitted' do
     module ::CascadingConfiguration::Core::Encapsulation::ChildParentHierarchySingleParentMock
     
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
 
       CCMMock = ::Module.new do
         def self.permits_multiple_parents?
@@ -319,7 +319,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
   it 'can find the next ancestor for a configuration name when multiple parents are permitted' do
     module ::CascadingConfiguration::Core::Encapsulation::ChildParentHierarchyMultipleParentMock
     
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
 
       CCMMock = ::Module.new do
         def self.permits_multiple_parents?
@@ -423,7 +423,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
   
   it 'can set, get and remove configuration variables' do
     module ::CascadingConfiguration::Core::Encapsulation::ConfigurationVariableMock
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       ForInstance = ::Module.new
       Encapsulation.instance_eval do
         has_configuration_value?( ForInstance, :some_variable ).should == false
@@ -445,7 +445,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
   it 'can match the first parent for condition looking up single parent chain' do
     module ::CascadingConfiguration::Core::Encapsulation::MatchParentForSingleParentConfiguration
 
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
 
       CCMMock = ::Module.new do
         def self.permits_multiple_parents?
@@ -525,7 +525,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
   it 'can match the first parent for condition looking up multiple parent chain (using first parent)' do
     module ::CascadingConfiguration::Core::Encapsulation::MatchParentForMultipleParentConfiguration
 
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
 
       CCMMock = ::Module.new do
         def self.permits_multiple_parents?
@@ -609,7 +609,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
   it 'can match the lowest parent for condition on each branch of tree looking up multiple parent chain' do
     module ::CascadingConfiguration::Core::Encapsulation::MatchLowestParentsForConfiguration
       
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
 
       CCMMock = ::Module.new do
         def self.permits_multiple_parents?

@@ -28,7 +28,7 @@ describe ::CascadingConfiguration::Core::InstanceController do
   
   it 'causes the instance it extends to be enabled for managing inheritable support modules' do
     module ::CascadingConfiguration::Core::InstanceController::InheritanceMock
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
       AnotherModule = ::Module.new do
@@ -49,7 +49,7 @@ describe ::CascadingConfiguration::Core::InstanceController do
   it 'can declare and retrieve extension modules for a configuration name on instance in an encapsulation' do
     module ::CascadingConfiguration::Core::InstanceController::AddExtensionModulesMock
     
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
@@ -77,7 +77,7 @@ describe ::CascadingConfiguration::Core::InstanceController do
   it 'can get an array of extension modules when a single parent is permitted' do
     module ::CascadingConfiguration::Core::InstanceController::ExtensionModulesUpwardSingleParentMock
 
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
 
       CCMMock = ::Module.new do
         def self.permits_multiple_parents?
@@ -124,7 +124,7 @@ describe ::CascadingConfiguration::Core::InstanceController do
   it 'can get an array of extension modules when multiple parents are permitted' do
     module ::CascadingConfiguration::Core::InstanceController::ExtensionModulesUpwardMultipleParentMock
 
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
 
       CCMMock = ::Module.new do
         def self.permits_multiple_parents?
@@ -176,7 +176,7 @@ describe ::CascadingConfiguration::Core::InstanceController do
   it 'can manage creation and return of module instances' do
     module ::CascadingConfiguration::Core::InstanceController::CreateSupportMock
       
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
@@ -270,7 +270,7 @@ describe ::CascadingConfiguration::Core::InstanceController do
   it 'can create a cascading support module for singleton (module/class) methods' do
     module ::CascadingConfiguration::Core::InstanceController::CreateSingletonSupportMock
     
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
 
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
@@ -289,7 +289,7 @@ describe ::CascadingConfiguration::Core::InstanceController do
   it 'can create a cascading support module for instance methods' do
     module ::CascadingConfiguration::Core::InstanceController::CreateInstanceSupportMock
     
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
@@ -308,7 +308,7 @@ describe ::CascadingConfiguration::Core::InstanceController do
   it 'can create a non-cascading support module supporting the local object and its instances' do
     module ::CascadingConfiguration::Core::InstanceController::CreateLocalInstanceSupportMock
     
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )

@@ -25,7 +25,7 @@ describe ::CascadingConfiguration::Core::InstanceController::SupportModule do
   it 'can return the first super module on each parent tree' do
     module ::CascadingConfiguration::Core::InstanceController::SuperModulesMock
 
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
 
       CCMMock = ::Module.new do
         def self.permits_multiple_parents?
@@ -105,7 +105,7 @@ describe ::CascadingConfiguration::Core::InstanceController::SupportModule do
   it 'can return the first child module on each child tree' do
     module ::CascadingConfiguration::Core::InstanceController::ChildModulesMock
 
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
 
       # set up hierarchy
       ForInstance_A = ::Module.new do
@@ -169,7 +169,7 @@ describe ::CascadingConfiguration::Core::InstanceController::SupportModule do
   it 'can return the first child module on each child tree' do
     module ::CascadingConfiguration::Core::InstanceController::CascadeNewSupportForChildModulesMock
 
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
 
       # set up hierarchy
       ForInstance_A = ::Module.new do

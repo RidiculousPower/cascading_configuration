@@ -34,7 +34,7 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Composi
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
       
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       
       # module 1
       Module1 = ::Module.new do
@@ -94,7 +94,7 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Composi
         ::CascadingConfiguration::Core.enable( self, ClassInstance )
       end
       
-      Encapsulation = :default
+      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
       
       # module 1
       Module1 = ::Module.new do
