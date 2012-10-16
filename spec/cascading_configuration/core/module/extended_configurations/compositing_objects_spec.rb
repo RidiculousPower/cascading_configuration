@@ -41,38 +41,38 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Composi
         include CCM
         attr_setting :some_configuration
       end
-      Encapsulation.get_configuration_value( Module1, :some_configuration ).is_a?( ::Array::Compositing ).should == true
+      Encapsulation.get_configuration( Module1, :some_configuration ).is_a?( ::Array::Compositing ).should == true
       Module1.some_configuration.is_a?( ::Array::Compositing ).should == true
     
       # module 2
       Module2 = ::Module.new do
         include Module1
       end
-      Encapsulation.get_configuration_value( Module2, :some_configuration ).nil?.should == true
+      Encapsulation.get_configuration( Module2, :some_configuration ).nil?.should == true
       Module2.some_configuration.is_a?( ::Array::Compositing ).should == true
     
       # module 3
       Module3 = ::Module.new do
         include Module2
       end
-      Encapsulation.get_configuration_value( Module3, :some_configuration ).nil?.should == true
+      Encapsulation.get_configuration( Module3, :some_configuration ).nil?.should == true
       Module3.some_configuration.is_a?( ::Array::Compositing ).should == true
     
       # class 1
       Class1 = ::Class.new do
         include Module3
       end
-      Encapsulation.get_configuration_value( Class1, :some_configuration ).nil?.should == true
+      Encapsulation.get_configuration( Class1, :some_configuration ).nil?.should == true
       Class1.some_configuration.is_a?( ::Array::Compositing ).should == true
     
       # subclass 1
       Class2 = ::Class.new( Class1 )
-      Encapsulation.get_configuration_value( Class2, :some_configuration ).nil?.should == true
+      Encapsulation.get_configuration( Class2, :some_configuration ).nil?.should == true
       Class2.some_configuration.is_a?( ::Array::Compositing ).should == true
     
       # instance
       Instance = Class2.new
-      Encapsulation.get_configuration_value( Instance, :some_configuration ).nil?.should == true
+      Encapsulation.get_configuration( Instance, :some_configuration ).nil?.should == true
       Instance.some_configuration.is_a?( ::Array::Compositing ).should == true
             
     end

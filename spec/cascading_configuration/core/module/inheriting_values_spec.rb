@@ -4,7 +4,7 @@ require_relative '../../../../lib/cascading_configuration.rb'
 describe ::CascadingConfiguration::Core::Module::InheritingValues do
 
   ########################################
-  #  get_configuration_value_searching_upward  #
+  #  get_configuration_searching_upward  #
   ########################################
 
   it 'can get the first defined configuration searching up the module configuration inheritance chain' do
@@ -37,21 +37,21 @@ describe ::CascadingConfiguration::Core::Module::InheritingValues do
       Encapsulation.register_child_for_parent( Instance_D, Instance_C1 )
       Encapsulation.register_child_for_parent( Instance_D, Instance_C2 )
       
-      Encapsulation.set_configuration_value( Instance_A, :some_configuration, :some_value )
-      Encapsulation.set_configuration_value( Instance_B, :some_other_configuration, :some_other_value )
+      Encapsulation.set_configuration( Instance_A, :some_configuration, :some_value )
+      Encapsulation.set_configuration( Instance_B, :some_other_configuration, :some_other_value )
       
       CCM.module_eval do
-        get_configuration_value_searching_upward( Encapsulation, Instance_B, :some_configuration ).should == :some_value
-        get_configuration_value_searching_upward( Encapsulation, Instance_B, :some_other_configuration ).should == :some_other_value
-        get_configuration_value_searching_upward( Encapsulation, Instance_C1, :some_configuration ).should == :some_value
-        get_configuration_value_searching_upward( Encapsulation, Instance_C1, :some_other_configuration ).should == :some_other_value
-        Encapsulation.set_configuration_value( Instance_C1, :yet_another_configuration, :another_value )
-        get_configuration_value_searching_upward( Encapsulation, Instance_C1, :yet_another_configuration ).should == :another_value
-        get_configuration_value_searching_upward( Encapsulation, Instance_C2, :some_configuration ).should == :some_value
-        get_configuration_value_searching_upward( Encapsulation, Instance_C2, :some_other_configuration ).should == :some_other_value
-        get_configuration_value_searching_upward( Encapsulation, Instance_D, :some_configuration ).should == :some_value
-        get_configuration_value_searching_upward( Encapsulation, Instance_D, :some_other_configuration ).should == :some_other_value
-        get_configuration_value_searching_upward( Encapsulation, Instance_D, :yet_another_configuration ).should == :another_value
+        get_configuration_searching_upward( Encapsulation, Instance_B, :some_configuration ).should == :some_value
+        get_configuration_searching_upward( Encapsulation, Instance_B, :some_other_configuration ).should == :some_other_value
+        get_configuration_searching_upward( Encapsulation, Instance_C1, :some_configuration ).should == :some_value
+        get_configuration_searching_upward( Encapsulation, Instance_C1, :some_other_configuration ).should == :some_other_value
+        Encapsulation.set_configuration( Instance_C1, :yet_another_configuration, :another_value )
+        get_configuration_searching_upward( Encapsulation, Instance_C1, :yet_another_configuration ).should == :another_value
+        get_configuration_searching_upward( Encapsulation, Instance_C2, :some_configuration ).should == :some_value
+        get_configuration_searching_upward( Encapsulation, Instance_C2, :some_other_configuration ).should == :some_other_value
+        get_configuration_searching_upward( Encapsulation, Instance_D, :some_configuration ).should == :some_value
+        get_configuration_searching_upward( Encapsulation, Instance_D, :some_other_configuration ).should == :some_other_value
+        get_configuration_searching_upward( Encapsulation, Instance_D, :yet_another_configuration ).should == :another_value
       end
       
     end    

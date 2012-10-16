@@ -17,7 +17,7 @@ class ::CascadingConfiguration::Core::Module::InheritingValues < ::CascadingConf
   
   def setter( encapsulation, instance, name, value )
     
-    return encapsulation.set_configuration_value( instance, name, value )
+    return encapsulation.set_configuration( instance, name, value )
     
   end
   
@@ -27,7 +27,7 @@ class ::CascadingConfiguration::Core::Module::InheritingValues < ::CascadingConf
 
   def getter( encapsulation, instance, name )
     
-    return get_configuration_value_searching_upward( encapsulation, instance, name )
+    return get_configuration_searching_upward( encapsulation, instance, name )
     
   end
 
@@ -44,10 +44,10 @@ class ::CascadingConfiguration::Core::Module::InheritingValues < ::CascadingConf
   alias_method( :instance_setter, :setter )
 
   ########################################
-  #  get_configuration_value_searching_upward  #
+  #  get_configuration_searching_upward  #
   ########################################
 
-  def get_configuration_value_searching_upward( encapsulation, instance, configuration_name )
+  def get_configuration_searching_upward( encapsulation, instance, configuration_name )
 
     configuration_value = nil
 
@@ -64,7 +64,7 @@ class ::CascadingConfiguration::Core::Module::InheritingValues < ::CascadingConf
     end
 
     if did_match_ancestor
-      configuration_value = encapsulation.get_configuration_value( matching_ancestor, configuration_name )
+      configuration_value = encapsulation.get_configuration( matching_ancestor, configuration_name )
     end
     
     return configuration_value

@@ -33,7 +33,7 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
 
   def create_configuration( encapsulation, instance, name )
     
-    unless compositing_object = encapsulation.get_configuration_value( instance, name )
+    unless compositing_object = encapsulation.get_configuration( instance, name )
     
       super
 
@@ -56,7 +56,7 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
     
       end
         
-      encapsulation.set_configuration_value( instance, name, compositing_object )    
+      encapsulation.set_configuration( instance, name, compositing_object )    
     
     end
     
@@ -86,7 +86,7 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
   
   def setter( encapsulation, instance, name, value )
     
-    compositing_object = encapsulation.get_configuration_value( instance, name )
+    compositing_object = encapsulation.get_configuration( instance, name )
 
     compositing_object.replace( value )
 
@@ -114,7 +114,7 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
 
   def getter( encapsulation, instance, name )
         
-    return encapsulation.get_configuration_value( instance, name )
+    return encapsulation.get_configuration( instance, name )
     
   end
 
@@ -126,7 +126,7 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
     
     compositing_object = nil
 
-    unless compositing_object = encapsulation.get_configuration_value( instance, name )
+    unless compositing_object = encapsulation.get_configuration( instance, name )
       compositing_object = initialize_compositing_configuration_for_parent( encapsulation, instance, name )
     end
 
@@ -140,7 +140,7 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
   
   def initialize_compositing_configuration_for_parent( encapsulation, instance, configuration_name )
 
-    unless compositing_object = encapsulation.get_configuration_value( instance, configuration_name )
+    unless compositing_object = encapsulation.get_configuration( instance, configuration_name )
       compositing_object = create_configuration( encapsulation, instance, configuration_name )
     end
     
@@ -154,10 +154,10 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
       # We can break at the first ancestor that we hit that has initialized for parent
       # or if we run out of ancestors.
 
-      parent_composite_object = encapsulation.get_configuration_value( parent, configuration_name )
+      parent_composite_object = encapsulation.get_configuration( parent, configuration_name )
       parent_composite_object2 = nil
       if parent2 = encapsulation.parent_for_configuration( parent, configuration_name )
-        parent_composite_object2 = encapsulation.get_configuration_value( parent2, configuration_name )
+        parent_composite_object2 = encapsulation.get_configuration( parent2, configuration_name )
       end
       
       # if first parent for configuration isn't initialized yet, initialize it
