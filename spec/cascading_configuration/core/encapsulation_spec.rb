@@ -414,11 +414,11 @@ describe ::CascadingConfiguration::Core::Encapsulation do
   end
 
   ###################################
-  #  set_configuration              #
-  #  get_configuration              #
+  #  set_configuration_value              #
+  #  get_configuration_value              #
   #  has_configuration_value?       #
-  #  configuration_variables        #
-  #  remove_configuration_variable  #
+  #  configuration_values        #
+  #  remove_configuration_value  #
   ###################################
   
   it 'can set, get and remove configuration variables' do
@@ -427,12 +427,12 @@ describe ::CascadingConfiguration::Core::Encapsulation do
       ForInstance = ::Module.new
       Encapsulation.instance_eval do
         has_configuration_value?( ForInstance, :some_variable ).should == false
-        set_configuration( ForInstance, :some_variable, :some_value )
+        set_configuration_value( ForInstance, :some_variable, :some_value )
         has_configuration_value?( ForInstance, :some_variable ).should == true
-        get_configuration( ForInstance, :some_variable ).should == :some_value
-        configuration_variables( ForInstance ).should == { :some_variable => :some_value }
-        remove_configuration_variable( ForInstance, :some_variable )
-        configuration_variables( ForInstance ).should == { }
+        get_configuration_value( ForInstance, :some_variable ).should == :some_value
+        configuration_values( ForInstance ).should == { :some_variable => :some_value }
+        remove_configuration_value( ForInstance, :some_variable )
+        configuration_values( ForInstance ).should == { }
         has_configuration_value?( ForInstance, :some_variable ).should == false
       end
     end
