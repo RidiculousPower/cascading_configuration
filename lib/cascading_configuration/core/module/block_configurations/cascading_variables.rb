@@ -57,12 +57,12 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::CascadingVari
 
   end
 
-  #####################################################
-  #  initialize_compositing_configuration_for_parent  #
-  #####################################################
+  ##############################
+  #  initialize_configuration  #
+  ##############################
   
   # Pending.
-  def initialize_compositing_configuration_for_parent( encapsulation, instance, configuration_name )
+  def initialize_configuration( encapsulation, instance, configuration_name )
 
     raise 'Pending.'
   

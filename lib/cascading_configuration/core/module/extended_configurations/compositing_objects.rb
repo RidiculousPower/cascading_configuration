@@ -68,9 +68,44 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
   #  initialize_configuration  #
   ##############################
   
-  def initialize_configuration( encapsulation, instance, name )
+  def initialize_configuration( encapsulation, instance, configuration_name )
     
-    initialize_compositing_configuration_for_parent( encapsulation, instance, name )
+    unless compositing_object = encapsulation.get_configuration( instance, configuration_name )
+      compositing_object = create_configuration( encapsulation, instance, configuration_name )
+    end
+    
+    # if instance has a parent
+    if parent = encapsulation.parent_for_configuration( instance, configuration_name )
+
+      # We are initializing for existing ancestors, but they may not have initialized yet - 
+      # so we need to make sure they did before we initialize for instance.
+      
+      # As long as our ancestor has an ancestor make sure that it has initialized for its parent.
+      # We can break at the first ancestor that we hit that has initialized for parent
+      # or if we run out of ancestors.
+
+      parent_composite_object = encapsulation.get_configuration( parent, configuration_name )
+      parent_composite_object2 = nil
+      if parent2 = encapsulation.parent_for_configuration( parent, configuration_name )
+        parent_composite_object2 = encapsulation.get_configuration( parent2, configuration_name )
+      end
+      
+      # if first parent for configuration isn't initialized yet, initialize it
+      unless parent_composite_object and
+             parent_composite_object.has_parent?( parent_composite_object2 )
+
+        parent_composite_object = initialize_configuration( encapsulation, 
+                                                            parent, 
+                                                            configuration_name )
+      end
+
+      unless compositing_object.has_parent?( parent_composite_object )
+        compositing_object.register_parent( parent_composite_object )
+      end
+      
+    end
+
+    return compositing_object
     
   end
 
@@ -127,56 +162,11 @@ class ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Compositin
     compositing_object = nil
 
     unless compositing_object = encapsulation.get_configuration( instance, name )
-      compositing_object = initialize_compositing_configuration_for_parent( encapsulation, instance, name )
+      compositing_object = initialize_configuration( encapsulation, instance, name )
     end
 
     return compositing_object
     
-  end
-
-  #####################################################
-  #  initialize_compositing_configuration_for_parent  #
-  #####################################################
-  
-  def initialize_compositing_configuration_for_parent( encapsulation, instance, configuration_name )
-
-    unless compositing_object = encapsulation.get_configuration( instance, configuration_name )
-      compositing_object = create_configuration( encapsulation, instance, configuration_name )
-    end
-    
-    # if instance has a parent
-    if parent = encapsulation.parent_for_configuration( instance, configuration_name )
-
-      # We are initializing for existing ancestors, but they may not have initialized yet - 
-      # so we need to make sure they did before we initialize for instance.
-      
-      # As long as our ancestor has an ancestor make sure that it has initialized for its parent.
-      # We can break at the first ancestor that we hit that has initialized for parent
-      # or if we run out of ancestors.
-
-      parent_composite_object = encapsulation.get_configuration( parent, configuration_name )
-      parent_composite_object2 = nil
-      if parent2 = encapsulation.parent_for_configuration( parent, configuration_name )
-        parent_composite_object2 = encapsulation.get_configuration( parent2, configuration_name )
-      end
-      
-      # if first parent for configuration isn't initialized yet, initialize it
-      unless parent_composite_object and
-             parent_composite_object.has_parent?( parent_composite_object2 )
-
-        parent_composite_object = initialize_compositing_configuration_for_parent( encapsulation, 
-                                                                                   parent, 
-                                                                                   configuration_name )
-      end
-
-      unless compositing_object.has_parent?( parent_composite_object )
-        compositing_object.register_parent( parent_composite_object )
-      end
-      
-    end
-
-    return compositing_object
-  
   end
 
 end

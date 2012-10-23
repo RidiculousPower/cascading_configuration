@@ -21,10 +21,10 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Composi
     end
   end
   
-  #####################################################
-  #  create_configuration                             #
-  #  initialize_compositing_configuration_for_parent  #
-  #####################################################
+  ##############################
+  #  create_configuration      #
+  #  initialize_configuration  #
+  ##############################
   
   it 'ensures objects are initialized for each level in hiearchy' do
     module ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects::CreateConfigurationMock

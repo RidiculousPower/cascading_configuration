@@ -245,9 +245,9 @@ class ::CascadingConfiguration::Core::Encapsulation < ::Module
 
   end
 
-  ###############################
-  #  register_child_for_parent  #
-  ###############################
+  #####################
+  #  register_parent  #
+  #####################
   
   ###
   # Register all parent configurations for child instance with parent instance as parent.
@@ -264,7 +264,7 @@ class ::CascadingConfiguration::Core::Encapsulation < ::Module
   #
   #         Self.
   #
-  def register_child_for_parent( child, parent )
+  def register_parent( child, parent )
 
     super
 
@@ -282,6 +282,40 @@ class ::CascadingConfiguration::Core::Encapsulation < ::Module
     
     return self
 
+  end
+  
+  alias_method( :register_child_for_parent, :register_parent )
+
+  ####################
+  #  replace_parent  #
+  ####################
+
+  def replace_parent( child, existing_parent, new_parent )
+  
+    parent_configurations = configurations( child )
+
+    parent_configurations.each do |this_name, this_configuration_module|
+      replace_parent_for_configuration( child, existing_parent, new_parent, this_name )
+    end
+    
+    return self
+  
+  end
+
+  ###################
+  #  remove_parent  #
+  ###################
+
+  def remove_parent( child, existing_parent )
+
+    parent_configurations = configurations( child )
+
+    parent_configurations.each do |this_name, this_configuration_module|
+      remove_parent_for_configuration( child, existing_parent, this_name )
+    end
+    
+    return self
+  
   end
 
   #######################################
@@ -368,6 +402,77 @@ class ::CascadingConfiguration::Core::Encapsulation < ::Module
     
     return self
     
+  end
+
+  ######################################
+  #  replace_parent_for_configuration  #
+  ######################################
+
+  def replace_parent_for_configuration( child, existing_parent, new_parent, configuration_name )
+  
+    parents_hash = parent_for_configuration_hash( child )
+    
+    # get module to determine whether we can have one ore multiple parents
+    configuration_module = configurations( child )[ configuration_name ]
+    if configuration_module.permits_multiple_parents?
+    
+      # replace parent in tracking array for configuration
+      parents_array = parents_hash[ configuration_name ]
+      parent_index = parents_array.index( existing_parent )
+      parents_array[ parent_index ] = new_parent
+
+      # if we have a CO ask it to replace parent
+      # we may not have a CO yet, in which case we don't have to do anything
+      if compositing_object = get_configuration( child, configuration_name ) and
+        parent_compositing_object = get_configuration( existing_parent, configuration_name )
+        new_parent_compositing_object = configuration_module.initialize_configuration( self, 
+                                                                                       new_parent, 
+                                                                                       configuration_name )
+        compositing_object.replace_parent( parent_compositing_object, new_parent_compositing_object )
+      end
+  
+    else
+    
+      # otherwise, set parent value for configuration
+      parents_hash[ configuration_name ] = new_parent
+
+    end
+
+    return self
+    
+  end
+
+  #####################################
+  #  remove_parent_for_configuration  #
+  #####################################
+
+  def remove_parent_for_configuration( child, existing_parent, configuration_name )
+    
+    parents_hash = parent_for_configuration_hash( child )
+    
+    # get module to determine whether we can have one ore multiple parents
+    configuration_module = configurations( child )[ configuration_name ]
+    if configuration_module.permits_multiple_parents?
+
+      # remove parent in tracking array for configuration
+      parents_array = parents_hash[ configuration_name ]
+      parent_index = parents_array.delete( existing_parent )
+
+      # if we have a CO ask it to unregister parent
+      # we may not have a CO yet, in which case we don't have to do anything
+      if compositing_object = encapsulation.get_configuration( child, configuration_name )
+        compositing_object.unregister_parent( existing_parent )
+      end      
+  
+    else
+    
+      # otherwise, delete parent value
+      parents_hash.delete( configuration_name )
+
+    end
+
+    return self
+  
   end
 
   ##################################
