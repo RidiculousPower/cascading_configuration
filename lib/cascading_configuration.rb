@@ -7,6 +7,9 @@ require_relative './namespaces'
 # source file requires
 require_relative './requires.rb'
 
+# any post-require setup
+require_relative './setup.rb'
+
 module ::CascadingConfiguration
   
   ConfigurationModules = [ Setting, 

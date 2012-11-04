@@ -269,7 +269,7 @@ class ::CascadingConfiguration::Core::Encapsulation < ::Module
     super
 
     # Modules already have configurations and if parent already has configurations 
-    unless parent.is_a?( ::Module ) or has_parents?( parent )
+    unless parent.__is_a__?( ::Module ) or has_parents?( parent )
       register_child_for_parent( parent, parent.class )
     end
     

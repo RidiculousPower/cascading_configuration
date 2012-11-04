@@ -91,7 +91,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
 
     @instance = instance.extend( ::Module::Cluster )
     
-    if @instance.is_a?( ::Module )
+    if @instance.__is_a__?( ::Module )
       initialize_constant_in_instance
     else
       initialize_constant_in_self
@@ -149,7 +149,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   
   def initialize_inheritance_for_instance( instance, extending = false )
 
-    unless instance.is_a?( ::Module::Cluster ) and 
+    unless instance.__is_a__?( ::Module::Cluster ) and 
            instance.has_cluster?( :cascading_configuration_inheritance )
       
       instance.extend( ::Module::Cluster )
