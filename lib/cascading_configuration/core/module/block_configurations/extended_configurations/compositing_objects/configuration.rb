@@ -2,7 +2,7 @@
 ###
 # Configurations extended for Compositing Objects.
 #
-class ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration < 
+class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration < 
       ::CascadingConfiguration::Core::Module::Configuration
   
   ################
@@ -237,5 +237,14 @@ class ::CascadingConfiguration::Core::Module::ExtendableConfigurations::Composit
     
   end
 
+  ############
+  #  value=  #
+  ############
+  
+  def value=( value )
+
+    return @value.replace( value )
+    
+  end
   
 end

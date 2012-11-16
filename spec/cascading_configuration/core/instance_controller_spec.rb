@@ -3,6 +3,11 @@ require_relative '../../../lib/cascading_configuration.rb'
 
 describe ::CascadingConfiguration::Core::InstanceController do
 
+  before :all do
+    @instance = ::Module.new
+    @instance_controller = ::CascadingConfiguration::Core::InstanceController.new( @instance )
+  end
+
   ##############################
   #  initialize                #
   #  instance                  #
@@ -10,255 +15,95 @@ describe ::CascadingConfiguration::Core::InstanceController do
   ##############################
   
   it 'can initialize for an instance' do
-    module ::CascadingConfiguration::Core::InstanceController::InitializeMock
-      ForInstance = ::Module.new
-      InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
-      InstanceController.instance.should == ForInstance
-      ForInstance::Controller.should == InstanceController
-      ::CascadingConfiguration::Core::InstanceController.instance_controller( ForInstance ).should == InstanceController
-      for_instance = ::Object.new
-      instance_controller = ::CascadingConfiguration::Core::InstanceController.new( for_instance )
-      instance_controller.instance.should == for_instance
-    end
+    @instance_controller.instance.should == @instance
+    @instance::Controller.should == @instance_controller
+    ::CascadingConfiguration::Core::InstanceController.instance_controller( @instance ).should == @instance_controller
   end
 
-  ####################################
-  #  initialize_inheriting_instance  #
-  ####################################
-  
-  it 'causes the instance it extends to be enabled for managing inheritable support modules' do
-    module ::CascadingConfiguration::Core::InstanceController::InheritanceMock
-      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
-      ForInstance = ::Module.new
-      InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
-      AnotherModule = ::Module.new do
-        include ForInstance
-      end
-      #AnotherAnotherModule = ::Module.new do
-      #  include AnotherModule
-      #end
-      #Encapsulation.parents( AnotherAnotherModule ).include?( AnotherModule ).should == true
-    end
-  end
-  
-  ###########################
-  #  add_extension_modules  #
-  #  extension_modules      #
-  ###########################
-  
-  it 'can declare and retrieve extension modules for a configuration name on instance in an encapsulation' do
-    module ::CascadingConfiguration::Core::InstanceController::AddExtensionModulesMock
-    
-      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
-      
-      ForInstance = ::Module.new
-      InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
-      
-      module SomeModuleA
-      end
-      module SomeModuleB
-      end
-      module SomeModuleC
-      end
-      
-      InstanceController.add_extension_modules( :some_configuration, Encapsulation, SomeModuleA, SomeModuleB, SomeModuleC ) do 
-        def some_other_stuff
-        end
-      end
-      extension_modules = InstanceController.extension_modules( :some_configuration, Encapsulation )
-      extension_modules.count.should == 4
-    end
-  end
-  
-  ##############################
-  #  extension_modules_upward  #
-  ##############################
-
-  it 'can get an array of extension modules when a single parent is permitted' do
-    module ::CascadingConfiguration::Core::InstanceController::ExtensionModulesUpwardSingleParentMock
-
-      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
-
-      CCMMock = ::Module.new do
-        def self.permits_multiple_parents?
-          return false
-        end
-        def self.create_configuration( encapsulation, instance, this_name )
-        end
-        def self.initialize_configuration( encapsulation, instance, this_name )
-        end
-      end
-
-      Instance_A = ::Module.new
-      InstanceController_A = ::CascadingConfiguration::Core::InstanceController.new( Instance_A )
-      Encapsulation.register_configuration( Instance_A, :some_configuration, CCMMock )
-      ExtensionModule_A1 = ::Module.new
-      ExtensionModule_A2 = ::Module.new
-      InstanceController_A.add_extension_modules( :some_configuration, Encapsulation, ExtensionModule_A1, ExtensionModule_A2 ) do
-        def some_other_stuff
-        end        
-      end
-      InstanceController_A.extension_modules( :some_configuration ).count.should == 3
-      InstanceController_A.extension_modules_upward( :some_configuration ).should == [ InstanceController_A::Default_some_configuration, ExtensionModule_A2, ExtensionModule_A1 ]
-
-
-      Instance_B = ::Module.new
-      Encapsulation.register_parent( Instance_B, Instance_A )
-  
-      Instance_C = ::Module.new
-      InstanceController_C = ::CascadingConfiguration::Core::InstanceController.new( Instance_C )
-      Encapsulation.register_parent( Instance_C, Instance_B )
-      ExtensionModule_C1 = ::Module.new
-      InstanceController_C.add_extension_modules( :some_configuration, Encapsulation, ExtensionModule_C1 ) do
-        def some_other_stuff
-        end        
-      end
-      InstanceController_C.extension_modules_upward( :some_configuration ).should == [ InstanceController_C::Default_some_configuration, ExtensionModule_C1, InstanceController_A::Default_some_configuration, ExtensionModule_A2, ExtensionModule_A1 ]
-
-      InstanceController_B = ::CascadingConfiguration::Core::InstanceController.new( Instance_B )
-      InstanceController_B.extension_modules_upward( :some_configuration ).should == [ InstanceController_A::Default_some_configuration, ExtensionModule_A2, ExtensionModule_A1 ]
-      
-    end
-  end
-
-  it 'can get an array of extension modules when multiple parents are permitted' do
-    module ::CascadingConfiguration::Core::InstanceController::ExtensionModulesUpwardMultipleParentMock
-
-      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
-
-      CCMMock = ::Module.new do
-        def self.permits_multiple_parents?
-          return true
-        end
-        def self.create_configuration( encapsulation, instance, this_name )
-        end
-        def self.initialize_configuration( encapsulation, instance, this_name )
-        end
-      end
-
-      Instance_A = ::Module.new
-      InstanceController_A = ::CascadingConfiguration::Core::InstanceController.new( Instance_A )
-      Encapsulation.register_configuration( Instance_A, :some_configuration, CCMMock )
-      ExtensionModule_A1 = ::Module.new
-      ExtensionModule_A2 = ::Module.new
-      InstanceController_A.add_extension_modules( :some_configuration, Encapsulation, ExtensionModule_A1, ExtensionModule_A2 ) do
-        def some_other_stuff
-        end        
-      end
-      InstanceController_A.extension_modules( :some_configuration ).count.should == 3
-      InstanceController_A.extension_modules_upward( :some_configuration ).should == [ InstanceController_A::Default_some_configuration, ExtensionModule_A2, ExtensionModule_A1 ]
-
-
-      Instance_B = ::Module.new
-      Encapsulation.register_parent( Instance_B, Instance_A )
-  
-      Instance_C = ::Module.new
-      InstanceController_C = ::CascadingConfiguration::Core::InstanceController.new( Instance_C )
-      Encapsulation.register_parent( Instance_C, Instance_B )
-      ExtensionModule_C1 = ::Module.new
-      InstanceController_C.add_extension_modules( :some_configuration, Encapsulation, ExtensionModule_C1 ) do
-        def some_other_stuff
-        end        
-      end
-      InstanceController_C.extension_modules_upward( :some_configuration ).should == [ InstanceController_C::Default_some_configuration, ExtensionModule_C1, InstanceController_A::Default_some_configuration, ExtensionModule_A2, ExtensionModule_A1 ]
-
-      InstanceController_B = ::CascadingConfiguration::Core::InstanceController.new( Instance_B )
-      InstanceController_B.extension_modules_upward( :some_configuration ).should == [ InstanceController_A::Default_some_configuration, ExtensionModule_A2, ExtensionModule_A1 ]
-      
-    end
-  end
-  
   ####################
   #  create_support  #
   #  support         #
   ####################
 
   it 'can manage creation and return of module instances' do
-    module ::CascadingConfiguration::Core::InstanceController::CreateSupportMock
-      
-      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
-      
-      ForInstance = ::Module.new
-      InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
+    # should_include
+    module_instance_include = @instance_controller.create_support( :include, nil, true, false, false, false )
+    @instance_controller.support( :include ).should == module_instance_include
+    @instance.ancestors.include?( module_instance_include ).should == true
+    @instance.is_a?( module_instance_include ).should == false
+    
+    # should_extend
+    module_instance_extend = @instance_controller.create_support( :extend, false, nil, true, false, false )
+    @instance_controller.support( :extend ).should == module_instance_extend
+    @instance.ancestors.include?( module_instance_extend ).should == false
+    @instance.is_a?( module_instance_extend ).should == true
+    
+    # should_cascade_includes
+    module_instance_cascade_includes = @instance_controller.create_support( :cascade_includes, false, nil, false, true, false )
+    @instance_controller.support( :cascade_includes ).should == module_instance_cascade_includes
+    @instance.ancestors.include?( module_instance_cascade_includes ).should == false
+    @instance.is_a?( module_instance_cascade_includes ).should == false
+    
+    # should_cascade_extends
+    module_instance_cascade_extends = @instance_controller.create_support( :cascade_extends, nil, false, false, false, true )
+    @instance_controller.support( :cascade_extends ).should == module_instance_cascade_extends
+    @instance.ancestors.include?( module_instance_cascade_extends ).should == false
+    @instance.is_a?( module_instance_cascade_extends ).should == false
+    
+    instance = @instance
+    
+    another_module_includeA = ::Module.new
+    another_module_includeA.instance_eval do
+      include instance
+      ancestors.include?( module_instance_cascade_includes ).should == true
+      eigenclass = class << self ; self ; end
+      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == true
+    end
+    another_module_includeB = ::Module.new
+    another_module_includeB.instance_eval do
+      include another_module_includeA
+      ancestors.include?( module_instance_cascade_includes ).should == true
+      eigenclass = class << self ; self ; end
+      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == true
+    end
+    another_module_includeC = ::Module.new
+    another_module_includeC.instance_eval do
+      include another_module_includeB
+      ancestors.include?( module_instance_cascade_includes ).should == true
+      eigenclass = class << self ; self ; end
+      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == true
+    end
+    another_module_class_include = ::Class.new
+    another_module_class_include.instance_eval do
+      include another_module_includeC
+      ancestors.include?( module_instance_cascade_includes ).should == true
+      eigenclass = class << self ; self ; end
+      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == true
+    end
 
-      # should_include
-      ModuleInstance_Include = InstanceController.create_support( :include, Encapsulation, nil, true, false, false, false )
-      InstanceController.support( :include ).should == ModuleInstance_Include
-      ForInstance.ancestors.include?( ModuleInstance_Include ).should == true
-      ForInstance.is_a?( ModuleInstance_Include ).should == false
-      
-      # should_extend
-      ModuleInstance_Extend = InstanceController.create_support( :extend, Encapsulation, false, nil, true, false, false )
-      InstanceController.support( :extend ).should == ModuleInstance_Extend
-      ForInstance.ancestors.include?( ModuleInstance_Extend ).should == false
-      ForInstance.is_a?( ModuleInstance_Extend ).should == true
-      
-      # should_cascade_includes
-      ModuleInstance_CascadeIncludes = InstanceController.create_support( :cascade_includes, Encapsulation, false, nil, false, true, false )
-      InstanceController.support( :cascade_includes ).should == ModuleInstance_CascadeIncludes
-      ForInstance.ancestors.include?( ModuleInstance_CascadeIncludes ).should == false
-      ForInstance.is_a?( ModuleInstance_CascadeIncludes ).should == false
-      
-      # should_cascade_extends
-      ModuleInstance_CascadeExtends = InstanceController.create_support( :cascade_extends, Encapsulation, nil, false, false, false, true )
-      InstanceController.support( :cascade_extends ).should == ModuleInstance_CascadeExtends
-      ForInstance.ancestors.include?( ModuleInstance_CascadeExtends ).should == false
-      ForInstance.is_a?( ModuleInstance_CascadeExtends ).should == false
-      
-      AnotherModule_IncludeA = ::Module.new
-      AnotherModule_IncludeA.instance_eval do
-        include ForInstance
-        ancestors.include?( ModuleInstance_CascadeIncludes ).should == true
-        eigenclass = class << self ; self ; end
-        eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == true
-      end
-      AnotherModule_IncludeB = ::Module.new
-      AnotherModule_IncludeB.instance_eval do
-        include AnotherModule_IncludeA
-        ancestors.include?( ModuleInstance_CascadeIncludes ).should == true
-        eigenclass = class << self ; self ; end
-        eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == true
-      end
-      AnotherModule_IncludeC = ::Module.new
-      AnotherModule_IncludeC.instance_eval do
-        include AnotherModule_IncludeB
-        ancestors.include?( ModuleInstance_CascadeIncludes ).should == true
-        eigenclass = class << self ; self ; end
-        eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == true
-      end
-      AnotherModule_ClassInclude = ::Class.new
-      AnotherModule_ClassInclude.instance_eval do
-        include AnotherModule_IncludeC
-        ancestors.include?( ModuleInstance_CascadeIncludes ).should == true
-        eigenclass = class << self ; self ; end
-        eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == true
-      end
-
-      AnotherModule_ExtendA = ::Module.new
-      AnotherModule_ExtendA.instance_eval do
-        extend ForInstance
-        eigenclass = class << self ; self ; end
-        eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == false
-      end
-      AnotherModule_ExtendB = ::Module.new
-      AnotherModule_ExtendB.instance_eval do
-        extend AnotherModule_ExtendA
-        eigenclass = class << self ; self ; end
-        eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == false
-      end
-      AnotherModule_ExtendC = ::Module.new
-      AnotherModule_ExtendC.instance_eval do
-        extend AnotherModule_ExtendB
-        eigenclass = class << self ; self ; end
-        eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == false
-      end
-      AnotherModule_ClassExtend = ::Class.new
-      AnotherModule_ClassExtend.instance_eval do
-        extend AnotherModule_ExtendC
-        eigenclass = class << self ; self ; end
-        eigenclass.ancestors.include?( ModuleInstance_CascadeExtends ).should == false
-      end
-
+    another_module_extendA = ::Module.new
+    another_module_extendA.instance_eval do
+      extend instance
+      eigenclass = class << self ; self ; end
+      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == false
+    end
+    another_module_extendB = ::Module.new
+    another_module_extendB.instance_eval do
+      extend another_module_extendA
+      eigenclass = class << self ; self ; end
+      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == false
+    end
+    another_module_extendC = ::Module.new
+    another_module_extendC.instance_eval do
+      extend another_module_extendB
+      eigenclass = class << self ; self ; end
+      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == false
+    end
+    another_module_class_extend = ::Class.new
+    another_module_class_extend.instance_eval do
+      extend another_module_extendC
+      eigenclass = class << self ; self ; end
+      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == false
     end
   end  
 
@@ -268,17 +113,8 @@ describe ::CascadingConfiguration::Core::InstanceController do
   ##############################
   
   it 'can create a cascading support module for singleton (module/class) methods' do
-    module ::CascadingConfiguration::Core::InstanceController::CreateSingletonSupportMock
-    
-      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
-
-      ForInstance = ::Module.new
-      InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
-      
-      singleton_support = InstanceController.create_singleton_support
-      InstanceController.singleton_support.should == singleton_support
-      
-    end
+    singleton_support = @instance_controller.create_singleton_support
+    @instance_controller.singleton_support.should == singleton_support
   end
 
   #############################
@@ -287,17 +123,8 @@ describe ::CascadingConfiguration::Core::InstanceController do
   #############################
 
   it 'can create a cascading support module for instance methods' do
-    module ::CascadingConfiguration::Core::InstanceController::CreateInstanceSupportMock
-    
-      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
-      
-      ForInstance = ::Module.new
-      InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
-    
-      instance_support = InstanceController.create_instance_support
-      InstanceController.instance_support.should == instance_support
-    
-    end
+    instance_support = @instance_controller.create_instance_support
+    @instance_controller.instance_support.should == instance_support
   end
 
   ###################################
@@ -306,17 +133,8 @@ describe ::CascadingConfiguration::Core::InstanceController do
   ###################################
 
   it 'can create a non-cascading support module supporting the local object and its instances' do
-    module ::CascadingConfiguration::Core::InstanceController::CreateLocalInstanceSupportMock
-    
-      Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
-      
-      ForInstance = ::Module.new
-      InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
-    
-      local_instance_support = InstanceController.create_local_instance_support
-      InstanceController.local_instance_support.should == local_instance_support
-    
-    end
+    local_instance_support = @instance_controller.create_local_instance_support
+    @instance_controller.local_instance_support.should == local_instance_support
   end
 
 end

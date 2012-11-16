@@ -14,18 +14,11 @@ describe ::CascadingConfiguration::Core::Module::Configuration do
 
   before :each do
     
-    @module_configuration = ::CascadingConfiguration::Core::Module::Configuration.new( @module_instance, 
-                                                                                       @configuration_module,
-                                                                                       :configuration_name )
-
-    @object_configuration = ::CascadingConfiguration::Core::Module::Configuration.new( @object_instance, 
-                                                                                       @configuration_module,
-                                                                                       :object_configuration_name?,
-                                                                                       :object_configuration= )
+    configuration_class = ::CascadingConfiguration::Core::Module::Configuration
     
-    @instance_configuration = ::CascadingConfiguration::Core::Module::Configuration.new( @instance, 
-                                                                                         @configuration_module,
-                                                                                         :configuration_name )
+    @module_configuration = configuration_class.new( @module_instance, @configuration_module, :configuration_name )
+    @object_configuration = configuration_class.new( @object_instance, @configuration_module, :object_configuration_name?, :object_configuration= )
+    @instance_configuration = configuration_class.new( @instance, @configuration_module, :configuration_name )
     
   end
   

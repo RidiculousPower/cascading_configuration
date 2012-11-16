@@ -9,7 +9,7 @@ module ::CascadingConfiguration::Core::IncludeCreatesInstanceSupport
   # Include creates instance support for the instance in which include occurs.
   #
   def included( instance )
-    
+
     super if defined?( super )
     
     # Ensure our instance has an instance controller
@@ -18,7 +18,7 @@ module ::CascadingConfiguration::Core::IncludeCreatesInstanceSupport
     end
 
     instance_controller.create_instance_support
-    
+
   end
   
 end

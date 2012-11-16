@@ -1,11 +1,11 @@
 
 require_relative '../../../../../../lib/cascading_configuration.rb'
 
-describe ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration do
+describe ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration do
 
   before :all do
     
-    @configuration_module = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects.new( :ccm, ::Array::Compositing )
+    @configuration_module = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects.new( :ccm, ::Array::Compositing )
     @parent_instance = ::Module.new
     @parent_instance_two = ::Object
     @child_instance = ::Object.new
@@ -14,17 +14,11 @@ describe ::CascadingConfiguration::Core::Module::ExtendableConfigurations::Compo
   
   before :each do
     
-    @parent_configuration = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_instance, 
-                                                                                                                                     @configuration_module,
-                                                                                                                                     :parent_name )
+    configuration_class = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration
     
-    @parent_configuration_two = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_instance_two, 
-                                                                                                                                         @configuration_module,
-                                                                                                                                         :parent_two_name?,
-                                                                                                                                         :parent_two= )
-    
-    @child_configuration = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @child_instance, 
-                                                                                                                                    @parent_configuration )
+    @parent_configuration = configuration_class.new( @parent_instance, @configuration_module, :parent_name )
+    @parent_configuration_two = configuration_class.new( @parent_instance_two, @configuration_module, :parent_two_name?, :parent_two= )
+    @child_configuration = configuration_class.new( @child_instance, @parent_configuration )
     
   end
 
@@ -129,11 +123,11 @@ describe ::CascadingConfiguration::Core::Module::ExtendableConfigurations::Compo
 
 end
 
-describe ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration do
+describe ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration do
 
   before :all do
     
-    @configuration_module = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects.new( :ccm, ::Array::Compositing )
+    @configuration_module = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects.new( :ccm, ::Array::Compositing )
 
   end
   
@@ -152,39 +146,39 @@ describe ::CascadingConfiguration::Core::Module::ExtendableConfigurations::Compo
     @parent_A_B2_C1_D_E_instance = ::Object.new
     @parent_A_B2_C1_D_E_F_instance = ::Object.new
 
-    @parent_A = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_instance, @configuration_module, :configuration_name )
+    @parent_A = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_instance, @configuration_module, :configuration_name )
     @parent_A.compositing_object.push( :A )
-    @parent_A_B1 = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B1_instance, @parent_A )
+    @parent_A_B1 = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B1_instance, @parent_A )
     @parent_A_B1.compositing_object.push( :B )
-    @parent_A_B1_C1 = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B1_C1_instance, @parent_A_B1 )
+    @parent_A_B1_C1 = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B1_C1_instance, @parent_A_B1 )
     @parent_A_B1_C1.compositing_object.push( :C )
-    @parent_A_B1_C1_D = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B1_C1_D_instance, @parent_A_B1_C1 )
+    @parent_A_B1_C1_D = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B1_C1_D_instance, @parent_A_B1_C1 )
     @parent_A_B1_C1_D.compositing_object.push( :D )
-    @parent_A_B1_C1_D_E = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B1_C1_D_E_instance, @parent_A_B1_C1_D )
+    @parent_A_B1_C1_D_E = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B1_C1_D_E_instance, @parent_A_B1_C1_D )
     @parent_A_B1_C1_D_E.compositing_object.push( :E )
-    @parent_A_B1_C2 = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B1_C2_instance, @parent_A_B1 )
+    @parent_A_B1_C2 = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B1_C2_instance, @parent_A_B1 )
     @parent_A_B1_C2.compositing_object.push( :C )
-    @parent_A_B1_C2_D = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B1_C2_D_instance, @parent_A_B1_C2 )
+    @parent_A_B1_C2_D = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B1_C2_D_instance, @parent_A_B1_C2 )
     @parent_A_B1_C2_D.compositing_object.push( :D )
-    @parent_A_B2 = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B2_instance, @parent_A )
+    @parent_A_B2 = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B2_instance, @parent_A )
     @parent_A_B2.compositing_object.push( :B )
-    @parent_A_B2_C1 = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B2_C1_instance, @parent_A_B2 )
+    @parent_A_B2_C1 = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B2_C1_instance, @parent_A_B2 )
     @parent_A_B2_C1.compositing_object.push( :C )
-    @parent_A_B2_C1_D = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B2_C1_D_instance, @parent_A_B2_C1 )
+    @parent_A_B2_C1_D = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B2_C1_D_instance, @parent_A_B2_C1 )
     @parent_A_B2_C1_D.compositing_object.push( :D )
-    @parent_A_B2_C1_D_E = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B2_C1_D_E_instance, @parent_A_B2_C1_D )
+    @parent_A_B2_C1_D_E = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B2_C1_D_E_instance, @parent_A_B2_C1_D )
     @parent_A_B2_C1_D_E.compositing_object.push( :E )
-    @parent_A_B2_C1_D_E_F = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B2_C1_D_E_F_instance, @parent_A_B2_C1_D_E )
+    @parent_A_B2_C1_D_E_F = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @parent_A_B2_C1_D_E_F_instance, @parent_A_B2_C1_D_E )
     @parent_A_B2_C1_D_E_F.compositing_object.push( :F )
 
     @diamond_A_instance = ::Object.new
-    @diamond_A = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @diamond_A_instance, @parent_A_B2_C1_D_E, @parent_A_B1_C2_D )
+    @diamond_A = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @diamond_A_instance, @parent_A_B2_C1_D_E, @parent_A_B1_C2_D )
 
     @diamond_B_instance = ::Object.new
-    @diamond_B = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @diamond_B_instance, @parent_A_B2_C1, @parent_A_B1 )
+    @diamond_B = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @diamond_B_instance, @parent_A_B2_C1, @parent_A_B1 )
 
     @diamond_C_instance = ::Object.new
-    @diamond_C = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::Configuration.new( @diamond_C_instance, @parent_A, @parent_A_B1_C2 )
+    @diamond_C = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( @diamond_C_instance, @parent_A, @parent_A_B1_C2 )
     
   end
 
@@ -208,6 +202,15 @@ describe ::CascadingConfiguration::Core::Module::ExtendableConfigurations::Compo
     @diamond_C.match_lowest_parents do |this_parent|
       ! this_parent.compositing_object.include?( :C )
     end.should == [ @parent_A, @parent_A_B1 ]
+  end
+
+  ############
+  #  value=  #
+  ############
+  
+  it 'can replace the current values with new contents (assumes object responds to :replace)' do
+    @parent_A.value = [ :A, :B, :C ]
+    @parent_A.value.should == [ :A, :B, :C ]
   end
   
 end

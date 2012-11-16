@@ -313,8 +313,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
 
     aliased_method = false
     
-    if singleton_support = singleton_support
-      aliased_method = singleton_support.alias_method( alias_name, configuration_name )
+    if singleton_support_module = singleton_support
+      aliased_method = singleton_support_module.alias_method( alias_name, configuration_name )
     end
     
     return aliased_method
@@ -329,8 +329,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
 
     removed_method = false
 
-    if singleton_support = singleton_support
-      removed_method = singleton_support.remove_method( configuration_name )
+    if singleton_support_module = singleton_support
+      removed_method = singleton_support_module.remove_method( configuration_name )
     end
     
     return removed_method
@@ -345,8 +345,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
 
     undefined_method = false
 
-    if singleton_support = singleton_support
-      undefined_method = singleton_support.undef_method( configuration_name )
+    if singleton_support_module = singleton_support
+      undefined_method = singleton_support_module.undef_method( configuration_name )
     end
     
     return undefined_method
@@ -371,8 +371,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
 
     removed_method = false
 
-    if instance_support = instance_support
-      removed_method = instance_support.remove_method( configuration_name )
+    if instance_support_module = instance_support
+      removed_method = instance_support_module.remove_method( configuration_name )
     end
     
     return removed_method
@@ -387,8 +387,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
 
     undefined_method = false
 
-    if instance_support = instance_support
-      undefined_method = instance_support.undef_method( configuration_name )
+    if instance_support_module = instance_support
+      undefined_method = instance_support_module.undef_method( configuration_name )
     end
     
     return undefined_method
@@ -401,8 +401,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   
   def define_instance_method_if_support( configuration_name, & method_proc )
 
-    if instance_support = instance_support
-      instance_support.define_method( configuration_name, & method_proc )
+    if instance_support_module = instance_support
+      instance_support_module.define_method( configuration_name, & method_proc )
     end 
     
     return self
@@ -417,8 +417,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
 
     aliased_method = false
     
-    if instance_support = instance_support
-      aliased_method = instance_support.alias_method( alias_name, configuration_name )
+    if instance_support_module = instance_support
+      aliased_method = instance_support_module.alias_method( alias_name, configuration_name )
     end
     
     return aliased_method
@@ -443,8 +443,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
 
     aliased_method = false
     
-    if local_instance_support = local_instance_support
-      aliased_method = local_instance_support.alias_method( alias_name, configuration_name )
+    if local_instance_support_module = local_instance_support
+      aliased_method = local_instance_support_module.alias_method( alias_name, configuration_name )
     end
     
     return aliased_method
@@ -459,8 +459,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
 
     removed_method = false
 
-    if local_instance_support = local_instance_support
-      removed_method = local_instance_support.remove_method( configuration_name )
+    if local_instance_support_module = local_instance_support
+      removed_method = local_instance_support_module.remove_method( configuration_name )
     end
     
     return removed_method
@@ -475,8 +475,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
 
     undefined_method = false
 
-    if local_instance_support = local_instance_support
-      undefined_method = local_instance_support.undef_method( configuration_name )
+    if local_instance_support_module = local_instance_support
+      undefined_method = local_instance_support_module.undef_method( configuration_name )
     end
     
     return undefined_method

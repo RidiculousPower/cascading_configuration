@@ -448,7 +448,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
       return configuration_instance.value
     end
 
-    define_configuration_method_types( accessor_name, getter_proc, method_types )
+    define_configuration_method_types( configuration_instance, accessor_name, getter_proc, method_types )
 
     #=======================#
     #  configuration_name=  #
@@ -458,7 +458,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
       return configuration_instance.value = value
     end
     
-    define_configuration_method_types( write_accessor_name, setter_proc, method_types )
+    define_configuration_method_types( configuration_instance, write_accessor_name, setter_proc, method_types )
 
     return self
     
@@ -790,11 +790,17 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Define actual methods for configuration.
   #
+  # @param [ CascadingConfiguration::Core::Module::Configuration ]
+  #
+  #        configuration_instance
+  #
+  #        Configuration instance for which methods are to be defined.
+  #
   # @param [ Symbol, String ]
   #
   #        accessor_name
   #
-  #        Name of method to be defined
+  #        Name of method to be defined.
   #
   # @param [ Proc ]
   #
@@ -812,8 +818,11 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #
   # @return Self.
   #
-  def define_configuration_method_types( accessor_name, proc_instance, method_types )
+  def define_configuration_method_types( configuration_instance, accessor_name, proc_instance, method_types )
     
+    instance = configuration_instance.instance
+    instance_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( instance )
+
     method_types.each do |this_method_type|
       
       case this_method_type
@@ -821,29 +830,29 @@ class ::CascadingConfiguration::Core::Module < ::Module
         # Cascades through all includes, module and instance methods
         when :all
 
-          define_singleton_method( accessor_name, & proc_instance )
-          define_instance_method_if_support( accessor_name, & proc_instance )
+          instance_controller.define_singleton_method( accessor_name, & proc_instance )
+          instance_controller.define_instance_method_if_support( accessor_name, & proc_instance )
         
         # Module methods only
         when :module, :class
         
-          define_singleton_method( accessor_name, & proc_instance )
+          instance_controller.define_singleton_method( accessor_name, & proc_instance )
         
         # Instance methods only
         when :instance
 
-          define_instance_method( accessor_name, & proc_instance )
+          instance_controller.define_instance_method( accessor_name, & proc_instance )
         
         # Methods local to this instance and instances of it only
         when :local_instance
         
-          define_local_instance_method( accessor_name, & proc_instance )
-          define_instance_method_if_support( accessor_name, & proc_instance )
+          instance_controller.define_local_instance_method( accessor_name, & proc_instance )
+          instance_controller.define_instance_method_if_support( accessor_name, & proc_instance )
 
         # Methods local to this instance only
         when :object
 
-          define_local_instance_method( accessor_name, & proc_instance )
+          instance_controller.define_local_instance_method( accessor_name, & proc_instance )
         
       end
       

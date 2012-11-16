@@ -1,5 +1,5 @@
 
-class ::CascadingConfiguration::Core::Module::ExtendableConfigurations < ::CascadingConfiguration::Core::Module
+class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations < ::CascadingConfiguration::Core::Module
 
   #############################
   #  parse_extension_modules  #
@@ -53,49 +53,6 @@ class ::CascadingConfiguration::Core::Module::ExtendableConfigurations < ::Casca
     end
     
     return names_modules_hash
-    
-  end
-
-  #################################
-  #  define_configuration_method  #
-  #################################
-
-  ###
-  # Define a configuration definition method with support for extendable configurations.
-  #
-  # @param [ Symbol, String ]
-  # 
-  #        ccm_method_name
-  # 
-  #        Name to use for configuration method.
-  # 
-  # @param [ Array< Symbol, String > ]
-  # 
-  #        method_types
-  # 
-  #        Type of method being defined: 
-  #        
-  #          :all, :module, :class, :instance, :local_instance, :object.
-  #
-  # @return Self.
-  #
-  def define_configuration_method( ccm_method_name, method_types )
-    
-    ccm = self
-     
-    #===================#
-    #  ccm_method_name  #
-    #===================#
-    
-    define_method( ccm_method_name ) do |*args, & definer_block|
-      
-      ccm.define_configurations( self, method_types, *args, & definer_block )                  
-      
-      return self
-      
-    end
-
-    return self
     
   end
 

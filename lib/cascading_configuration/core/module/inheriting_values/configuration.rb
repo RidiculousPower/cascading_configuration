@@ -110,9 +110,9 @@ class ::CascadingConfiguration::Core::Module::InheritingValues::Configuration <
     
   end
 
-  ###################
+  #######################
   #  unregister_parent  #
-  ###################
+  #######################
 
   def unregister_parent
     
@@ -199,7 +199,7 @@ class ::CascadingConfiguration::Core::Module::InheritingValues::Configuration <
    
     matched_parent = nil
     
-    this_parent = @parent
+    this_parent = self
 
     begin
       if match_block.call( this_parent )
@@ -209,6 +209,36 @@ class ::CascadingConfiguration::Core::Module::InheritingValues::Configuration <
     end while this_parent = this_parent.parent
 
     return matched_parent
+    
+  end
+
+  #################
+  #  local_value  #
+  #################
+  
+  alias_method :local_value, :value
+  
+  ###########
+  #  value  #
+  ###########
+
+  def value
+
+    configuration_value = nil
+
+    matching_parent = match_parent do |this_parent|
+      if this_parent.has_value?
+        true
+      else
+        false
+      end
+    end
+
+    if matching_parent
+      configuration_value = matching_parent.local_value
+    end
+    
+    return configuration_value
     
   end
   

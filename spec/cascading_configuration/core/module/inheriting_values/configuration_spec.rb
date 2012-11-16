@@ -14,15 +14,11 @@ describe ::CascadingConfiguration::Core::Module::InheritingValues::Configuration
   
   before :each do
   
-    @parent_configuration = ::CascadingConfiguration::Core::Module::InheritingValues::Configuration.new( @parent_instance, 
-                                                                                                         @configuration_module,
-                                                                                                         :parent_name )
-    
-    @parent_configuration_two = ::CascadingConfiguration::Core::Module::InheritingValues::Configuration.new( @parent_instance_two, 
-                                                                                                             @parent_configuration )
-    
-    @child_configuration = ::CascadingConfiguration::Core::Module::InheritingValues::Configuration.new( @child_instance, 
-                                                                                                        @parent_configuration_two )
+    configuration_class = ::CascadingConfiguration::Core::Module::InheritingValues::Configuration
+  
+    @parent_configuration = configuration_class.new( @parent_instance, @configuration_module, :parent_name )
+    @parent_configuration_two = configuration_class.new( @parent_instance_two, @parent_configuration )    
+    @child_configuration = configuration_class.new( @child_instance, @parent_configuration_two )
     
   end
 
@@ -99,4 +95,13 @@ describe ::CascadingConfiguration::Core::Module::InheritingValues::Configuration
     end.should == @parent_configuration
   end
 
+  ###########
+  #  value  #
+  ###########
+
+  it 'matches value by searching upward for first match' do
+    @parent_configuration.value = :some_value
+    @child_configuration.value.should == :some_value
+  end
+  
 end
