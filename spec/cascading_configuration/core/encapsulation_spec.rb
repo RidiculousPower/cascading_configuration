@@ -51,7 +51,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
   end
 
   ###############################
-  #  register_child_for_parent  #
+  #  register_parent  #
   ###############################
 
   it 'can register children for parents when a single parent is permitted' do
@@ -71,12 +71,12 @@ describe ::CascadingConfiguration::Core::Encapsulation do
       AnotherParent = ::Module.new
       Encapsulation.module_eval do
         register_configuration( Parent, :some_configuration, CCMMock )
-        register_child_for_parent( Child, Parent )
+        register_parent( Child, Parent )
         has_configuration?( Child, :some_configuration ).should == true
         parent_for_configuration( Child, :some_configuration ).should == Parent
         register_configuration( AnotherParent, :some_other_configuration, CCMMock )
         register_configuration( Child, :some_other_configuration, CCMMock )
-        register_child_for_parent( Child, AnotherParent )
+        register_parent( Child, AnotherParent )
         has_configuration?( Child, :some_other_configuration ).should == true
         parent_for_configuration( Child, :some_other_configuration ).should == AnotherParent
         parents( Child ).include?( AnotherParent ).should == true
@@ -101,12 +101,12 @@ describe ::CascadingConfiguration::Core::Encapsulation do
       AnotherParent = ::Module.new
       Encapsulation.module_eval do
         register_configuration( Parent, :some_configuration, CCMMock )
-        register_child_for_parent( Child, Parent )
+        register_parent( Child, Parent )
         has_configuration?( Child, :some_configuration ).should == true
         parent_for_configuration( Child, :some_configuration ).should == Parent
         register_configuration( AnotherParent, :some_other_configuration, CCMMock )
         register_configuration( Child, :some_other_configuration, CCMMock )
-        register_child_for_parent( Child, AnotherParent )
+        register_parent( Child, AnotherParent )
         has_configuration?( Child, :some_other_configuration ).should == true
         parent_for_configuration( Child, :some_other_configuration ).should == AnotherParent
         parents( Child ).include?( AnotherParent ).should == true
@@ -246,7 +246,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B
         end
       end
-      Encapsulation.register_child_for_parent( MockB, MockA )
+      Encapsulation.register_parent( MockB, MockA )
       Encapsulation.register_configuration( MockB, :config_A, CCMMock )
       Encapsulation.register_configuration( MockB, :config_B, CCMMock )
     
@@ -255,7 +255,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B, :config_C1
         end
       end
-      Encapsulation.register_child_for_parent( MockC1, MockB )
+      Encapsulation.register_parent( MockC1, MockB )
       Encapsulation.register_configuration( MockC1, :config_A, CCMMock )
       Encapsulation.register_configuration( MockC1, :config_B, CCMMock )
       Encapsulation.register_configuration( MockC1, :config_C1, CCMMock )
@@ -265,7 +265,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B, :config_C2
         end
       end
-      Encapsulation.register_child_for_parent( MockC2, MockB )
+      Encapsulation.register_parent( MockC2, MockB )
       Encapsulation.register_configuration( MockC2, :config_A, CCMMock )
       Encapsulation.register_configuration( MockC2, :config_B, CCMMock )
       Encapsulation.register_configuration( MockC2, :config_C2, CCMMock )
@@ -278,8 +278,8 @@ describe ::CascadingConfiguration::Core::Encapsulation do
     
       Encapsulation.instance_eval do
     
-        register_child_for_parent( MockD, MockC1 )
-        register_child_for_parent( MockD, MockC2 )
+        register_parent( MockD, MockC1 )
+        register_parent( MockD, MockC2 )
         register_configuration( MockD, :config_A, CCMMock )
         register_configuration( MockD, :config_B, CCMMock )
         register_configuration( MockD, :config_C1, CCMMock )
@@ -343,7 +343,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B
         end
       end
-      Encapsulation.register_child_for_parent( MockB, MockA )
+      Encapsulation.register_parent( MockB, MockA )
       Encapsulation.register_configuration( MockB, :config_A, CCMMock )
       Encapsulation.register_configuration( MockB, :config_B, CCMMock )
     
@@ -352,7 +352,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B, :config_C1
         end
       end
-      Encapsulation.register_child_for_parent( MockC1, MockB )
+      Encapsulation.register_parent( MockC1, MockB )
       Encapsulation.register_configuration( MockC1, :config_A, CCMMock )
       Encapsulation.register_configuration( MockC1, :config_B, CCMMock )
       Encapsulation.register_configuration( MockC1, :config_C1, CCMMock )
@@ -362,7 +362,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B, :config_C2
         end
       end
-      Encapsulation.register_child_for_parent( MockC2, MockB )
+      Encapsulation.register_parent( MockC2, MockB )
       Encapsulation.register_configuration( MockC2, :config_A, CCMMock )
       Encapsulation.register_configuration( MockC2, :config_B, CCMMock )
       Encapsulation.register_configuration( MockC2, :config_C2, CCMMock )
@@ -375,8 +375,8 @@ describe ::CascadingConfiguration::Core::Encapsulation do
     
       Encapsulation.instance_eval do
     
-        register_child_for_parent( MockD, MockC1 )
-        register_child_for_parent( MockD, MockC2 )
+        register_parent( MockD, MockC1 )
+        register_parent( MockD, MockC2 )
         register_configuration( MockD, :config_A, CCMMock )
         register_configuration( MockD, :config_B, CCMMock )
         register_configuration( MockD, :config_C1, CCMMock )
@@ -469,7 +469,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B
         end
       end
-      Encapsulation.register_child_for_parent( MockB, MockA )
+      Encapsulation.register_parent( MockB, MockA )
       Encapsulation.register_configuration( MockB, :config_A, CCMMock )
       Encapsulation.register_configuration( MockB, :config_B, CCMMock )
     
@@ -478,7 +478,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B, :config_C1
         end
       end
-      Encapsulation.register_child_for_parent( MockC1, MockB )
+      Encapsulation.register_parent( MockC1, MockB )
       Encapsulation.register_configuration( MockC1, :config_A, CCMMock )
       Encapsulation.register_configuration( MockC1, :config_B, CCMMock )
       Encapsulation.register_configuration( MockC1, :config_C1, CCMMock )
@@ -488,7 +488,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B, :config_C2
         end
       end
-      Encapsulation.register_child_for_parent( MockC2, MockB )
+      Encapsulation.register_parent( MockC2, MockB )
       Encapsulation.register_configuration( MockC2, :config_A, CCMMock )
       Encapsulation.register_configuration( MockC2, :config_B, CCMMock )
       Encapsulation.register_configuration( MockC2, :config_C2, CCMMock )
@@ -498,7 +498,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B, :config_C1, :config_C2, :config_D
         end
       end
-      Encapsulation.register_child_for_parent( MockD, MockC2 )
+      Encapsulation.register_parent( MockD, MockC2 )
       Encapsulation.register_configuration( MockC2, :config_A, CCMMock )
       Encapsulation.register_configuration( MockC2, :config_B, CCMMock )
       Encapsulation.register_configuration( MockC2, :config_C2, CCMMock )
@@ -549,7 +549,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B
         end
       end
-      Encapsulation.register_child_for_parent( MockB, MockA )
+      Encapsulation.register_parent( MockB, MockA )
       Encapsulation.register_configuration( MockB, :config_A, CCMMock )
       Encapsulation.register_configuration( MockB, :config_B, CCMMock )
     
@@ -558,7 +558,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B, :config_C1
         end
       end
-      Encapsulation.register_child_for_parent( MockC1, MockB )
+      Encapsulation.register_parent( MockC1, MockB )
       Encapsulation.register_configuration( MockC1, :config_A, CCMMock )
       Encapsulation.register_configuration( MockC1, :config_B, CCMMock )
       Encapsulation.register_configuration( MockC1, :config_C1, CCMMock )
@@ -568,7 +568,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B, :config_C2
         end
       end
-      Encapsulation.register_child_for_parent( MockC2, MockB )
+      Encapsulation.register_parent( MockC2, MockB )
       Encapsulation.register_configuration( MockC2, :config_A, CCMMock )
       Encapsulation.register_configuration( MockC2, :config_B, CCMMock )
       Encapsulation.register_configuration( MockC2, :config_C2, CCMMock )
@@ -578,7 +578,7 @@ describe ::CascadingConfiguration::Core::Encapsulation do
           attr_accessor :config_A, :config_B, :config_C1, :config_C2, :config_D
         end
       end
-      Encapsulation.register_child_for_parent( MockD, MockC2 )
+      Encapsulation.register_parent( MockD, MockC2 )
       Encapsulation.register_configuration( MockC2, :config_A, CCMMock )
       Encapsulation.register_configuration( MockC2, :config_B, CCMMock )
       Encapsulation.register_configuration( MockC2, :config_C2, CCMMock )

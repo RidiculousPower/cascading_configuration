@@ -1,3 +1,4 @@
+
 begin ; require 'development' ; rescue ::LoadError ; end
 
 require 'to_camel_case'
@@ -10,17 +11,23 @@ basepath = 'cascading_configuration'
 
 files = [
     
-  'core/enable_module_support',
-  'core/enable_instance_support',
-  
+  'core/include_creates_instance_support',
+
   'core',
   
-  'core/encapsulation',
+  'core/auto_nesting_id_hash',
   
   'core/module',
+  'core/module/configuration',
+  'core/module/configuration/class_configuration',
+  'core/module/configuration/class_instance_configuration',
+  'core/module/configuration/module_configuration',
+  'core/module/configuration/instance_configuration',
   'core/module/inheriting_values',
+  'core/module/inheriting_values/configuration',
   'core/module/extended_configurations',
   'core/module/extended_configurations/compositing_objects',
+  'core/module/extended_configurations/compositing_objects/configuration',
   'core/module/block_configurations',
   'core/module/block_configurations/cascading_variables',
     

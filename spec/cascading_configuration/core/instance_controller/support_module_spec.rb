@@ -47,28 +47,28 @@ describe ::CascadingConfiguration::Core::InstanceController::SupportModule do
         include ForInstance_A
       end
       Encapsulation.register_configuration( ForInstance_B1, :some_other_configuration, CCMMock )
-      Encapsulation.register_child_for_parent( ForInstance_B1, ForInstance_A )
+      Encapsulation.register_parent( ForInstance_B1, ForInstance_A )
       ForInstance_B2 = ::Module.new do
         include ForInstance_A
       end
-      Encapsulation.register_child_for_parent( ForInstance_B2, ForInstance_A )
+      Encapsulation.register_parent( ForInstance_B2, ForInstance_A )
       ForInstance_C1 = ::Module.new do
         include ForInstance_B1
       end
       Encapsulation.register_configuration( ForInstance_C1, :yet_another_configuration, CCMMock )
-      Encapsulation.register_child_for_parent( ForInstance_C1, ForInstance_B1 )
+      Encapsulation.register_parent( ForInstance_C1, ForInstance_B1 )
       ForInstance_C2 = ::Module.new do
         include ForInstance_B1
       end
-      Encapsulation.register_child_for_parent( ForInstance_C2, ForInstance_B1 )
+      Encapsulation.register_parent( ForInstance_C2, ForInstance_B1 )
       ForInstance_D = ::Module.new do
         include ForInstance_B2
         include ForInstance_C1
         include ForInstance_C2
       end
-      Encapsulation.register_child_for_parent( ForInstance_D, ForInstance_B2 )
-      Encapsulation.register_child_for_parent( ForInstance_D, ForInstance_C1 )
-      Encapsulation.register_child_for_parent( ForInstance_D, ForInstance_C2 )
+      Encapsulation.register_parent( ForInstance_D, ForInstance_B2 )
+      Encapsulation.register_parent( ForInstance_D, ForInstance_C1 )
+      Encapsulation.register_parent( ForInstance_D, ForInstance_C2 )
       Module_A.super_modules.empty?.should == true
       InstanceController_B2 = ::CascadingConfiguration::Core::InstanceController.new( ForInstance_B2 )
       Module_B2 = InstanceController_B2.create_support( :some_type )
@@ -121,28 +121,28 @@ describe ::CascadingConfiguration::Core::InstanceController::SupportModule do
         attr_accessor :some_other_configuration
         include ForInstance_A
       end
-      Encapsulation.register_child_for_parent( ForInstance_B1, ForInstance_A )
+      Encapsulation.register_parent( ForInstance_B1, ForInstance_A )
       ForInstance_B2 = ::Module.new do
         include ForInstance_A
       end
-      Encapsulation.register_child_for_parent( ForInstance_B2, ForInstance_A )
+      Encapsulation.register_parent( ForInstance_B2, ForInstance_A )
       ForInstance_C1 = ::Module.new do
         include ForInstance_B1
         attr_accessor :yet_another_configuration
       end
-      Encapsulation.register_child_for_parent( ForInstance_C1, ForInstance_B1 )
+      Encapsulation.register_parent( ForInstance_C1, ForInstance_B1 )
       ForInstance_C2 = ::Module.new do
         include ForInstance_B1
       end
-      Encapsulation.register_child_for_parent( ForInstance_C2, ForInstance_B1 )
+      Encapsulation.register_parent( ForInstance_C2, ForInstance_B1 )
       ForInstance_D = ::Module.new do
         include ForInstance_B2
         include ForInstance_C1
         include ForInstance_C2
       end
-      Encapsulation.register_child_for_parent( ForInstance_D, ForInstance_B2 )
-      Encapsulation.register_child_for_parent( ForInstance_D, ForInstance_C1 )
-      Encapsulation.register_child_for_parent( ForInstance_D, ForInstance_C2 )
+      Encapsulation.register_parent( ForInstance_D, ForInstance_B2 )
+      Encapsulation.register_parent( ForInstance_D, ForInstance_C1 )
+      Encapsulation.register_parent( ForInstance_D, ForInstance_C2 )
       InstanceController_B2 = ::CascadingConfiguration::Core::InstanceController.new( ForInstance_B2 )
       Module_B2 = InstanceController_B2.create_support( :some_type )
       InstanceController_C1 = ::CascadingConfiguration::Core::InstanceController.new( ForInstance_C1 )
@@ -185,28 +185,28 @@ describe ::CascadingConfiguration::Core::InstanceController::SupportModule do
         attr_accessor :some_other_configuration
         include ForInstance_A
       end
-      Encapsulation.register_child_for_parent( ForInstance_B1, ForInstance_A )
+      Encapsulation.register_parent( ForInstance_B1, ForInstance_A )
       ForInstance_B2 = ::Module.new do
         include ForInstance_A
       end
-      Encapsulation.register_child_for_parent( ForInstance_B2, ForInstance_A )
+      Encapsulation.register_parent( ForInstance_B2, ForInstance_A )
       ForInstance_C1 = ::Module.new do
         include ForInstance_B1
         attr_accessor :yet_another_configuration
       end
-      Encapsulation.register_child_for_parent( ForInstance_C1, ForInstance_B1 )
+      Encapsulation.register_parent( ForInstance_C1, ForInstance_B1 )
       ForInstance_C2 = ::Module.new do
         include ForInstance_B1
       end
-      Encapsulation.register_child_for_parent( ForInstance_C2, ForInstance_B1 )
+      Encapsulation.register_parent( ForInstance_C2, ForInstance_B1 )
       ForInstance_D = ::Module.new do
         include ForInstance_B2
         include ForInstance_C1
         include ForInstance_C2
       end
-      Encapsulation.register_child_for_parent( ForInstance_D, ForInstance_B2 )
-      Encapsulation.register_child_for_parent( ForInstance_D, ForInstance_C1 )
-      Encapsulation.register_child_for_parent( ForInstance_D, ForInstance_C2 )
+      Encapsulation.register_parent( ForInstance_D, ForInstance_B2 )
+      Encapsulation.register_parent( ForInstance_D, ForInstance_C1 )
+      Encapsulation.register_parent( ForInstance_D, ForInstance_C2 )
       Module_A.child_modules.empty?.should == true
       InstanceController_C2 = ::CascadingConfiguration::Core::InstanceController.new( ForInstance_C2 )
       Module_C2 = InstanceController_C2.create_support( :some_type )

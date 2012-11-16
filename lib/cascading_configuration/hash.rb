@@ -5,6 +5,10 @@
 # 
 module ::CascadingConfiguration::Hash
 
+  ###############
+  #  attr_hash  #
+  ###############
+
   ###
   # Cascading hash attribute methods, which will affect instances according to include/extend pattern used.
   #
@@ -12,17 +16,24 @@ module ::CascadingConfiguration::Hash
   #
   # @overload attr_hash( *names )
   #   
-  #   @scope 
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String }, Module ] 
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String},Module] name The name to be used 
-  #    for the declared attribute. If a hash is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #          name 
   #
-  #   @yield [ ] Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
-  #    and runs module_eval( & block ) on instance with provided block.
+  #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
+  #
+  #   @yield [ ]
+  #
+  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
+
+  ######################
+  #  attr_module_hash  #
+  ######################
 
   ###
   # Cascading hash attribute module/class methods, which will affect all module singletons 
@@ -32,15 +43,24 @@ module ::CascadingConfiguration::Hash
   #
   # @overload attr_module_hash( *names )
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name The name to be used 
-  #    for the declared attribute. If a hash is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
   #
-  #   @yield [ ] Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
-  #    and runs module_eval( & block ) on instance with provided block.
+  #          name 
+  #
+  #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
+  #
+  #   @yield [ ] 
+  #
+  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
+
+  ########################
+  #  attr_instance_hash  #
+  ########################
 
   ###
   # Cascading hash instance methods, which will affect instances of including modules according to 
@@ -50,15 +70,24 @@ module ::CascadingConfiguration::Hash
   #
   # @overload attr_instance_hash( *names )
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name The name to be used 
-  #    for the declared attribute. If a hash is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
   #
-  #   @yield [ ] Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
-  #    and runs module_eval( & block ) on instance with provided block.
+  #          name 
+  #
+  #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
+  #
+  #   @yield [ ] 
+  #
+  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
+
+  #####################
+  #  attr_local_hash  #
+  #####################
 
   ###
   # Non-cascading hash methods that will affect the instance declared on as well as instances of that instance, 
@@ -68,15 +97,24 @@ module ::CascadingConfiguration::Hash
   #
   # @overload attr_local_hash( *names )
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name The name to be used 
-  #    for the declared attribute. If a hash is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
   #
-  #   @yield [ ] Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
-  #    and runs module_eval( & block ) on instance with provided block.
+  #          name 
+  #
+  #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
+  #
+  #   @yield [ ] 
+  #
+  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
+
+  ######################
+  #  attr_object_hash  #
+  ######################
 
   ###
   # Non-cascading hash methods that will affect only the instance declared on.
@@ -85,19 +123,24 @@ module ::CascadingConfiguration::Hash
   #
   # @overload attr_object_hash( *names )
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name The name to be used 
-  #    for the declared attribute. If a hash is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
   #
-  #   @yield [ ] Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
-  #    and runs module_eval( & block ) on instance with provided block.
+  #          name 
+  #
+  #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
+  #
+  #   @yield [ ] 
+  #
+  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
 
-  hash_module = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::
-                  CompositingObjects.new( :hash, ::Hash::Compositing, :default, :configuration_hash )
+  hash_module = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::
+                  CompositingObjects.new( :hash, ::Hash::Compositing, :configuration_hash )
   
-  ::CascadingConfiguration::Core.enable( self, hash_module )
+  ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( self, hash_module )
 
 end

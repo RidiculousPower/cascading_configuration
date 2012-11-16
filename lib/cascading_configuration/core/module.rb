@@ -1,71 +1,152 @@
 
+###
+# A Core Configuration Module abstracts and implements all of the primary functionality for
+#  CascadingConfiguration modules, permitting simple definition of multiple configuration
+#  module types as well as easy extension of configuration types.
+#
 class ::CascadingConfiguration::Core::Module < ::Module
   
-  DefaultEncapsulationName = :default
-  DefaultEncapsulation = ::CascadingConfiguration::Core::Encapsulation.new( DefaultEncapsulationName )
-  
-  include ::CascadingConfiguration::Core::EnableModuleSupport
-  
+  ###
+  # Prefix used for configuration definition methods.
+  #
+  DefinitionMethodPrefix = 'attr'
+    
   ################
   #  initialize  #
   ################
   
-  def initialize( ccm_name, 
-                  default_encapsulation_or_name = :default, 
-                  *ccm_aliases )
+  ###
+  # @overload new( module_type_name, module_type_name_alias, ... )
+  #
+  #   @param [ Symbol, String ] 
+  #
+  #          module_type_name
+  #
+  #          Name to be used for this configuration module.
+  #
+  #          This name will be used as the base for all method definition names.
+  #
+  #          For example: 
+  #
+  #            CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #            :attr_setting_<configuration_name>.
+  #
+  #   @param [ Symbol, String ]
+  #
+  #          module_type_name_alias
+  #
+  #          Additional names to use for this configuration module.
+  #
+  #          For example: 
+  #
+  #            CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #            and therefore has the base method name :attr_setting_<configuration_name>.
+  #
+  def initialize( module_type_name, *module_type_name_aliases )
     
     super()
     
-    encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( default_encapsulation_or_name )
+    @module_type_name = module_type_name
+    @module_type_name_aliases = module_type_name_aliases
     
-    @default_encapsulation = encapsulation
-    
-    @ccm_name = ccm_name
-    @ccm_aliases = ccm_aliases
-    
-    define_definition_methods( @ccm_name, *@ccm_aliases )
+    define_cascading_definition_methods( @module_type_name, *@module_type_name_aliases )
         
   end
 
-  ###############################
-  #  permits_multiple_parents?  #
-  ###############################
+  ##############
+  #  extended  #
+  ##############
   
-  def permits_multiple_parents?
+  ###
+  # Extend creates instance support for the instance in which extend occurs.
+  #
+  def extended( instance )
     
-    return false
+    super if defined?( super )
+    
+    # Ensure our instance has an instance controller
+    unless instance_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( instance )
+      instance_controller = ::CascadingConfiguration::Core::InstanceController.new( instance, true )
+    end
+
+    instance_controller.create_singleton_support
     
   end
 
-  ###########################
-  #  default_encapsulation  #
-  ###########################
+  ######################
+  #  module_type_name  #
+  ######################
   
-  attr_reader :default_encapsulation
+  ###
+  # Name used as base for all method definition names.
+  #
+  #   For example: 
+  #   
+  #     CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #     :attr_setting_<configuration_name>.
+  #
+  # @!attribute [r]
+  #
+  # @return [ Symbol ]
+  #
+  attr_reader :module_type_name
 
-  ##############
-  #  ccm_name  #
-  ##############
+  ##############################
+  #  module_type_name_aliases  #
+  ##############################
   
-  attr_reader :ccm_name
+  ###
+  # Name aliases used for additional method definition names.
+  #
+  #   For example: 
+  #   
+  #     CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #     and therefore has the base method name :attr_setting_<configuration_name>.
+  #
+  # @!attribute [r]
+  #
+  # @return [ Symbol ]
+  #
+  attr_reader :module_type_name_aliases
 
-  #################
-  #  ccm_aliases  #
-  #################
+  #########################################
+  #  define_cascading_definition_methods  #
+  #########################################
   
-  attr_reader :ccm_aliases
-
-  ###############################
-  #  define_definition_methods  #
-  ###############################
-  
-  def define_definition_methods( ccm_name, *ccm_aliases )
+  ###
+  # Define all cascading definition methods.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name
+  #        
+  #        Name to be used for this configuration module.
+  #        
+  #        This name will be used as the base for all method definition names.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #          :attr_setting_<configuration_name>.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name_alias
+  #        
+  #        Additional names to use for this configuration module.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #          and therefore has the base method name :attr_setting_<configuration_name>.
+  #
+  def define_cascading_definition_methods( module_type_name, *module_type_name_aliases )
     
-    define_cascading_definition_method( ccm_name, *ccm_aliases )
-    define_module_definition_method( ccm_name, *ccm_aliases )
-    define_instance_definition_method( ccm_name, *ccm_aliases )
-    define_object_definition_method( ccm_name, *ccm_aliases )
-    define_local_instance_definition_method( ccm_name, *ccm_aliases )
+    define_cascading_definition_method( module_type_name, *module_type_name_aliases )
+    define_module_definition_method( module_type_name, *module_type_name_aliases )
+    define_instance_definition_method( module_type_name, *module_type_name_aliases )
+    define_object_definition_method( module_type_name, *module_type_name_aliases )
+    define_local_instance_definition_method( module_type_name, *module_type_name_aliases )
     
   end
   
@@ -73,12 +154,40 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #  define_cascading_definition_method  #
   ########################################
   
-  def define_cascading_definition_method( ccm_name, *ccm_aliases )
+  ###
+  # Define a definition method that will cause configurations to cascade through include/extend
+  #   for both singletons (Modules and Classes) and instances.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name
+  #        
+  #        Name to be used for this configuration module.
+  #        
+  #        This name will be used as the base for all method definition names.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #          :attr_setting_<configuration_name>.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name_alias
+  #        
+  #        Additional names to use for this configuration module.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #          and therefore has the base method name :attr_setting_<configuration_name>.
+  #
+  def define_cascading_definition_method( module_type_name, *module_type_name_aliases )
 
-    ccm_method_name = cascading_method_name( ccm_name )
-    ccm_alias_names = ccm_aliases.collect { |this_alias| cascading_method_name( this_alias ) }
+    ccm_method_name = cascading_method_name( module_type_name )
+    ccm_alias_names = module_type_name_aliases.collect { |this_alias| cascading_method_name( this_alias ) }
 
-    return define_method_with_extension_modules( ccm_method_name, ccm_alias_names, :all )
+    return define_configuration_definer( ccm_method_name, ccm_alias_names, :all )
 
   end
 
@@ -86,14 +195,42 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #  define_module_definition_method  #
   #####################################
 
-  def define_module_definition_method( ccm_name, *ccm_aliases )
+  ###
+  # Define a definition method that will cause configurations to cascade through include/extend
+  #   for singletons (Modules/Classes).
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name
+  #        
+  #        Name to be used for this configuration module.
+  #        
+  #        This name will be used as the base for all method definition names.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #          :attr_module_setting_<configuration_name>.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name_alias
+  #        
+  #        Additional names to use for this configuration module.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #          and therefore has the base method name :attr_module_setting_<configuration_name>.
+  #
+  def define_module_definition_method( module_type_name, *module_type_name_aliases )
     
-    ccm_method_name = module_method_name( ccm_name )
-    ccm_alias_names = [ class_method_name( ccm_name ) ]
-    ccm_alias_names.concat( ccm_aliases.collect { |this_alias| module_method_name( this_alias ) } )
-    ccm_alias_names.concat( ccm_aliases.collect { |this_alias| class_method_name( this_alias ) } )
+    ccm_method_name = module_method_name( module_type_name )
+    ccm_alias_names = [ class_method_name( module_type_name ) ]
+    ccm_alias_names.concat( module_type_name_aliases.collect { |this_alias| module_method_name( this_alias ) } )
+    ccm_alias_names.concat( module_type_name_aliases.collect { |this_alias| class_method_name( this_alias ) } )
     
-    return define_method_with_extension_modules( ccm_method_name, ccm_alias_names, :module )
+    return define_configuration_definer( ccm_method_name, ccm_alias_names, :module )
     
   end
 
@@ -101,12 +238,40 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #  define_instance_definition_method  #
   #######################################
 
-  def define_instance_definition_method( ccm_name, *ccm_aliases )
+  ###
+  # Define a definition method that will cause configurations to cascade through include/extend
+  #   for instances.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name
+  #        
+  #        Name to be used for this configuration module.
+  #        
+  #        This name will be used as the base for all method definition names.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #          :attr_instance_setting_<configuration_name>.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name_alias
+  #        
+  #        Additional names to use for this configuration module.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #          and therefore has the base method name :attr_instance_setting_<configuration_name>.
+  #
+  def define_instance_definition_method( module_type_name, *module_type_name_aliases )
     
-    ccm_method_name = instance_method_name( ccm_name )
-    ccm_alias_names = ccm_aliases.collect { |this_alias| instance_method_name( this_alias ) }
+    ccm_method_name = instance_method_name( module_type_name )
+    ccm_alias_names = module_type_name_aliases.collect { |this_alias| instance_method_name( this_alias ) }
     
-    return define_method_with_extension_modules( ccm_method_name, ccm_alias_names, :instance )
+    return define_configuration_definer( ccm_method_name, ccm_alias_names, :instance )
     
   end
 
@@ -114,12 +279,39 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #  define_local_instance_definition_method  #
   #############################################
 
-  def define_local_instance_definition_method( ccm_name, *ccm_aliases )
+  ###
+  # Define a definition method that will create configurations that do not cascade.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name
+  #        
+  #        Name to be used for this configuration module.
+  #        
+  #        This name will be used as the base for all method definition names.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #          :attr_local_instance_setting_<configuration_name>.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name_alias
+  #        
+  #        Additional names to use for this configuration module.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #          and therefore has the base method name :attr_local_instance_setting_<configuration_name>.
+  #
+  def define_local_instance_definition_method( module_type_name, *module_type_name_aliases )
     
-    ccm_method_name = local_instance_method_name( ccm_name )
-    ccm_alias_names = ccm_aliases.collect { |this_alias| local_instance_method_name( this_alias ) }
+    ccm_method_name = local_instance_method_name( module_type_name )
+    ccm_alias_names = module_type_name_aliases.collect { |this_alias| local_instance_method_name( this_alias ) }
     
-    return define_method_with_extension_modules( ccm_method_name, ccm_alias_names, :local_instance )
+    return define_configuration_definer( ccm_method_name, ccm_alias_names, :local_instance )
     
   end
 
@@ -127,34 +319,40 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #  define_object_definition_method  #
   #####################################
 
-  def define_object_definition_method( ccm_name, *ccm_aliases )
+  ###
+  # Define a definition method that will create configurations for the instance in which they are created
+  #   as well as configurations that will cascade through include/extend for instances.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name
+  #        
+  #        Name to be used for this configuration module.
+  #        
+  #        This name will be used as the base for all method definition names.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #          :attr_object_setting_<configuration_name>.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name_alias
+  #        
+  #        Additional names to use for this configuration module.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #          and therefore has the base method name :attr_object_setting_<configuration_name>.
+  #
+  def define_object_definition_method( module_type_name, *module_type_name_aliases )
 
-    ccm_method_name = object_method_name( ccm_name )
-    ccm_alias_names = ccm_aliases.collect { |this_alias| object_method_name( this_alias ) }
+    ccm_method_name = object_method_name( module_type_name )
+    ccm_alias_names = module_type_name_aliases.collect { |this_alias| object_method_name( this_alias ) }
 
-    return define_method_with_extension_modules( ccm_method_name, ccm_alias_names, :object )
-    
-  end
-   
-  ##########################
-  #  create_configuration  #
-  ##########################
-
-  def create_configuration( encapsulation, instance, name )
-
-    encapsulation.register_configuration( instance, name, self )
-    
-    return self
-    
-  end
-
-  ##############################
-  #  initialize_configuration  #
-  ##############################
-  
-  def initialize_configuration( encapsulation, instance, name )
-    
-    # Nothing here - for subclasses to define.
+    return define_configuration_definer( ccm_method_name, ccm_alias_names, :object )
     
   end
 
@@ -162,29 +360,182 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #  define_configurations  #
   ###########################
   
-  def define_configurations( instance_controller, encapsulation, method_types, *names, & definer_block )
+  ###
+  # Define configurations for instance.
+  #
+  # @overload define_configurations( instance, method_types, configuration_name, ... )
+  #
+  #   @param [ Object ]
+  #   
+  #          instance
+  #   
+  #          Instance in which configuration method will be defined.
+  #   
+  #   @param [ Array< Symbol, String > ]
+  #   
+  #          method_types
+  #   
+  #          Type of method being defined: 
+  #   
+  #            :all, :module, :class, :instance, :local_instance, :object.
+  #
+  #   @param [ Symbol, String, Hash{ Symbol, String => Symbol, String } ]
+  #
+  #          configuration_name
+  #
+  #          Name of configuration to be defined.
+  #
+  # @return self.
+  #
+  def define_configurations( instance, method_types, *configuration_names )
 
-    accessors = instance_controller.define_configuration_methods( self, encapsulation, method_types, names, & definer_block )
-    
-    instance = instance_controller.instance
-    
-    accessors.each do |this_accessor, this_write_accessor|
-      create_configuration( encapsulation, instance, this_accessor )
+    accessors = parse_names_for_accessors( configuration_names )
+
+    accessors.each do |this_configuration_name, this_write_configuration_name|
+      define_configuration( instance, method_types, this_configuration_name, this_write_configuration_name )
     end
+    
+    return self
     
   end
 
+  ##########################
+  #  define_configuration  #
+  ##########################
+  
+  ###
+  # Define configuration for instance.
+  #
+  # @param [ Object ]
+  # 
+  #        instance
+  # 
+  #        Instance in which configuration method will be defined.
+  # 
+  # @param [ Array< Symbol, String > ]
+  # 
+  #        method_types
+  # 
+  #        Type of method being defined: 
+  # 
+  #          :all, :module, :class, :instance, :local_instance, :object.
+  # 
+  # @param [ Symbol, String ]
+  # 
+  #        accessor_name
+  # 
+  #        Name to use for configuration reader.
+  # 
+  # @param [ Symbol, String ]
+  # 
+  #        write_accessor_name
+  # 
+  #        Name to use for configuration writer.
+  # 
+  # @return self.
+  #
+  def define_configuration( instance, method_types, accessor_name, write_accessor_name )
+
+    configuration_instance = self.class::Configuration.new( instance, self, accessor_name, write_accessor_name )
+
+    ::CascadingConfiguration.define_configuration( instance, configuration_instance )
+
+    #======================#
+    #  configuration_name  #
+    #======================#
+
+    getter_proc = ::Proc.new do
+      return configuration_instance.value
+    end
+
+    define_configuration_method_types( accessor_name, getter_proc, method_types )
+
+    #=======================#
+    #  configuration_name=  #
+    #=======================#
+
+    setter_proc = ::Proc.new do |value|
+      return configuration_instance.value = value
+    end
+    
+    define_configuration_method_types( write_accessor_name, setter_proc, method_types )
+
+    return self
+    
+  end
+  
   ##################################################################################################
       private ######################################################################################
   ##################################################################################################
+
+  ###############################
+  #  parse_names_for_accessors  #
+  ###############################
+  
+  ###
+  # Parses arguments from configuration definition to normalize configuration names.
+  #
+  # @param configuration_names
+  #
+  #        [ Array< Symbol, String, Hash{ Symbol, String => Symbol, String } > ]
+  #
+  #        Configuration names for both accessor and write accessor or Hash of accessor => write accessor pairs.
+  #
+  # @return [ Hash{ Symbol, String => Symbol, String } ]
+  #
+  #         Hash of accessor => write accessor pairs.
+  #
+  def parse_names_for_accessors( configuration_names )
+    
+    accessors = { }
+    
+    configuration_names.each do |this_configuration_name|
+
+      case this_configuration_name
+
+        when ::Hash
+        
+          this_configuration_name.each do |this_accessor_configuration_name, this_write_accessor_configuration_name|
+            this_accessor_name = this_accessor_configuration_name.accessor_name
+            this_write_accessor_name = this_write_accessor_configuration_name.write_accessor_name
+            accessors[ this_accessor_name ] = this_write_accessor_name
+          end
+        
+        else
+        
+          accessors[ this_configuration_name.accessor_name ] = this_configuration_name.write_accessor_name
+        
+      end
+
+    end
+
+    return accessors
+    
+  end
 
   ###########################
   #  cascading_method_name  #
   ###########################
   
-  def cascading_method_name( base_name )
+  ###
+  # Construct string for cascading method type (:all) with module type name.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name
+  #        
+  #        Name to be used for this configuration module.
+  #        
+  #        This name will be used as the base for all method definition names.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #          :attr_setting_<configuration_name>.
+  #
+  def cascading_method_name( module_type_name )
     
-    return 'attr_' << base_name.to_s
+    return self.class::DefinitionMethodPrefix + '_' << module_type_name.to_s
     
   end
 
@@ -192,9 +543,25 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #  module_method_name  #
   ########################
 
-  def module_method_name( base_name )
+  ###
+  # Construct string for cascading method type (:module) with module type name.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name
+  #        
+  #        Name to be used for this configuration module.
+  #        
+  #        This name will be used as the base for all method definition names.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #          :attr_module_setting_<configuration_name>.
+  #
+  def module_method_name( module_type_name )
 
-    return 'attr_module_' << base_name.to_s
+    return self.class::DefinitionMethodPrefix + '_module_' << module_type_name.to_s
 
   end
 
@@ -202,9 +569,25 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #  class_method_name  #
   #######################
 
-  def class_method_name( base_name )
+  ###
+  # Construct string for cascading method type (:class) with module type name.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name
+  #        
+  #        Name to be used for this configuration module.
+  #        
+  #        This name will be used as the base for all method definition names.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #          :attr_class_setting_<configuration_name>.
+  #
+  def class_method_name( module_type_name )
 
-    return 'attr_class_' << base_name.to_s
+    return self.class::DefinitionMethodPrefix + '_class_' << module_type_name.to_s
 
   end
 
@@ -212,9 +595,25 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #  instance_method_name  #
   ##########################
 
-  def instance_method_name( base_name )
+  ###
+  # Construct string for cascading method type (:instance) with module type name.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name
+  #        
+  #        Name to be used for this configuration module.
+  #        
+  #        This name will be used as the base for all method definition names.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #          :attr_instance_setting_<configuration_name>.
+  #
+  def instance_method_name( module_type_name )
 
-    return 'attr_instance_' << base_name.to_s
+    return self.class::DefinitionMethodPrefix + '_instance_' << module_type_name.to_s
 
   end
 
@@ -222,9 +621,25 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #  local_instance_method_name  #
   ################################
 
-  def local_instance_method_name( base_name )
+  ###
+  # Construct string for cascading method type (:local_instance) with module type name.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name
+  #        
+  #        Name to be used for this configuration module.
+  #        
+  #        This name will be used as the base for all method definition names.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #          :attr_local_instance_setting_<configuration_name>.
+  #
+  def local_instance_method_name( module_type_name )
 
-    return 'attr_local_' << base_name.to_s
+    return self.class::DefinitionMethodPrefix + '_local_' << module_type_name.to_s
 
   end
 
@@ -232,59 +647,206 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #  object_method_name  #
   ########################
 
-  def object_method_name( base_name )
+  ###
+  # Construct string for cascading method type (:object) with module type name.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        module_type_name
+  #        
+  #        Name to be used for this configuration module.
+  #        
+  #        This name will be used as the base for all method definition names.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #          :attr_object_setting_<configuration_name>.
+  #
+  def object_method_name( module_type_name )
 
-    return 'attr_object_' << base_name.to_s
+    return self.class::DefinitionMethodPrefix + '_object_' << module_type_name.to_s
 
   end
 
-  ##########################################
-  #  define_method_with_extension_modules  #
-  ##########################################
+  ##################################
+  #  define_configuration_definer  #
+  ##################################
+  
+  ###
+  # Define a configuration definition method and aliases.
+  #
+  # @overload define_configuration_definer( ccm_method_name, module_type_name_aliases, method_type, ... )
+  #
+  #   @param [ Symbol, String ]
+  #
+  #          ccm_method_name
+  #
+  #          Name to use for configuration method.
+  #   
+  #   @param [ Array< Symbol, String > ]
+  #
+  #          module_type_name_aliases
+  #
+  #          Aliases to use for configuration method.
+  #   
+  #   @param [ Symbol, String ]
+  #
+  #          method_type
+  #
+  #          Type of method being defined: 
+  #          
+  #            :all, :module, :class, :instance, :local_instance, :object.
+  #
+  # @return Self.
+  #
+  def define_configuration_definer( ccm_method_name, module_type_name_aliases, *method_types )
+    
+    define_configuration_method( ccm_method_name, method_types )
+    define_configuration_method_aliases( ccm_method_name, module_type_name_aliases )
+    
+    return self
+    
+  end
+  
+  #################################
+  #  define_configuration_method  #
+  #################################
 
-  def define_method_with_extension_modules( ccm_method_name, ccm_aliases, *method_types )
-        
-    # Methods that define configurations that optionally take modules as parameters as well as a
-    # block that will be used to dynamically define an extension module for the instances created
-    # by the configurations. 
-    # 
-    # This defines attr_... :configuration_name, ModuleInstance, ... { ... }
+  ###
+  # Define a configuration definition method.
+  #
+  # @param [ Symbol, String ]
+  # 
+  #        ccm_method_name
+  # 
+  #        Name to use for configuration method.
+  # 
+  # @param [ Array< Symbol, String > ]
+  # 
+  #        method_types
+  # 
+  #        Type of method being defined: 
+  #        
+  #          :all, :module, :class, :instance, :local_instance, :object.
+  #
+  # @return Self.
+  #
+  def define_configuration_method( ccm_method_name, method_types )
     
     ccm = self
      
-    #======================#
-    #  ccm_method_name_in  #
-    #======================#
-     
-    ccm_encapsulation_method_name = ccm_method_name.to_s + '_in'
-
-    define_method( ccm_encapsulation_method_name ) do |encapsulation_or_name, *args, & definer_block|
+    #===================#
+    #  ccm_method_name  #
+    #===================#
+    
+    define_method( ccm_method_name ) do |*args|
       
-      encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( encapsulation_or_name, true )
-
-      instance_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( self, true )
-
-      ccm.define_configurations( instance_controller, encapsulation, method_types, *args, & definer_block )                  
+      ccm.define_configurations( self, method_types, *args )                  
       
       return self
       
     end
 
-    #===================#
-    #  ccm_method_name  #
-    #===================#
+    return self
     
-    default_encapsulation = @default_encapsulation_name
+  end
 
-    define_method( ccm_method_name ) do |*args, & definer_block|
-      
-      return __send__( ccm_encapsulation_method_name, default_encapsulation, *args, & definer_block )
-      
+  #########################################
+  #  define_configuration_method_aliases  #
+  #########################################
+  
+  ###
+  # Define aliases for a configuration definition method.
+  #
+  # @param [ Symbol, String ]
+  # 
+  #        ccm_method_name
+  # 
+  #        Name to use for configuration method.
+  # 
+  # @param [ Array< Symbol, String > ]
+  # 
+  #        module_type_name_aliases
+  # 
+  #        Aliases to use for configuration method.
+  #   
+  # @return Self.
+  #
+  def define_configuration_method_aliases( ccm_method_name, module_type_name_aliases )
+
+    module_type_name_aliases.each do |this_alias|
+      alias_method( this_alias, ccm_method_name )
     end
     
-    ccm_aliases.each do |this_alias|
-      alias_method( this_alias.to_s + '_in', ccm_encapsulation_method_name )
-      alias_method( this_alias, ccm_method_name )
+    return self
+    
+  end
+
+  #######################################
+  #  define_configuration_method_types  #
+  #######################################
+  
+  ###
+  # Define actual methods for configuration.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        accessor_name
+  #
+  #        Name of method to be defined
+  #
+  # @param [ Proc ]
+  #
+  #        proc_instance
+  #
+  #        Proc for method body.
+  #
+  # @param [ Array< Symbol, String > ]
+  #
+  #        method_types
+  #
+  #        Type of method being defined: 
+  #        
+  #          :all, :module, :class, :instance, :local_instance, :object.
+  #
+  # @return Self.
+  #
+  def define_configuration_method_types( accessor_name, proc_instance, method_types )
+    
+    method_types.each do |this_method_type|
+      
+      case this_method_type
+        
+        # Cascades through all includes, module and instance methods
+        when :all
+
+          define_singleton_method( accessor_name, & proc_instance )
+          define_instance_method_if_support( accessor_name, & proc_instance )
+        
+        # Module methods only
+        when :module, :class
+        
+          define_singleton_method( accessor_name, & proc_instance )
+        
+        # Instance methods only
+        when :instance
+
+          define_instance_method( accessor_name, & proc_instance )
+        
+        # Methods local to this instance and instances of it only
+        when :local_instance
+        
+          define_local_instance_method( accessor_name, & proc_instance )
+          define_instance_method_if_support( accessor_name, & proc_instance )
+
+        # Methods local to this instance only
+        when :object
+
+          define_local_instance_method( accessor_name, & proc_instance )
+        
+      end
+      
     end
     
     return self

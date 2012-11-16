@@ -5,10 +5,9 @@ class ::CascadingConfiguration::Core::InstanceController::ExtensionModule < ::Mo
   #  initialize  #
   ################
   
-  def initialize( instance_controller, encapsulation, configuration_name, & definer_block )
+  def initialize( instance_controller, configuration_name, & definer_block )
     
     @instance_controller = instance_controller
-    @encapsulation = encapsulation
     @configuration_name = configuration_name
 
     @pending_aliases = { }
@@ -35,12 +34,6 @@ class ::CascadingConfiguration::Core::InstanceController::ExtensionModule < ::Mo
 
   attr_reader :instance_controller
 
-  ###################
-  #  encapsulation  #
-  ###################
-
-  attr_reader :encapsulation
-  
   ########################
   #  configuration_name  #
   ########################

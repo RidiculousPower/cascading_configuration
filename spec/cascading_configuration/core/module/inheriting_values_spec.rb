@@ -19,23 +19,23 @@ describe ::CascadingConfiguration::Core::Module::InheritingValues do
       Instance_B = ::Module.new do
         include Instance_A
       end
-      Encapsulation.register_child_for_parent( Instance_B, Instance_A )
+      Encapsulation.register_parent( Instance_B, Instance_A )
       Encapsulation.register_configuration( Instance_B, :some_other_configuration, CCM )
       Instance_C1 = ::Module.new do
         include Instance_B
       end
-      Encapsulation.register_child_for_parent( Instance_C1, Instance_B )
+      Encapsulation.register_parent( Instance_C1, Instance_B )
       Encapsulation.register_configuration( Instance_C1, :yet_another_configuration, CCM )
       Instance_C2 = ::Module.new do
         include Instance_B
       end
-      Encapsulation.register_child_for_parent( Instance_C2, Instance_B )
+      Encapsulation.register_parent( Instance_C2, Instance_B )
       Instance_D = ::Module.new do
         include Instance_C1
         include Instance_C2
       end
-      Encapsulation.register_child_for_parent( Instance_D, Instance_C1 )
-      Encapsulation.register_child_for_parent( Instance_D, Instance_C2 )
+      Encapsulation.register_parent( Instance_D, Instance_C1 )
+      Encapsulation.register_parent( Instance_D, Instance_C2 )
       
       Encapsulation.set_configuration( Instance_A, :some_configuration, :some_value )
       Encapsulation.set_configuration( Instance_B, :some_other_configuration, :some_other_value )

@@ -103,11 +103,11 @@ describe ::CascadingConfiguration::Core::InstanceController do
 
 
       Instance_B = ::Module.new
-      Encapsulation.register_child_for_parent( Instance_B, Instance_A )
+      Encapsulation.register_parent( Instance_B, Instance_A )
   
       Instance_C = ::Module.new
       InstanceController_C = ::CascadingConfiguration::Core::InstanceController.new( Instance_C )
-      Encapsulation.register_child_for_parent( Instance_C, Instance_B )
+      Encapsulation.register_parent( Instance_C, Instance_B )
       ExtensionModule_C1 = ::Module.new
       InstanceController_C.add_extension_modules( :some_configuration, Encapsulation, ExtensionModule_C1 ) do
         def some_other_stuff
@@ -150,11 +150,11 @@ describe ::CascadingConfiguration::Core::InstanceController do
 
 
       Instance_B = ::Module.new
-      Encapsulation.register_child_for_parent( Instance_B, Instance_A )
+      Encapsulation.register_parent( Instance_B, Instance_A )
   
       Instance_C = ::Module.new
       InstanceController_C = ::CascadingConfiguration::Core::InstanceController.new( Instance_C )
-      Encapsulation.register_child_for_parent( Instance_C, Instance_B )
+      Encapsulation.register_parent( Instance_C, Instance_B )
       ExtensionModule_C1 = ::Module.new
       InstanceController_C.add_extension_modules( :some_configuration, Encapsulation, ExtensionModule_C1 ) do
         def some_other_stuff

@@ -15,9 +15,9 @@ class ::CascadingConfiguration::Core::Module::InheritingValues < ::CascadingConf
   #  setter  #
   ############
   
-  def setter( encapsulation, instance, name, value )
+  def setter( instance, name, value )
     
-    return encapsulation.set_configuration( instance, name, value )
+    return set_configuration( instance, name, value )
     
   end
   
@@ -25,9 +25,9 @@ class ::CascadingConfiguration::Core::Module::InheritingValues < ::CascadingConf
   #  getter  #
   ############
 
-  def getter( encapsulation, instance, name )
+  def getter( instance, name )
     
-    return get_configuration_searching_upward( encapsulation, instance, name )
+    return get_configuration_searching_upward( instance, name )
     
   end
 
@@ -47,7 +47,7 @@ class ::CascadingConfiguration::Core::Module::InheritingValues < ::CascadingConf
   #  get_configuration_searching_upward  #
   ########################################
 
-  def get_configuration_searching_upward( encapsulation, instance, configuration_name )
+  def get_configuration_searching_upward( instance, configuration_name )
 
     configuration_value = nil
 
@@ -55,8 +55,8 @@ class ::CascadingConfiguration::Core::Module::InheritingValues < ::CascadingConf
 
     did_match_ancestor = false
 
-    matching_ancestor = encapsulation.match_parent_for_configuration( instance, configuration_name ) do |this_ancestor|
-      if encapsulation.has_configuration_value?( this_ancestor, configuration_name )
+    matching_ancestor = match_parent_for_configuration( instance, configuration_name ) do |this_ancestor|
+      if has_configuration_value?( this_ancestor, configuration_name )
         did_match_ancestor = true
       else
         false
@@ -64,7 +64,7 @@ class ::CascadingConfiguration::Core::Module::InheritingValues < ::CascadingConf
     end
 
     if did_match_ancestor
-      configuration_value = encapsulation.get_configuration( matching_ancestor, configuration_name )
+      configuration_value = get_configuration( matching_ancestor, configuration_name )
     end
     
     return configuration_value

@@ -5,6 +5,10 @@
 # 
 module ::CascadingConfiguration::Setting
   
+  ##################
+  #  attr_setting  #
+  ##################
+  
   ###
   # Cascading setting attribute methods, which will affect instances according to include/extend pattern used.
   #
@@ -12,14 +16,17 @@ module ::CascadingConfiguration::Setting
   #
   # @overload attr_setting( *names )
   #   
-  #   @scope 
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] name
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name The name to be used 
-  #    for the declared attribute. If a hash is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
   #
   #   @return self
   #
+
+  #########################
+  #  attr_module_setting  #
+  #########################
 
   ###
   # Cascading setting attribute module/class methods, which will affect all module singletons 
@@ -29,12 +36,17 @@ module ::CascadingConfiguration::Setting
   #
   # @overload attr_module_setting( *names )
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name The name to be used 
-  #    for the declared attribute. If a hash is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] name 
+  #
+  #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
   #
   #   @return self
   #
+
+  ###########################
+  #  attr_instance_setting  #
+  ###########################
 
   ###
   # Cascading setting instance methods, which will affect instances of including modules according to 
@@ -44,12 +56,17 @@ module ::CascadingConfiguration::Setting
   #
   # @overload attr_instance_setting( *names )
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name The name to be used 
-  #    for the declared attribute. If a hash is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] name 
+  #
+  #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
   #
   #   @return self
   #
+
+  ########################
+  #  attr_local_setting  #
+  ########################
 
   ###
   # Non-cascading setting methods that will affect the instance declared on as well as instances of that instance, 
@@ -59,12 +76,17 @@ module ::CascadingConfiguration::Setting
   #
   # @overload attr_local_setting( *names )
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name The name to be used 
-  #    for the declared attribute. If a hash is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] name
+  #
+  #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
   #
   #   @return self
   #
+
+  #########################
+  #  attr_object_setting  #
+  #########################
 
   ###
   # Non-cascading setting methods that will affect only the instance declared on.
@@ -73,15 +95,16 @@ module ::CascadingConfiguration::Setting
   #
   # @overload attr_object_setting( *names )
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name The name to be used 
-  #    for the declared attribute. If a hash is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] name 
+  #
+  #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
   #
   #   @return self
   #
   
-  setting_module = ::CascadingConfiguration::Core::Module::InheritingValues.new( :setting, :default, :configuration )
+  setting_module = ::CascadingConfiguration::Core::Module::InheritingValues.new( :setting, :configuration )
   
-  ::CascadingConfiguration::Core.enable( self, setting_module )
+  ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( self, setting_module )
 
 end

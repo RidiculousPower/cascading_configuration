@@ -7,7 +7,7 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::CascadingVari
   ##########################
 
   # Pending.
-  def create_configuration( encapsulation, instance, name )
+  def create_configuration( instance, name )
 
     raise 'Pending.'
     
@@ -18,7 +18,7 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::CascadingVari
   ############
 
   # Pending.
-  def setter( encapsulation, instance, name, value )
+  def setter( instance, name, value )
 
     raise 'Pending.'
 
@@ -29,7 +29,7 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::CascadingVari
   ############
 
   # Pending.
-  def getter( encapsulation, instance, name )
+  def getter( instance, name )
 
     raise 'Pending.'
 
@@ -40,7 +40,7 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::CascadingVari
   #####################
 
   # Pending.
-  def instance_setter( encapsulation, instance, name, value )
+  def instance_setter( instance, name, value )
 
     raise 'Pending.'
 
@@ -51,7 +51,7 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::CascadingVari
   #####################
 
   # Pending.
-  def instance_getter( encapsulation, instance, name )
+  def instance_getter( instance, name )
 
     raise 'Pending.'
 
@@ -62,7 +62,7 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::CascadingVari
   ##############################
   
   # Pending.
-  def initialize_configuration( encapsulation, instance, configuration_name )
+  def initialize_configuration( instance, configuration_name )
 
     raise 'Pending.'
   

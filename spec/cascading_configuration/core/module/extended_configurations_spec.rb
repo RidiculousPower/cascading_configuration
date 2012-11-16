@@ -1,7 +1,7 @@
 
 require_relative '../../../../lib/cascading_configuration.rb'
 
-describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations do
+describe ::CascadingConfiguration::Core::Module::ExtendableConfigurations do
   
   #############################
   #  parse_extension_modules  #
@@ -12,7 +12,7 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations do
       ForInstance = ::Module.new
       InstanceController = ::CascadingConfiguration::Core::InstanceController.new( ForInstance )
       Encapsulation = :default
-      CCM = ::CascadingConfiguration::Core::Module::ExtendedConfigurations.new( :setting, :default, '' )
+      CCM = ::CascadingConfiguration::Core::Module::ExtendableConfigurations.new( :setting, :default, '' )
       module ModuleA
       end
       module ModuleB
@@ -22,7 +22,7 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations do
       module ModuleD
       end
       names_modules = [ :name1, :name2, ModuleA, :name3, ModuleB, :name4, :name5, ModuleC, ModuleD, :name6 ]
-      names_modules_hash = CCM.class.parse_extension_modules( InstanceController, Encapsulation, *names_modules )
+      names_modules_hash = parse_extension_modules( Encapsulation, names_modules )
       modules = [ ModuleA, ModuleB, ModuleC, ModuleD ]
       names_modules_hash.should == { :name1 => modules,
                                      :name2 => modules,

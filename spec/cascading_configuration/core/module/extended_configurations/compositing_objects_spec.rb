@@ -1,7 +1,7 @@
 
 require_relative '../../../../../lib/cascading_configuration.rb'
 
-describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects do
+describe ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects do
 
   ##############################
   #  initialize                #
@@ -9,14 +9,14 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Composi
   ##############################
   
   it 'can initialize with a compositing object class' do
-    module ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects::InitializeMock
-      ClassInstance = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects.new( :setting, ::Array::Compositing, :default, '' )
+    module ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::InitializeMock
+      ClassInstance = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects.new( :setting, ::Array::Compositing, '' )
       CCM = ::Module.new do
-        ::CascadingConfiguration::Core.enable( self, ClassInstance )
+        ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( self, ClassInstance )
       end
       CCM::ClassInstance.default_encapsulation.should == ::CascadingConfiguration::Core::Module::DefaultEncapsulation
-      CCM::ClassInstance.ccm_name.should == :setting
-      CCM::ClassInstance.ccm_aliases.should == [ '' ]
+      CCM::ClassInstance.module_type_name.should == :setting
+      CCM::ClassInstance.module_type_name_aliases.should == [ '' ]
       CCM::ClassInstance.compositing_object_class.should == ::Array::Compositing
     end
   end
@@ -27,11 +27,11 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Composi
   ##############################
   
   it 'ensures objects are initialized for each level in hiearchy' do
-    module ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects::CreateConfigurationMock
+    module ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::CreateConfigurationMock
 
-      ClassInstance = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects.new( :setting, ::Array::Compositing, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects.new( :setting, ::Array::Compositing, :default, '' )
       CCM = ::Module.new do
-        ::CascadingConfiguration::Core.enable( self, ClassInstance )
+        ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( self, ClassInstance )
       end
       
       Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
@@ -87,11 +87,11 @@ describe ::CascadingConfiguration::Core::Module::ExtendedConfigurations::Composi
   #####################
   
   it 'can set and get values' do
-    module ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects::SetterGetterMock
+    module ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects::SetterGetterMock
       
-      ClassInstance = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::CompositingObjects.new( :setting, ::Array::Compositing, :default, '' )
+      ClassInstance = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::CompositingObjects.new( :setting, ::Array::Compositing, :default, '' )
       CCM = ::Module.new do
-        ::CascadingConfiguration::Core.enable( self, ClassInstance )
+        ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( self, ClassInstance )
       end
       
       Encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )

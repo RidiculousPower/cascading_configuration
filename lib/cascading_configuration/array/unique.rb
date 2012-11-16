@@ -5,6 +5,10 @@
 # 
 module ::CascadingConfiguration::Array::Unique
 
+  #######################
+  #  attr_unique_array  #
+  #######################
+
   ###
   # Cascading array attribute methods, which will affect instances according to include/extend pattern used.
   #
@@ -12,17 +16,24 @@ module ::CascadingConfiguration::Array::Unique
   #
   # @overload attr_unique_array( *names )
   #   
-  #   @scope 
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String},Module] name The name to be used 
-  #    for the declared attribute. If a array is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #          name 
   #
-  #   @yield [ ] Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
-  #    and runs module_eval( & block ) on instance with provided block.
+  #          The name to be used for the declared attribute. If a array is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
+  #
+  #   @yield [ ] 
+  #
+  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
+
+  ##############################
+  #  attr_module_unique_array  #
+  ##############################
 
   ###
   # Cascading array attribute module/class methods, which will affect all module singletons 
@@ -32,15 +43,24 @@ module ::CascadingConfiguration::Array::Unique
   #
   # @overload attr_module_unique_array( *names )
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name The name to be used 
-  #    for the declared attribute. If a array is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
   #
-  #   @yield [ ] Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
-  #    and runs module_eval( & block ) on instance with provided block.
+  #          name 
+  #
+  #          The name to be used for the declared attribute. If a array is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
+  #
+  #   @yield [ ] 
+  #
+  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
+
+  ################################
+  #  attr_instance_unique_array  #
+  ################################
 
   ###
   # Cascading array instance methods, which will affect instances of including modules according to 
@@ -50,15 +70,24 @@ module ::CascadingConfiguration::Array::Unique
   #
   # @overload attr_instance_unique_array( *names )
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name The name to be used 
-  #    for the declared attribute. If a array is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
   #
-  #   @yield [ ] Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
-  #    and runs module_eval( & block ) on instance with provided block.
+  #          name 
+  #
+  #          The name to be used for the declared attribute. If a array is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
+  #
+  #   @yield [ ] 
+  #
+  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
+
+  #############################
+  #  attr_local_unique_array  #
+  #############################
 
   ###
   # Non-cascading array methods that will affect the instance declared on as well as instances of that instance, 
@@ -68,15 +97,24 @@ module ::CascadingConfiguration::Array::Unique
   #
   # @overload attr_local_unique_array( *names )
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name The name to be used 
-  #    for the declared attribute. If a array is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
   #
-  #   @yield [ ] Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
-  #    and runs module_eval( & block ) on instance with provided block.
+  #          name 
+  #
+  #          The name to be used for the declared attribute. If a array is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
+  #
+  #   @yield [ ] 
+  #
+  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
+
+  ##############################
+  #  attr_object_unique_array  #
+  ##############################
 
   ###
   # Non-cascading array methods that will affect only the instance declared on.
@@ -85,22 +123,26 @@ module ::CascadingConfiguration::Array::Unique
   #
   # @overload attr_object_unique_array( *names )
   #
-  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name The name to be used 
-  #    for the declared attribute. If a array is passed, each key will be used as the setting 
-  #    name and accessor and each value will be used as the corresponding write accessor.
+  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
   #
-  #   @yield [ ] Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
-  #    and runs module_eval( & block ) on instance with provided block.
+  #          name 
+  #
+  #          The name to be used for the declared attribute. If a array is passed, each key will be used as 
+  #          the setting name and accessor and each value will be used as the corresponding write accessor.
+  #
+  #   @yield [ ] 
+  #
+  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
 
-  unique_array_module = ::CascadingConfiguration::Core::Module::ExtendedConfigurations::
+  unique_array_module = ::CascadingConfiguration::Core::Module::ExtendableConfigurations::
                           CompositingObjects.new( :unique_array, 
                                                   ::Array::Unique::Compositing, 
-                                                  :default, 
                                                   :configuration_unique_array )
   
-  ::CascadingConfiguration::Core.enable( self, unique_array_module )
+  ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( self, unique_array_module )
 
 end

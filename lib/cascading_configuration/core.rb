@@ -1,18 +1,24 @@
 
-# @private
+###
+# Namespace for all internal CascadingConfiguration code. 
+#   Anything in this namespace may change.
+#
 module ::CascadingConfiguration::Core
   
-  #################
-  #  self.enable  #
-  #################
+  ############################################################
+  #  self.enable_instance_as_cascading_configuration_module  #
+  ############################################################
   
-  # @private
-  def self.enable( instance, ccm )
+  ###
+  # Enable Module instance as a cascading configuration module.
+  #
+  def self.enable_instance_as_cascading_configuration_module( instance, core_module )
     
-    instance.const_set( :ClassInstance, ccm )
+    # Store the configuration module we are enabling in instance at instance::ClassInstance
+    instance.const_set( :ClassInstance, core_module )
 
     # Enable module instance so that when included it creates instance support
-    instance.extend( ::CascadingConfiguration::Core::EnableInstanceSupport )
+    instance.extend( ::CascadingConfiguration::Core::IncludeCreatesInstanceSupport )
 
     instance.extend( ::Module::Cluster )
 
