@@ -139,11 +139,11 @@ module ::CascadingConfiguration::Array::Sorted::Unique
   #
 
   sorted_unique_array_module = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::
-                                 CompositingObjects.new( :sorted_unique_array, 
-                                                         ::Array::Sorted::Unique::Compositing, 
-                                                         :unique_sorted_array,
-                                                         :configuration_sorted_unique_array,
-                                                         :configuration_unique_sorted_array )
+                                 CompositingObjects::Array.new( :sorted_unique_array, 
+                                                                ::Array::Sorted::Unique::Compositing, 
+                                                                :unique_sorted_array,
+                                                                :configuration_sorted_unique_array,
+                                                                :configuration_unique_sorted_array )
   
   ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( self, sorted_unique_array_module )
 

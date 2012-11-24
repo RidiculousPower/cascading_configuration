@@ -139,9 +139,9 @@ module ::CascadingConfiguration::Array::Unique
   #
 
   unique_array_module = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::
-                          CompositingObjects.new( :unique_array, 
-                                                  ::Array::Unique::Compositing, 
-                                                  :configuration_unique_array )
+                          CompositingObjects::Array.new( :unique_array, 
+                                                         ::Array::Unique::Compositing, 
+                                                         :configuration_unique_array )
   
   ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( self, unique_array_module )
 

@@ -139,9 +139,9 @@ module ::CascadingConfiguration::Array::Sorted
   #
 
   sorted_array_module = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::
-                          CompositingObjects.new( :sorted_array, 
-                                                  ::Array::Sorted::Compositing, 
-                                                  :configuration_sorted_array )
+                          CompositingObjects::Array.new( :sorted_array, 
+                                                         ::Array::Sorted::Compositing, 
+                                                         :configuration_sorted_array )
   
   ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( self, sorted_array_module )
 

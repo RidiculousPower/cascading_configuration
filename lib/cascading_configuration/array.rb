@@ -139,7 +139,7 @@ module ::CascadingConfiguration::Array
   #
 
   array_module = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::
-                   CompositingObjects.new( :array, ::Array::Compositing, :configuration_array )
+                   CompositingObjects::Array.new( :array, ::Array::Compositing, :configuration_array )
   
   ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( self, array_module )
 

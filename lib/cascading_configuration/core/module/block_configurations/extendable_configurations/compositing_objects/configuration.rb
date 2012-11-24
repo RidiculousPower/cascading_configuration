@@ -85,7 +85,7 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableCon
   #####################
   #  register_parent  #
   #####################
-  
+
   ###
   # Register configuration for instance with parent instance as parent for configuration.
   #
@@ -98,19 +98,33 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableCon
   #         Self.
   #
   def register_parent( *parents )
-            
+
     parents.each do |this_parent|
       # is the new parent already part of the parent chain?
       unless is_parent?( this_parent )
         # if not, register it
         @parents.push( this_parent )
-        @extension_modules.register_parent( this_parent.extension_modules )
-        @value.register_parent( this_parent.compositing_object )
+        parent_extension_modules = this_parent.extension_modules
+        @extension_modules.register_parent( parent_extension_modules )
+        unless parent_extension_modules.empty?
+          @value.extend( *this_parent.extension_modules )
+        end
+        register_composite_object_parent( this_parent.compositing_object )
       end
     end
-        
+
     return self
-    
+
+  end
+
+  ######################################
+  #  register_composite_object_parent  #
+  ######################################
+
+  def register_composite_object_parent( parent_composite_object )
+  
+    @value.register_parent( parent_composite_object )
+  
   end
 
   ####################

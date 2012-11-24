@@ -30,6 +30,10 @@ files = [
   'core/module/block_configurations/extendable_configurations',
   'core/module/block_configurations/extendable_configurations/compositing_objects',
   'core/module/block_configurations/extendable_configurations/compositing_objects/configuration',
+  'core/module/block_configurations/extendable_configurations/compositing_objects/array',
+  'core/module/block_configurations/extendable_configurations/compositing_objects/array/configuration',
+  'core/module/block_configurations/extendable_configurations/compositing_objects/hash',
+  'core/module/block_configurations/extendable_configurations/compositing_objects/hash/configuration',
     
   'core/instance_controller/support_module',
   'core/instance_controller/support_module/instance_support_module',
