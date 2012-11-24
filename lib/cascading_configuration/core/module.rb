@@ -445,7 +445,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
     #======================#
 
     getter_proc = ::Proc.new do
-      return configuration_instance.value
+      return ::CascadingConfiguration.configuration( self, accessor_name ).value
     end
 
     define_configuration_method_types( configuration_instance, accessor_name, getter_proc, method_types )
@@ -455,7 +455,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
     #=======================#
 
     setter_proc = ::Proc.new do |value|
-      return configuration_instance.value = value
+      return ::CascadingConfiguration.configuration( self, accessor_name ).value = value
     end
     
     define_configuration_method_types( configuration_instance, write_accessor_name, setter_proc, method_types )
@@ -740,8 +740,8 @@ class ::CascadingConfiguration::Core::Module < ::Module
     #  ccm_method_name  #
     #===================#
     
-    define_method( ccm_method_name ) do |*args|
-      
+    define_method( ccm_method_name ) do |*args, & block|
+
       ccm.define_configurations( self, method_types, *args )                  
       
       return self

@@ -5,6 +5,30 @@
 #
 module ::CascadingConfiguration::Core
   
+  @configuration_modules = ::Array::Unique.new
+
+  ########################################
+  #  self.register_configuration_module  #
+  ########################################
+  
+  def self.configuration_modules
+    
+    return @configuration_modules
+    
+  end
+  
+  ########################################
+  #  self.register_configuration_module  #
+  ########################################
+  
+  def self.register_configuration_module( configuration_module )
+    
+    @configuration_modules.push( configuration_module )
+    
+    return self
+    
+  end
+  
   ############################################################
   #  self.enable_instance_as_cascading_configuration_module  #
   ############################################################
@@ -24,6 +48,10 @@ module ::CascadingConfiguration::Core
 
     instance.cluster( :cascading_configuration ).after_include.extend( instance::ClassInstance )
     instance.cluster( :cascading_configuration ).after_extend.extend( instance::ClassInstance )
+    
+    register_configuration_module( instance )
+    
+    return self
     
   end
   

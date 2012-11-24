@@ -140,7 +140,7 @@ module ::CascadingConfiguration::Hash
 
   hash_module = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::
                   CompositingObjects.new( :hash, ::Hash::Compositing, :configuration_hash )
-  
+
   ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( self, hash_module )
 
 end

@@ -759,7 +759,6 @@ describe CascadingConfiguration::Array do
           super( 2 )
         end
       end
-      other_configuration_setting.is_a?( Controller::Default_other_configuration_setting ).should == true
       other_configuration_setting.push( 1 )
       other_configuration_setting[ 0 ].should == 2
     end

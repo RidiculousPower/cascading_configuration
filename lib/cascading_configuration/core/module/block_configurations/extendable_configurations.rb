@@ -1,5 +1,6 @@
 
-class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations < ::CascadingConfiguration::Core::Module
+class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations < 
+      ::CascadingConfiguration::Core::Module::BlockConfigurations
 
   #############################
   #  parse_extension_modules  #
@@ -55,7 +56,7 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableCon
     return names_modules_hash
     
   end
-
+  
   ###########################
   #  define_configurations  #
   ###########################
@@ -91,33 +92,37 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableCon
   #
   # @return Self.
   #
-  def define_configurations( instance_controller, method_types, *names_modules, & definer_block )
+  def define_configurations( instance, method_types, *names_modules, & definer_block )
     
-    block_defined_module = nil
-    
-    if block_given?
-      block_defined_module = instance_controller.class::ExtensionModule.new( self, name, & definer_block )
-      constant_name = name.to_s.to_camel_case
-      const_set( constant_name, block_defined_module )
-    end
-    
+    module_defined_by_block = nil
+        
     # Ask MethodModule to parse extension modules for these declarations on instance.
     names_modules_hash = parse_extension_modules( names_modules )
-    
-    instance = instance_controller.instance
-    
-    names_modules_hash.each do |this_configuration_name, these_modules|
-      this_configuration = ::CascadingConfiguration.configuration( instance, this_configuration_name )
-      if block_defined_module
-        these_modules.push( block_defined_module )
-      end
-      this_configuration.extension_modules.unshift( *these_modules.reverse )
-    end
-    
+
     names = names_modules_hash.keys
 
-    super( instance_controller, method_types, *names )
-    
+    super( instance, method_types, *names )
+
+    instance_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( instance )
+
+    names_modules_hash.each do |this_configuration_name, these_modules|
+      this_configuration = ::CascadingConfiguration.configuration( instance, this_configuration_name )
+      if block_given?
+        this_module_defined_by_block = instance_controller.class::ExtensionModule.new( self, 
+                                                                                       this_configuration_name, 
+                                                                                       & definer_block )
+        constant_name = this_configuration_name.to_s.to_camel_case
+        if instance.__is_a__?( ::Module )
+          instance.const_set( constant_name, this_module_defined_by_block )
+        end
+        these_modules.push( this_module_defined_by_block )
+      end
+      unless these_modules.empty?
+        this_configuration.extension_modules.unshift( *these_modules.reverse )
+        this_configuration.value.extend( *this_configuration.extension_modules )
+      end
+    end
+        
   end
 
 end

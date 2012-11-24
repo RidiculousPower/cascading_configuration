@@ -36,13 +36,13 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations < ::CascadingC
   #
   # @return Self.
   #
-  def define_configurations( instance_controller, method_types, *names_modules, & block )
+  def define_configurations( instance, method_types, *names_modules, & block )
     
     if block_given?
       @block = block
     end
     
-    super( instance_controller, method_types, *names_modules )
+    super( instance, method_types, *names_modules )
     
     return self
     
@@ -78,13 +78,13 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations < ::CascadingC
   def define_configuration_method( ccm_method_name, method_types )
     
     ccm = self
-     
+
     #===================#
     #  ccm_method_name  #
     #===================#
     
     define_method( ccm_method_name ) do |*args, & block|
-      
+
       ccm.define_configurations( self, method_types, *args, & block )                  
       
       return self

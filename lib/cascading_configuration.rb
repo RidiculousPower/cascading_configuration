@@ -14,8 +14,6 @@ module ::CascadingConfiguration
   
   extend ::ParallelAncestry
   
-  @configuration_modules = ::Array::Unique.new
-  
   @configurations = ::CascadingConfiguration::Core::AutoNestingIDHash.new
   
   ###################
@@ -29,7 +27,7 @@ module ::CascadingConfiguration
     
     super if defined?( super )
     
-    configuration_modules = @configuration_modules
+    configuration_modules = ::CascadingConfiguration::Core.configuration_modules
     
     instance.module_eval do
       configuration_modules.each do |this_member|
@@ -50,14 +48,14 @@ module ::CascadingConfiguration
     
     super if defined?( super )
     
-    configuration_modules = @configuration_modules
+    configuration_modules = ::CascadingConfiguration::Core.configuration_modules
     
     configuration_modules.each do |this_member|
       instance.extend( this_member )
     end
     
   end
-  
+
   #########################
   #  self.configurations  #
   #########################
@@ -141,7 +139,7 @@ module ::CascadingConfiguration
     instance_configurations = @configurations[ instance ]
     configuration_instance = instance_configurations[ configuration_name ]
     
-    unless configuration_instance
+    unless configuration_instance or instance.equal?( ::Class )
       # If we don't have a configuration instance, see if our class has a configuration instance.
       if parent_configuration_instance = configuration( instance.class, configuration_name )
         # If our class has a configuration instance, create a child configuration instance for this instance.
@@ -182,8 +180,12 @@ module ::CascadingConfiguration
     
     super
     
-    @configurations[ instance ].each do |this_configuration_name, this_configuration_instance|
-      this_configuration_instance.register_parent( parent )
+    instance_configurations = @configurations[ instance ]
+    
+    @configurations[ parent ].each do |this_configuration_name, this_parent_configuration_instance|
+      this_configuration_class = this_parent_configuration_instance.class
+      this_configuration_instance = this_configuration_class.new( instance, this_parent_configuration_instance )
+      instance_configurations[ this_configuration_name ] = this_configuration_instance
     end
         
     return self
