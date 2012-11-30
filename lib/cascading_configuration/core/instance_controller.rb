@@ -102,7 +102,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
       instance.extend( ::Module::Cluster )
       
       reference_to_self = self
-      
+
       case instance
       
         when ::Class
@@ -123,13 +123,19 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
             # would result in the parent being the original hook instance, not the most
             # recent hooked instance.
             
-            instance.cluster( :cascading_configuration_inheritance ).before_include do |inheriting_instance|
+            cluster = instance.cluster( :cascading_configuration_inheritance )
+            cluster.before_include do |inheriting_instance|
               reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
               reference_to_self.initialize_inheritance_for_instance( inheriting_instance )
             end
 
-            instance.cluster( :cascading_configuration_inheritance ).before_extend do |inheriting_instance|
+            cluster.before_extend do |inheriting_instance|
               reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
+              # extend cascades down classes but not modules
+              case inheriting_instance
+                when ::Class
+                  reference_to_self.initialize_inheritance_for_instance( inheriting_instance )
+              end
             end
 
           end

@@ -110,6 +110,7 @@ describe CascadingConfiguration::Setting do
       setting_class_including_instance.instance_variables.empty?.should == true
       # => instances of extending classes get nothing
       class ClassExtending
+        $wtf = true
         extend CascadingConfiguration::Setting::ConfigurationMockIncluded
         respond_to?( :some_configuration ).should == true
         some_configuration.should == :our_setting_value
