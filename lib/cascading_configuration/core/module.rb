@@ -225,12 +225,13 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #
   def define_module_definition_method( module_type_name, *module_type_name_aliases )
     
-    ccm_method_name = module_method_name( module_type_name )
-    ccm_alias_names = [ class_method_name( module_type_name ) ]
+    ccm_method_name = singleton_method_name( module_type_name )
+    ccm_alias_names = [ module_method_name( module_type_name ), 
+                        class_method_name( module_type_name ) ]
     ccm_alias_names.concat( module_type_name_aliases.collect { |this_alias| module_method_name( this_alias ) } )
     ccm_alias_names.concat( module_type_name_aliases.collect { |this_alias| class_method_name( this_alias ) } )
     
-    return define_configuration_definer( ccm_method_name, ccm_alias_names, :module )
+    return define_configuration_definer( ccm_method_name, ccm_alias_names, :singleton )
     
   end
 
@@ -539,6 +540,32 @@ class ::CascadingConfiguration::Core::Module < ::Module
     
   end
 
+  ###########################
+  #  singleton_method_name  #
+  ###########################
+
+  ###
+  # Construct string for cascading method type (:singleton) with singleton type name.
+  #
+  # @param [ Symbol, String ]
+  #
+  #        singleton_type_name
+  #        
+  #        Name to be used for this configuration module.
+  #        
+  #        This name will be used as the base for all method definition names.
+  #        
+  #        For example: 
+  #        
+  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #          :attr_module_setting_<configuration_name>.
+  #
+  def singleton_method_name( singleton_type_name )
+
+    return self.class::DefinitionMethodPrefix + '_singleton_' << singleton_type_name.to_s
+
+  end
+
   ########################
   #  module_method_name  #
   ########################
@@ -696,7 +723,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #
   #          Type of method being defined: 
   #          
-  #            :all, :module, :class, :instance, :local_instance, :object.
+  #            :all, :singleton, :module, :class, :instance, :local_instance, :object.
   #
   # @return Self.
   #
@@ -728,7 +755,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   # 
   #        Type of method being defined: 
   #        
-  #          :all, :module, :class, :instance, :local_instance, :object.
+  #          :all, :singleton, :module, :class, :instance, :local_instance, :object.
   #
   # @return Self.
   #
@@ -814,7 +841,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #
   #        Type of method being defined: 
   #        
-  #          :all, :module, :class, :instance, :local_instance, :object.
+  #          :all, :singleton, :module, :class, :instance, :local_instance, :object.
   #
   # @return Self.
   #
@@ -834,7 +861,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
           instance_controller.define_instance_method_if_support( accessor_name, & proc_instance )
         
         # Module methods only
-        when :module, :class
+        when :singleton, :module, :class
         
           instance_controller.define_singleton_method( accessor_name, & proc_instance )
         
