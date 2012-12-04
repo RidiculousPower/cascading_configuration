@@ -74,7 +74,7 @@ module ::CascadingConfiguration
   def self.configurations( instance )
     
     # the first time we get configurations for instance, register configurations defined in class
-    unless @configurations.has_key?( instance ) or instance.__is_a__?( ::Module )
+    unless @configurations.has_key?( instance ) or instance.equal?( ::Class )
       # create the instance_configurations hash so it won't loop
       @configurations[ instance ]
       register_parent( instance, instance.class )
