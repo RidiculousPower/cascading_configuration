@@ -59,4 +59,14 @@ class ::CascadingConfiguration::Core::AutoNestingIDHash < ::Hash
     
   end
   
+  ##############
+  #  has_key?  #
+  ##############
+  
+  def has_key?( object )
+    
+    return super( object.__id__ )
+    
+  end
+  
 end

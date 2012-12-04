@@ -73,6 +73,13 @@ module ::CascadingConfiguration
   # 
   def self.configurations( instance )
     
+    # the first time we get configurations for instance, register configurations defined in class
+    unless @configurations.has_key?( instance ) or instance.__is_a__?( ::Module )
+      # create the instance_configurations hash so it won't loop
+      instance_configurations = @configurations[ instance ]
+      register_parent( instance, instance.class )
+    end
+    
     return @configurations[ instance ]
 
   end
@@ -100,7 +107,7 @@ module ::CascadingConfiguration
   #
   def self.define_configuration( instance, configuration_instance )
     
-    @configurations[ instance ][ configuration_instance.name ] = configuration_instance
+    configurations( instance )[ configuration_instance.name ] = configuration_instance
     
     return self
     
@@ -134,21 +141,8 @@ module ::CascadingConfiguration
     
     configuration_instance = nil
     
-    configuration_name = configuration_name.to_sym
-    
-    instance_configurations = @configurations[ instance ]
-    configuration_instance = instance_configurations[ configuration_name ]
-    
-    unless configuration_instance or instance.equal?( ::Class )
-      # If we don't have a configuration instance, see if our class has a configuration instance.
-      if parent_configuration_instance = configuration( instance.class, configuration_name )
-        # If our class has a configuration instance, create a child configuration instance for this instance.
-        configuration_instance = parent_configuration_instance.class.new( instance, parent_configuration_instance )
-        instance_configurations[ configuration_name ] = configuration_instance
-      else
-        # If a configuration was requested that did not exist for instance or instance.class we encountered a problem.
-        raise ::ArgumentError, 'No configuration ' << configuration_name.to_s + ' for ' << instance.to_s + '.'
-      end
+    unless configuration_instance = configurations( instance )[ configuration_name.to_sym ]
+      raise ::ArgumentError, 'No configuration ' << configuration_name.to_s + ' for ' << instance.to_s + '.'
     end
     
     return configuration_instance
@@ -180,14 +174,10 @@ module ::CascadingConfiguration
     
     super
     
-    instance_configurations = @configurations[ instance ]
-    
-    configurations = @configurations[ parent ]
-    if configurations.empty? and ! parent.equal?( ::Class )
-      configurations = @configurations[ parent.class ]
-    end
-    
-    configurations.each do |this_configuration_name, this_parent_configuration_instance|
+    parent_configurations = configurations( parent )
+    instance_configurations = configurations( instance )
+
+    parent_configurations.each do |this_configuration_name, this_parent_configuration_instance|
       if this_configuration_instance = instance_configurations[ this_configuration_name ]
         this_configuration_instance.register_parent( parent )
       else
@@ -226,7 +216,7 @@ module ::CascadingConfiguration
     
     super
     
-    @configurations[ instance ].each do |this_configuration_name, this_configuration_instance|
+    configurations( instance ).each do |this_configuration_name, this_configuration_instance|
       this_configuration_instance.unregister_parent( parent )
     end
         
@@ -263,7 +253,7 @@ module ::CascadingConfiguration
   #
   def self.replace_parent( instance, parent, new_parent )
     
-    @configurations[ instance ].each do |this_configuration_name, this_configuration_instance|
+    configurations( instance ).each do |this_configuration_name, this_configuration_instance|
       this_configuration_instance.replace_parent( parent, new_parent )
     end
         
@@ -319,7 +309,7 @@ module ::CascadingConfiguration
   #
   def self.has_configuration?( instance, configuration_name )
 
-    return @configurations[ instance ].has_key?( configuration_name.to_sym )
+    return configurations( instance ).has_key?( configuration_name.to_sym )
 
   end
 
