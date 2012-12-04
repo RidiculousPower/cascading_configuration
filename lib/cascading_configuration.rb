@@ -76,7 +76,7 @@ module ::CascadingConfiguration
     # the first time we get configurations for instance, register configurations defined in class
     unless @configurations.has_key?( instance ) or instance.__is_a__?( ::Module )
       # create the instance_configurations hash so it won't loop
-      instance_configurations = @configurations[ instance ]
+      @configurations[ instance ]
       register_parent( instance, instance.class )
     end
     
@@ -138,8 +138,6 @@ module ::CascadingConfiguration
   #         Configuration instance for name on instance.
   #
   def self.configuration( instance, configuration_name )
-    
-    configuration_instance = nil
     
     unless configuration_instance = configurations( instance )[ configuration_name.to_sym ]
       raise ::ArgumentError, 'No configuration ' << configuration_name.to_s + ' for ' << instance.to_s + '.'
