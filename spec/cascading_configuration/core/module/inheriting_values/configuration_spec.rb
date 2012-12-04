@@ -86,11 +86,11 @@ describe ::CascadingConfiguration::Core::Module::InheritingValues::Configuration
   end
   
   ##################
-  #  match_parent  #
+  #  match_parent_configuration  #
   ##################
 
   it 'can match a parent for a condition' do
-    @child_configuration.match_parent do |this_parent|
+    @child_configuration.match_parent_configuration do |this_parent|
       this_parent.equal?( @parent_configuration )
     end.should == @parent_configuration
   end

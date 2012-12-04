@@ -21,9 +21,7 @@ class ::CascadingConfiguration::Core::Module::InheritingValues::Configuration <
       when self.class
         
         parent_instance = args[ 0 ]
-        
         super( instance, parent_instance.module, parent_instance.name, parent_instance.write_name )
-
         register_parent( parent_instance )
         
       else
@@ -74,6 +72,15 @@ class ::CascadingConfiguration::Core::Module::InheritingValues::Configuration <
     #
     # :is_parent? will answer all of these questions, checking up the chain
     
+    # if we have a configuration we use it as parent
+    # otherwise we look up configuration for parent
+    case parent
+      when ::CascadingConfiguration::Core::Module::Configuration
+        # parent is what we want already
+      else
+        parent = ::CascadingConfiguration.configuration( parent, @name )
+    end
+    
     unless @parent and is_parent?( parent )
       @parent = parent
     end
@@ -104,7 +111,8 @@ class ::CascadingConfiguration::Core::Module::InheritingValues::Configuration <
 
   def replace_parent( new_parent )
   
-    @parent = new_parent
+    unregister_parent
+    register_parent( new_parent )
 
     return self
     
@@ -169,15 +177,22 @@ class ::CascadingConfiguration::Core::Module::InheritingValues::Configuration <
   #
   def is_parent?( potential_parent )
     
-    return match_parent do |this_parent|
-      this_parent.equal?( potential_parent )
+    case potential_parent
+      when ::CascadingConfiguration::Core::Module::Configuration
+        # parent is what we want already
+      else
+        potential_parent = ::CascadingConfiguration.configuration( potential_parent, @name )
+    end
+    
+    return match_parent_configuration do |this_parent_configuration|
+      this_parent_configuration.equal?( potential_parent )
     end ? true : false
     
   end
   
-  ##################
-  #  match_parent  #
-  ##################
+  ################################
+  #  match_parent_configuration  #
+  ################################
   
   ###
   # Match first parent for which block returns true.
@@ -195,7 +210,7 @@ class ::CascadingConfiguration::Core::Module::InheritingValues::Configuration <
   #
   #         Parent that matched.
   #
-  def match_parent( & match_block )
+  def match_parent_configuration( & match_block )
    
     matched_parent = nil
     
@@ -226,12 +241,8 @@ class ::CascadingConfiguration::Core::Module::InheritingValues::Configuration <
 
     configuration_value = nil
 
-    matching_parent = match_parent do |this_parent|
-      if this_parent.has_value?
-        true
-      else
-        false
-      end
+    matching_parent = match_parent_configuration do |this_parent_configuration|
+      this_parent_configuration.has_value? ? true: false
     end
 
     if matching_parent

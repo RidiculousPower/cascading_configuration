@@ -100,6 +100,14 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableCon
   def register_parent( *parents )
 
     parents.each do |this_parent|
+
+      case this_parent
+        when ::CascadingConfiguration::Core::Module::Configuration
+          # parent is what we want already
+        else
+          this_parent = ::CascadingConfiguration.configuration( this_parent, @name )
+      end
+
       # is the new parent already part of the parent chain?
       unless is_parent?( this_parent )
         # if not, register it
@@ -111,6 +119,7 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableCon
         end
         register_composite_object_parent( this_parent.compositing_object )
       end
+
     end
 
     return self
@@ -133,9 +142,8 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableCon
 
   def replace_parent( existing_parent, new_parent )
 
-    @value.replace_parent( existing_parent.compositing_object, new_parent.compositing_object )
-    @parents.delete( existing_parent )
-    @parents.push( new_parent )
+    unregister_parent( existing_parent )
+    register_parent( new_parent )
 
     return self
 
@@ -147,9 +155,16 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableCon
 
   def unregister_parent( existing_parent )
     
+    case existing_parent
+      when ::CascadingConfiguration::Core::Module::Configuration
+        # parent is what we want already
+      else
+        existing_parent = ::CascadingConfiguration.configuration( existing_parent, @name )
+    end
+
     @value.unregister_parent( existing_parent.compositing_object )
     @parents.delete( existing_parent )
-    
+
     return self
   
   end
@@ -201,6 +216,13 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableCon
   #
   def is_parent?( potential_parent )
     
+    case potential_parent
+      when ::CascadingConfiguration::Core::Module::Configuration
+        # parent is what we want already
+      else
+        potential_parent = ::CascadingConfiguration.configuration( potential_parent, @name )
+    end
+    
     return @parents.include?( potential_parent )
     
   end
@@ -230,17 +252,17 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableCon
     # we use a unique array because diamond shaped inheritance gives the same parent twice
     lowest_parents = ::Array::Unique.new
     
-    @parents.each do |this_parent|
+    @parents.each do |this_parent_configuration|
 
       # if we match this parent we are done with this branch and can go to the next
-      if match_block.call( this_parent )
+      if match_block.call( this_parent_configuration )
 
-        lowest_parents.push( this_parent )
+        lowest_parents.push( this_parent_configuration )
 
       # otherwise our branch expands and we have to finish it before the next parent
-      elsif this_parent.has_parents?
+      elsif this_parent_configuration.has_parents?
 
-        parents_for_branch = this_parent.match_lowest_parents( & match_block )
+        parents_for_branch = this_parent_configuration.match_lowest_parents( & match_block )
         lowest_parents.concat( parents_for_branch )
 
       end

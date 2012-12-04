@@ -183,9 +183,13 @@ module ::CascadingConfiguration
     instance_configurations = @configurations[ instance ]
     
     @configurations[ parent ].each do |this_configuration_name, this_parent_configuration_instance|
-      this_configuration_class = this_parent_configuration_instance.class
-      this_configuration_instance = this_configuration_class.new( instance, this_parent_configuration_instance )
-      instance_configurations[ this_configuration_name ] = this_configuration_instance
+      if this_configuration_instance = instance_configurations[ this_configuration_name ]
+        this_configuration_instance.register_parent( parent )
+      else
+        this_configuration_class = this_parent_configuration_instance.class
+        this_configuration_instance = this_configuration_class.new( instance, this_parent_configuration_instance )
+        instance_configurations[ this_configuration_name ] = this_configuration_instance
+      end
     end
         
     return self
