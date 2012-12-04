@@ -182,7 +182,12 @@ module ::CascadingConfiguration
     
     instance_configurations = @configurations[ instance ]
     
-    @configurations[ parent ].each do |this_configuration_name, this_parent_configuration_instance|
+    configurations = @configurations[ parent ]
+    if configurations.empty? and ! parent.equal?( ::Class )
+      configurations = @configurations[ parent.class ]
+    end
+    
+    configurations.each do |this_configuration_name, this_parent_configuration_instance|
       if this_configuration_instance = instance_configurations[ this_configuration_name ]
         this_configuration_instance.register_parent( parent )
       else
