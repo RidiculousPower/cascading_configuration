@@ -1,83 +1,118 @@
 
 require_relative '../../../../lib/cascading_configuration.rb'
 
+require_relative '../../../support/named_class_and_module.rb'
+
 describe ::CascadingConfiguration::Core::InstanceController::SupportModule do
 
-  before :all do
-    @instance = ::Module.new
-    @instance_controller = ::CascadingConfiguration::Core::InstanceController.new( @instance_controller )
-    @module_instance = ::CascadingConfiguration::Core::InstanceController::SupportModule.new( @instance_controller, :some_type )
-    @ccm = ::Module.new
-  end
-
-  ################
-  #  initialize  #
-  ################
-  
-  it 'can create a module for use with an instance for dynamic definition' do
-    @instance.ancestors.include?( @module_instance ).should == false
-    @instance.is_a?( @module_instance ).should == false
+  let( :instance ) { ::Module.new }
+  let( :instance_controller ) { ::CascadingConfiguration::Core::InstanceController.new( instance ) }
+  let( :ccm ) { ::Module.new }
+  let( :module_instance ) do
+    ::CascadingConfiguration::Core::InstanceController::SupportModule.new( instance_controller, :some_type, nil )
   end
 
   ###################
   #  super_modules  #
   ###################
   
-  it 'can return the first super module on each parent tree' do
-
-    instance_A = ::Module.new
-    instance_controller_A = ::CascadingConfiguration::Core::InstanceController.new( instance_A )
-    module_A = instance_controller_A.create_support( :some_type )
-
-    instance_B1 = ::Module.new
-    ::CascadingConfiguration.register_parent( instance_B1, instance_A )
-
-    instance_B2 = ::Module.new
-    ::CascadingConfiguration.register_parent( instance_B2, instance_A )
-
-    instance_C1 = ::Module.new
-    ::CascadingConfiguration.register_parent( instance_C1, instance_B1 )
-
-    instance_C2 = ::Module.new
-    ::CascadingConfiguration.register_parent( instance_C2, instance_B1 )
-
-    instance_D = ::Module.new
-    ::CascadingConfiguration.register_parent( instance_D, instance_B2 )
-    ::CascadingConfiguration.register_parent( instance_D, instance_C1 )
-    ::CascadingConfiguration.register_parent( instance_D, instance_C2 )
-
-    module_A.super_modules.empty?.should == true
-
-    instance_controller_B2 = ::CascadingConfiguration::Core::InstanceController.new( instance_B2 )
-    module_B2 = instance_controller_B2.create_support( :some_type )
-    module_B2.super_modules.should == [ module_A ]
-
-    instance_controller_C1 = ::CascadingConfiguration::Core::InstanceController.new( instance_C1 )
-    module_C1 = instance_controller_C1.create_support( :some_type )
-    module_B2.super_modules.should == [ module_A ]
-    module_C1.super_modules.should == [ module_A ]
-
-    instance_controller_C2 = ::CascadingConfiguration::Core::InstanceController.new( instance_C2 )
-    module_C2 = instance_controller_C2.create_support( :some_type )
-    module_B2.super_modules.should == [ module_A ]
-    module_C1.super_modules.should == [ module_A ]
-    module_C2.super_modules.should == [ module_A ]
-
-    instance_controller_B1 = ::CascadingConfiguration::Core::InstanceController.new( instance_B1 )
-    module_B1 = instance_controller_B1.create_support( :some_type )
-    module_B1.super_modules.should == [ module_A ]
-    module_B2.super_modules.should == [ module_A ]
-    module_C1.super_modules.should == [ module_B1 ]
-    module_C2.super_modules.should == [ module_B1 ]
-
-    instance_controller_D = ::CascadingConfiguration::Core::InstanceController.new( instance_D )
-    module_D = instance_controller_D.create_support( :some_type )
-    module_B1.super_modules.should == [ module_A ]
-    module_B2.super_modules.should == [ module_A ]
-    module_C1.super_modules.should == [ module_B1 ]
-    module_C2.super_modules.should == [ module_B1 ]
-    module_D.super_modules.should == [ module_C2, module_C1, module_B2 ]
-
+  context '#super_modules' do
+    let( :instance_A ) do
+      ::Module.new.name( :InstanceA )
+    end
+    let( :instance_B1 ) do
+      instance_B1 = ::Module.new.name( :instance_B1 )
+      ::CascadingConfiguration.register_parent( instance_B1, instance_A )
+      instance_B1
+    end
+    let( :instance_B2 ) do 
+      instance_B2 = ::Module.new.name( :instance_B2 )
+      ::CascadingConfiguration.register_parent( instance_B2, instance_A )
+      instance_B2
+    end
+    let( :instance_C1 ) do
+      instance_C1 = ::Module.new.name( :instance_C1 )
+      ::CascadingConfiguration.register_parent( instance_C1, instance_B1 )
+      instance_C1
+    end
+    let( :instance_C2 ) do
+      instance_C2 = ::Module.new.name( :instance_C2 )
+      ::CascadingConfiguration.register_parent( instance_C2, instance_B1 )
+      instance_C2
+    end
+    let( :instance_D ) do
+      instance_D = ::Module.new.name( :instance_D )
+      ::CascadingConfiguration.register_parent( instance_D, instance_B2 )
+      ::CascadingConfiguration.register_parent( instance_D, instance_C1 )
+      ::CascadingConfiguration.register_parent( instance_D, instance_C2 )
+      instance_D
+    end
+    let( :instance_controller_A ) { ::CascadingConfiguration::Core::InstanceController.new( instance_A ) }
+    let( :instance_controller_B1 ) { ::CascadingConfiguration::Core::InstanceController.new( instance_B1 ) }
+    let( :instance_controller_B2 ) { ::CascadingConfiguration::Core::InstanceController.new( instance_B2 ) }
+    let( :instance_controller_C1 ) { ::CascadingConfiguration::Core::InstanceController.new( instance_C1 ) }
+    let( :instance_controller_C2 ) { ::CascadingConfiguration::Core::InstanceController.new( instance_C2 ) }
+    let( :instance_controller_D ) { ::CascadingConfiguration::Core::InstanceController.new( instance_D ) }
+    let( :module_A ) { instance_controller_A.instance_eval { create_support( :some_type ) } }
+    let( :module_B1 ) { instance_controller_B1.instance_eval { create_support( :some_type ) } }
+    let( :module_B2 ) { instance_controller_B2.instance_eval { create_support( :some_type ) } }
+    let( :module_C1 ) { instance_controller_C1.instance_eval { create_support( :some_type ) } }
+    let( :module_C2 ) { instance_controller_C2.instance_eval { create_support( :some_type ) } }
+    let( :module_D ) { instance_controller_D.instance_eval { create_support( :some_type ) } }
+    let( :create_module_A ) { module_A }
+    let( :create_module_B1 ) { module_B1 }
+    let( :create_module_B2 ) { module_B2 }
+    let( :create_module_C1 ) { module_C1 }
+    let( :create_module_C2 ) { module_C2 }
+    let( :create_module_D ) { module_D }
+    
+    context 'when no super modules' do
+      before :all do
+        create_module_A
+      end
+      it 'will not have super modules' do
+        module_A.super_modules.empty?.should == true
+      end
+    end
+    context 'when one immediate super module' do
+      before :all do
+        create_module_A
+        create_module_B2
+      end
+      it 'will return the super module' do
+        module_B2.super_modules.should == [ module_A ]
+      end
+    end
+    context 'when one non-immediate super module' do
+      before :all do
+        create_module_A
+        create_module_B2
+        create_module_C1
+        create_module_C2
+      end
+      it 'will return the super module' do
+        module_B2.super_modules.should == [ module_A ]
+        module_C1.super_modules.should == [ module_A ]
+        module_C2.super_modules.should == [ module_A ]
+      end
+    end
+    context 'when a tree with multiple super modules' do
+      before :all do
+        # order of creation should not matter
+        create_module_A
+        create_module_C1
+        create_module_D
+        create_module_C2
+        create_module_B2
+      end
+      it 'will return the super modules for each branch' do
+        module_B1.super_modules.should == [ module_A ]
+        module_B2.super_modules.should == [ module_A ]
+        module_C1.super_modules.should == [ module_B1 ]
+        module_C2.super_modules.should == [ module_B1 ]
+        module_D.super_modules.should == [ module_C2, module_C1, module_B2 ]
+      end
+    end
   end
   
   ###################

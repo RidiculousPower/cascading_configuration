@@ -1,11 +1,13 @@
 
 require_relative '../../../lib/cascading_configuration.rb'
 
+require_relative '../../support/named_class_and_module.rb'
+
 describe ::CascadingConfiguration::Core::Module do
 
   before :all do
-    @class_instance = ::CascadingConfiguration::Core::Module.new( :setting, '' )
-    @ccm = ::Module.new
+    @class_instance = ::CascadingConfiguration::Core::Module.new( :setting, '' ).name( :ClassInstance )
+    @ccm = ::Module.new.name( :CCM )
     ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( @ccm, @class_instance )
   end
 

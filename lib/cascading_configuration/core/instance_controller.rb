@@ -175,7 +175,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   ##############
   
   attr_reader :instance
-   
+  
   ##############################
   #  create_singleton_support  #
   ##############################
@@ -251,6 +251,16 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     return create_singleton_support.define_method( configuration_name, & method_proc )
 
   end 
+
+  #############
+  #  support  #
+  #############
+
+  def support( module_type_name )
+    
+    return @support_modules[ module_type_name.to_sym ]
+    
+  end
 
   #########################
   #  alias_module_method  #
@@ -518,14 +528,4 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     
   end
   
-  #############
-  #  support  #
-  #############
-
-  def support( module_type_name )
-    
-    return @support_modules[ module_type_name.to_sym ]
-    
-  end
-
 end

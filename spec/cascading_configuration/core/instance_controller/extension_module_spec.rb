@@ -1,13 +1,15 @@
 
 require_relative '../../../../lib/cascading_configuration.rb'
 
+require_relative '../../../support/named_class_and_module.rb'
+
 describe ::CascadingConfiguration::Core::InstanceController::ExtensionModule do
   
   let( :instance ) do
     ::Module.new do
       def self.method_in_object_but_not_module
       end
-    end
+    end.name( :Instance )
   end
   let( :instance_controller ) { ::CascadingConfiguration::Core::InstanceController.new( instance ) }
   let( :ccm ) do

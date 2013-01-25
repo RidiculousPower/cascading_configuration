@@ -1,11 +1,13 @@
 
 require_relative '../../../lib/cascading_configuration.rb'
 
-require_relative '../../support/support_module.rb'
+require_relative '../../helpers/support_module.rb'
+
+require_relative '../../support/named_class_and_module.rb'
 
 describe ::CascadingConfiguration::Core::InstanceController do
 
-  let( :instance ) { ::Module.new }
+  let( :instance ) { ::Module.new.name( :Instance ) }
   let( :instance_controller ) { ::CascadingConfiguration::Core::InstanceController.new( instance ) }
 
   ##################################################################################################
@@ -676,6 +678,33 @@ describe ::CascadingConfiguration::Core::InstanceController do
 
   end
   
+  ##################################################################################################
+  #   public #######################################################################################
+  ##################################################################################################
+
+  ##############################
+  #  self.instance_controller  #
+  ##############################
+
+  context '::instance_controller' do
+    it 'tracks instance controllers for instances' do
+      instance_controller.should be ::CascadingConfiguration::Core::InstanceController.instance_controller( instance )
+    end
+  end
+
+  ##############
+  #  instance  #
+  ##############
+  
+  context '#instance' do
+    it 'returns its instance' do
+      instance_controller.instance.should be instance
+    end
+    it 'a referene to it is stored in its instance' do
+      instance_controller.should be instance::Controller
+    end
+  end
+  
   #############
   #  support  #
   #############
@@ -704,32 +733,5 @@ describe ::CascadingConfiguration::Core::InstanceController do
       end
     end
   end
-  
-  ##################################################################################################
-  #   public #######################################################################################
-  ##################################################################################################
-
-  ##############################
-  #  self.instance_controller  #
-  ##############################
-
-  context '::instance_controller' do
-    it 'tracks instance controllers for instances' do
-      instance_controller.should be ::CascadingConfiguration::Core::InstanceController.instance_controller( instance )
-    end
-  end
-
-  ##############
-  #  instance  #
-  ##############
-  
-  context '#instance' do
-    it 'returns its instance' do
-      instance_controller.instance.should be instance
-    end
-    it 'a referene to it is stored in its instance' do
-      instance_controller.should be instance::Controller
-    end
-  end
-    
+   
 end
