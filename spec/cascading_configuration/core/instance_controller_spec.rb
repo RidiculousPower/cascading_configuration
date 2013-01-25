@@ -681,7 +681,28 @@ describe ::CascadingConfiguration::Core::InstanceController do
   #############
 
   context '#support' do
-    
+    let( :module_type_name ) { :arbitrary_type_name }
+    let( :support_module ) do
+      _module_type_name = module_type_name
+      instance_controller.instance_eval { create_support( _module_type_name ) }
+    end
+    let( :support ) do
+      support_module
+      _module_type_name = module_type_name
+      instance_controller.instance_eval { support( _module_type_name ) }
+    end
+    context 'when name is a symbol' do
+      let( :request_module_type_name ) { module_type_name }
+      it 'will return the named support module' do
+        support.should be( support_module )
+      end
+    end
+    context 'when name is a string' do
+      let( :request_module_type_name ) { module_type_name.to_s }
+      it 'will return the named support module' do
+        support.should be( support_module )
+      end
+    end
   end
   
   ##################################################################################################
@@ -694,7 +715,7 @@ describe ::CascadingConfiguration::Core::InstanceController do
 
   context '::instance_controller' do
     it 'tracks instance controllers for instances' do
-      instance_controller.should == ::CascadingConfiguration::Core::InstanceController.instance_controller( instance )
+      instance_controller.should be ::CascadingConfiguration::Core::InstanceController.instance_controller( instance )
     end
   end
 
@@ -703,181 +724,12 @@ describe ::CascadingConfiguration::Core::InstanceController do
   ##############
   
   context '#instance' do
-    it 'is for an instance' do
-      instance_controller.instance.should == instance
-      instance::Controller.should == instance_controller
+    it 'returns its instance' do
+      instance_controller.instance.should be instance
+    end
+    it 'a referene to it is stored in its instance' do
+      instance_controller.should be instance::Controller
     end
   end
-  
-  ####################
-  #  create_support  #
-  ####################
-
-  context '#create_support' do
-
-    let( :support_module ) { instance_controller.create_support( :include, support_module_class, should_include, should_extend, should_cascade_includes, should_cascade_extends ) }
-    let( :support_module_class ) { nil }
-    let( :should_include ) { false }
-    let( :should_extend ) { false }
-    let( :should_cascade_includes ) { false }
-    let( :should_cascade_extends ) { false }
     
-    context 'when support module class is nil' do
-      it 'will use the default support module class' do
-        support_module.is_a?( ::CascadingConfiguration::Core::InstanceController::SupportModule ).should == true
-      end
-    end
-
-    context 'when support module class is provided' do
-      before :all do
-        MockSupportModuleClass = ::Class.new( ::Module )
-      end
-      let( :support_module_class ) { MockSupportModuleClass }
-      it 'will use the provided support module class' do
-        
-      end
-    end
-    
-    context 'when should include' do
-      it 'will include the support module in its instance' do
-        @instance_controller.support( :include ).should == module_instance_include
-        @instance.ancestors.include?( module_instance_include ).should == true
-        @instance.is_a?( module_instance_include ).should == false
-      end
-    end
-
-    context 'when should extend' do
-      it 'will extend its instance with the support module' do
-        module_instance_extend = @instance_controller.create_support( :extend, false, nil, true, false, false )
-        @instance_controller.support( :extend ).should == module_instance_extend
-        @instance.ancestors.include?( module_instance_extend ).should == false
-        @instance.is_a?( module_instance_extend ).should == true
-      end
-    end
-
-    context 'when should cascade includes' do
-      it 'will include in instances that receive cascading support from the instance owning this controller' do
-        module_instance_cascade_includes = @instance_controller.create_support( :cascade_includes, false, nil, false, true, false )
-        @instance_controller.support( :cascade_includes ).should == module_instance_cascade_includes
-        @instance.ancestors.include?( module_instance_cascade_includes ).should == false
-        @instance.is_a?( module_instance_cascade_includes ).should == false
-      end
-    end
-
-    context 'when should cascade extends' do
-      it 'will extend instances that receive cascading support from the instance owning this controller' do
-        module_instance_cascade_extends = @instance_controller.create_support( :cascade_extends, nil, false, false, false, true )
-        @instance_controller.support( :cascade_extends ).should == module_instance_cascade_extends
-        @instance.ancestors.include?( module_instance_cascade_extends ).should == false
-        @instance.is_a?( module_instance_cascade_extends ).should == false
-      end
-    end
-
-    context 'when module constant is not provided' do
-      it 'will set the constant in itself to the type name in camel case' do
-        
-      end
-    end
-
-    context 'when module constant is provided' do
-      it 'will use the provided constant name to set in itself' do
-        
-      end
-    end
-    
-  end
-
-  #############
-  #  support  #
-  #############
-
-  it 'can manage creation and return of module instances' do
-    
-    instance = @instance
-    
-    another_module_includeA = ::Module.new
-    another_module_includeA.instance_eval do
-      include instance
-      ancestors.include?( module_instance_cascade_includes ).should == true
-      eigenclass = class << self ; self ; end
-      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == true
-    end
-    another_module_includeB = ::Module.new
-    another_module_includeB.instance_eval do
-      include another_module_includeA
-      ancestors.include?( module_instance_cascade_includes ).should == true
-      eigenclass = class << self ; self ; end
-      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == true
-    end
-    another_module_includeC = ::Module.new
-    another_module_includeC.instance_eval do
-      include another_module_includeB
-      ancestors.include?( module_instance_cascade_includes ).should == true
-      eigenclass = class << self ; self ; end
-      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == true
-    end
-    another_module_class_include = ::Class.new
-    another_module_class_include.instance_eval do
-      include another_module_includeC
-      ancestors.include?( module_instance_cascade_includes ).should == true
-      eigenclass = class << self ; self ; end
-      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == true
-    end
-
-    another_module_extendA = ::Module.new
-    another_module_extendA.instance_eval do
-      extend instance
-      eigenclass = class << self ; self ; end
-      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == false
-    end
-    another_module_extendB = ::Module.new
-    another_module_extendB.instance_eval do
-      extend another_module_extendA
-      eigenclass = class << self ; self ; end
-      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == false
-    end
-    another_module_extendC = ::Module.new
-    another_module_extendC.instance_eval do
-      extend another_module_extendB
-      eigenclass = class << self ; self ; end
-      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == false
-    end
-    another_module_class_extend = ::Class.new
-    another_module_class_extend.instance_eval do
-      extend another_module_extendC
-      eigenclass = class << self ; self ; end
-      eigenclass.ancestors.include?( module_instance_cascade_extends ).should == false
-    end
-  end  
-
-  ##############################
-  #  create_singleton_support  #
-  #  singleton_support         #
-  ##############################
-  
-  it 'can create a cascading support module for singleton (module/class) methods' do
-    singleton_support = @instance_controller.create_singleton_support
-    @instance_controller.singleton_support.should == singleton_support
-  end
-
-  #############################
-  #  create_instance_support  #
-  #  instance_support         #
-  #############################
-
-  it 'can create a cascading support module for instance methods' do
-    instance_support = @instance_controller.create_instance_support
-    @instance_controller.instance_support.should == instance_support
-  end
-
-  ###################################
-  #  create_local_instance_support  #
-  #  local_instance_support         #
-  ###################################
-
-  it 'can create a non-cascading support module supporting the local object and its instances' do
-    local_instance_support = @instance_controller.create_local_instance_support
-    @instance_controller.local_instance_support.should == local_instance_support
-  end
-
 end
