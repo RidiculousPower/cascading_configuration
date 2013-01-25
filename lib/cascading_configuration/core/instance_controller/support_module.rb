@@ -94,18 +94,9 @@ class ::CascadingConfiguration::Core::InstanceController::SupportModule < ::Modu
   
   def super_modules
     
-    ancestor_controller = nil
-
     return ::CascadingConfiguration.lowest_parents( @instance_controller.instance ) do |this_parent|
-
       ancestor_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_parent )
-      
-      if ancestor_controller and ancestor_support = ancestor_controller.support( @module_type_name )
-        true
-      else
-        false
-      end
-
+      ancestor_controller and ancestor_support = ancestor_controller.support( @module_type_name )
     end.collect do |this_ancestor|
       ancestor_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_ancestor )
       ancestor_controller.support( @module_type_name )
@@ -119,23 +110,12 @@ class ::CascadingConfiguration::Core::InstanceController::SupportModule < ::Modu
   
   def child_modules
 
-    ancestor_controller = nil
-    
     return ::CascadingConfiguration.highest_children( @instance_controller.instance ) do |this_child|
-
       ancestor_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_child )
-
-      if ancestor_controller and ancestor_controller.support( @module_type_name )
-        true
-      else
-        false
-      end
-
+      ancestor_controller and ancestor_controller.support( @module_type_name )
     end.collect do |this_ancestor|
-
       ancestor_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_ancestor )
       ancestor_controller.support( @module_type_name )
-
     end.uniq
     
   end
