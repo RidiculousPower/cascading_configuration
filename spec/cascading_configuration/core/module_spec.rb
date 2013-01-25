@@ -59,7 +59,7 @@ describe ::CascadingConfiguration::Core::Module do
   end
 
   ################################
-  #  local_method_name  #
+  #  local_instance_method_name  #
   ################################
 
   it 'can return a local instance method name for a base name' do

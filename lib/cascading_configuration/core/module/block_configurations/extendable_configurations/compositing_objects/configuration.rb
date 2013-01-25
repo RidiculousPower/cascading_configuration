@@ -183,7 +183,7 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableCon
   #
   #        Instance for which configurations are being queried.
   #
-  # @param [ Symbol, String ]
+  # @param [Symbol,String]
   #
   #        configuration_name
   #

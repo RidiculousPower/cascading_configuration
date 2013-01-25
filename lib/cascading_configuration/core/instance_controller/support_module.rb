@@ -11,10 +11,11 @@ class ::CascadingConfiguration::Core::InstanceController::SupportModule < ::Modu
   #  initialize  #
   ################
   
-  def initialize( instance_controller, module_type_name )
+  def initialize( instance_controller, module_type_name, module_inheritance_model )
     
     @instance_controller = instance_controller
     @module_type_name = module_type_name
+    @module_inheritance_model = module_inheritance_model
 
     @included = ::Array::Unique.new( self )
     @extended = ::Array::Unique.new( self )
@@ -30,6 +31,18 @@ class ::CascadingConfiguration::Core::InstanceController::SupportModule < ::Modu
     cascade_new_support_for_child_modules
     
   end
+
+  ######################
+  #  module_type_name  #
+  ######################
+  
+  attr_reader :module_type_name
+
+  ##############################
+  #  module_inheritance_model  #
+  ##############################
+  
+  attr_reader :module_inheritance_model
 
   ##############
   #  included  #
@@ -87,23 +100,15 @@ class ::CascadingConfiguration::Core::InstanceController::SupportModule < ::Modu
 
       ancestor_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_parent )
       
-      if ancestor_controller and 
-         ancestor_support = ancestor_controller.support( @module_type_name )
-
+      if ancestor_controller and ancestor_support = ancestor_controller.support( @module_type_name )
         true
-        
       else
-
         false
-
       end
 
     end.collect do |this_ancestor|
-
       ancestor_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_ancestor )
-
       ancestor_controller.support( @module_type_name )
-
     end.uniq
     
   end
@@ -120,8 +125,7 @@ class ::CascadingConfiguration::Core::InstanceController::SupportModule < ::Modu
 
       ancestor_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_child )
 
-      if ancestor_controller and
-         ancestor_controller.support( @module_type_name )
+      if ancestor_controller and ancestor_controller.support( @module_type_name )
         true
       else
         false
@@ -130,7 +134,6 @@ class ::CascadingConfiguration::Core::InstanceController::SupportModule < ::Modu
     end.collect do |this_ancestor|
 
       ancestor_controller = ::CascadingConfiguration::Core::InstanceController.instance_controller( this_ancestor )
-
       ancestor_controller.support( @module_type_name )
 
     end.uniq

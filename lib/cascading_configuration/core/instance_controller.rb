@@ -10,7 +10,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   def self.create_instance_controller( instance, extending = false )
     
     instance_controller = nil
-    
+
     unless instance_controller = @instance_controllers[ instance ]
       instance_controller = new( instance, extending )
     end
@@ -26,7 +26,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   def self.instance_controller( instance, ensure_exists = false )
     
     instance_controller_instance = nil
-    
+
     unless instance_controller_instance = @instance_controllers[ instance ]
       if ensure_exists
         exception_string = 'No module controller defined for :' << instance.to_s
@@ -95,12 +95,17 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #########################################
   
   def initialize_inheritance_for_instance( instance, extending = false )
-
-    unless instance.__is_a__?( ::Module::Cluster ) and 
-           instance.has_cluster?( :cascading_configuration_inheritance )
+    
+    should_enable = true
+    
+    case instance
+      when ::Module::Cluster
+        should_enable = ! instance.has_cluster?( :cascading_configuration_inheritance )
+    end
+    
+    if should_enable
       
-      instance.extend( ::Module::Cluster )
-      
+      instance.extend( ::Module::Cluster )      
       reference_to_self = self
 
       case instance
@@ -111,6 +116,14 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
           instance.cluster( :cascading_configuration_inheritance ).subclass.cascade do |inheriting_instance|
             reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
           end
+          
+          # if our class is a subclass of ::Module we want instances to have include/extend hooks
+          
+          
+          # if before/after include/extend hooks are called on a class that inherits from module
+          # then we want to define them as hooks on instances of class (which will be a module)
+          
+          # hooks occur by adding to #included or #extended
       
         when ::Module
         
@@ -162,87 +175,16 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   ##############
   
   attr_reader :instance
-  
-  ####################
-  #  create_support  #
-  ####################
-  
-  def create_support( module_type_name,
-                      support_module_class = ::CascadingConfiguration::Core::InstanceController::SupportModule,
-                      should_include = false, 
-                      should_extend = false, 
-                      should_cascade_includes = false, 
-                      should_cascade_extends = false,
-                      module_constant_name = module_type_name.to_s.to_camel_case )
-
-    # permit nil for support_module_class to default
-    support_module_class ||= ::CascadingConfiguration::Core::InstanceController::SupportModule
-    
-    unless support_module_instance = @support_modules[ module_type_name = module_type_name.to_sym ]
-
-      # New Instance
-    
-      support_module_instance = support_module_class.new( self, module_type_name )
-      const_set( module_constant_name, support_module_instance )
-      @support_modules[ module_type_name ] = support_module_instance
-    
-      # Cascades
-    
-      if should_cascade_includes
-        @instance.cluster( :cascading_configuration ).after_include.cascade.include( support_module_instance )
-      end
-    
-      if should_cascade_extends
-        @instance.cluster( :cascading_configuration ).after_include.cascade.extend( support_module_instance )
-      end
-    
-      # Includes/Extends
-    
-      if should_include
-        case @instance
-          # we can only include in modules
-          when ::Module
-            @instance.module_eval do
-              include( support_module_instance )
-            end
-          # but we might be told to create instance support on instances, in which case we need to extend
-          else
-            @instance.extend( support_module_instance )
-        end
-      end
-        
-      if should_extend
-        @instance.extend( support_module_instance )
-      end
-
-    end
-    
-    return support_module_instance
-    
-  end
- 
-  #############
-  #  support  #
-  #############
-  
-  def support( module_type_name )
-    
-    return @support_modules[ module_type_name.to_sym ]
-    
-  end
- 
+   
   ##############################
   #  create_singleton_support  #
   ##############################
   
-  def create_singleton_support
+  def create_singleton_support( module_type_name = :ccm_singleton, 
+                                support_module_class = self.class::SupportModule::SingletonSupportModule,
+                                module_constant_name = module_type_name.to_s.to_camel_case )
 
-    return create_support( :singleton, 
-                           self.class::SupportModule::SingletonSupportModule, 
-                           false, 
-                           true, 
-                           false, 
-                           true )
+    return create_support( module_type_name, :singleton, support_module_class )
 
   end
 
@@ -250,9 +192,9 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  singleton_support  #
   #######################
   
-  def singleton_support
+  def singleton_support( module_type_name = :ccm_singleton )
 
-    return support( :singleton )
+    return support( module_type_name )
 
   end
 
@@ -260,14 +202,11 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  create_instance_support  #
   #############################
 
-  def create_instance_support
+  def create_instance_support( module_type_name = :ccm_instance, 
+                               support_module_class = self.class::SupportModule::InstanceSupportModule,
+                               module_constant_name = module_type_name.to_s.to_camel_case )
 
-    return create_support( :instance, 
-                           self.class::SupportModule::InstanceSupportModule, 
-                           true, 
-                           false, 
-                           true, 
-                           false )
+    return create_support( module_type_name, :instance, support_module_class )
 
   end
 
@@ -275,9 +214,9 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  instance_support  #
   ######################
 
-  def instance_support
+  def instance_support( module_type_name = :ccm_instance )
 
-    return support( :instance )
+    return support( module_type_name )
 
   end
 
@@ -285,9 +224,11 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  create_local_instance_support  #
   ###################################
 
-  def create_local_instance_support
+  def create_local_instance_support( module_type_name = :ccm_local_instance, 
+                                     support_module_class = self.class::SupportModule::LocalInstanceSupportModule,
+                                     module_constant_name = module_type_name.to_s.to_camel_case )
 
-    return create_support( :local_instance, nil, false, true, false, false )
+    return create_support( module_type_name, :local_instance, support_module_class )
 
   end
 
@@ -295,9 +236,9 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   #  local_instance_support  #
   ############################
 
-  def local_instance_support
+  def local_instance_support( module_type_name = :ccm_local_instance )
 
-    return support( :local_instance )
+    return support( module_type_name )
 
   end
   
@@ -521,5 +462,70 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
     alias_instance_method( alias_name, configuration_name )
     
   end
+
+  ##################################################################################################
+      private ######################################################################################
+  ##################################################################################################
+
+  ####################
+  #  create_support  #
+  ####################
   
+  def create_support( module_type_name,
+                      module_inheritance_model = :local_instance,
+                      support_module_class = ::CascadingConfiguration::Core::InstanceController::SupportModule,
+                      module_constant_name = module_type_name.to_s.to_camel_case )
+
+    # permit nil for support_module_class to default
+    support_module_class ||= ::CascadingConfiguration::Core::InstanceController::SupportModule
+    
+    unless support_module_instance = @support_modules[ module_type_name = module_type_name.to_sym ]
+
+      support_module_instance = support_module_class.new( self, module_type_name, module_inheritance_model )
+      const_set( module_constant_name, support_module_instance )
+      @support_modules[ module_type_name ] = support_module_instance
+    
+      case module_inheritance_model
+        when :singleton
+          case @instance
+            when ::Class
+              @instance.extend( support_module_instance )
+            when ::Module
+              @instance.extend( support_module_instance )
+              @instance.cluster( :cascading_configuration ).after_include.cascade.extend( support_module_instance )
+              @instance.cluster( :cascading_configuration ).after_extend.extend( support_module_instance )
+            else
+              @instance.extend( support_module_instance )
+          end
+        when :instance
+          case @instance
+            when ::Class
+              @instance.class_eval { include( support_module_instance ) }
+            when ::Module
+              @instance.module_eval { include( support_module_instance ) }
+              @instance.cluster( :cascading_configuration ).after_include.cascade.include( support_module_instance )
+            else
+              # we might be told to create instance support on instances, in which case we need to extend
+              @instance.extend( support_module_instance )
+          end
+        when :local_instance
+          @instance.extend( support_module_instance )
+      end
+
+    end
+    
+    return support_module_instance
+    
+  end
+  
+  #############
+  #  support  #
+  #############
+
+  def support( module_type_name )
+    
+    return @support_modules[ module_type_name.to_sym ]
+    
+  end
+
 end

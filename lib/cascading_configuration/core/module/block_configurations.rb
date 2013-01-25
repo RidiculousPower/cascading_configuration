@@ -59,7 +59,7 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations < ::CascadingC
   ###
   # Define a configuration definition method with support for extendable configurations.
   #
-  # @param [ Symbol, String ]
+  # @param [Symbol,String]
   # 
   #        ccm_method_name
   # 

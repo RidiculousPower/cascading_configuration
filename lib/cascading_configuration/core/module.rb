@@ -18,9 +18,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # @overload new( module_type_name, module_type_name_alias, ... )
   #
-  #   @param [ Symbol, String ] 
-  #
-  #          module_type_name
+  #   @param [Symbol,String] module_type_name
   #
   #          Name to be used for this configuration module.
   #
@@ -31,9 +29,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #            CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
   #            :attr_setting_<configuration_name>.
   #
-  #   @param [ Symbol, String ]
-  #
-  #          module_type_name_alias
+  #   @param [Symbol,String] module_type_name_alias
   #
   #          Additional names to use for this configuration module.
   #
@@ -116,9 +112,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Define all cascading definition methods.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name
+  # @param [Symbol,String] module_type_name
   #        
   #        Name to be used for this configuration module.
   #        
@@ -129,9 +123,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
   #          :attr_setting_<configuration_name>.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name_alias
+  # @param [Symbol,String] module_type_name_alias
   #        
   #        Additional names to use for this configuration module.
   #        
@@ -158,9 +150,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   # Define a definition method that will cause configurations to cascade through include/extend
   #   for both singletons (Modules and Classes) and instances.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name
+  # @param [Symbol,String] module_type_name
   #        
   #        Name to be used for this configuration module.
   #        
@@ -171,9 +161,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
   #          :attr_setting_<configuration_name>.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name_alias
+  # @param [Symbol,String] module_type_name_alias
   #        
   #        Additional names to use for this configuration module.
   #        
@@ -199,9 +187,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   # Define a definition method that will cause configurations to cascade through include/extend
   #   for singletons (Modules/Classes).
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name
+  # @param [Symbol,String] module_type_name
   #        
   #        Name to be used for this configuration module.
   #        
@@ -212,9 +198,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
   #          :attr_module_setting_<configuration_name>.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name_alias
+  # @param [Symbol,String] module_type_name_alias
   #        
   #        Additional names to use for this configuration module.
   #        
@@ -243,9 +227,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   # Define a definition method that will cause configurations to cascade through include/extend
   #   for instances.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name
+  # @param [Symbol,String] module_type_name
   #        
   #        Name to be used for this configuration module.
   #        
@@ -256,9 +238,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
   #          :attr_instance_setting_<configuration_name>.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name_alias
+  # @param [Symbol,String] module_type_name_alias
   #        
   #        Additional names to use for this configuration module.
   #        
@@ -283,9 +263,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Define a definition method that will create configurations that do not cascade.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name
+  # @param [Symbol,String] module_type_name
   #        
   #        Name to be used for this configuration module.
   #        
@@ -296,9 +274,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
   #          :attr_local_instance_setting_<configuration_name>.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name_alias
+  # @param [Symbol,String] module_type_name_alias
   #        
   #        Additional names to use for this configuration module.
   #        
@@ -324,9 +300,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   # Define a definition method that will create configurations for the instance in which they are created
   #   as well as configurations that will cascade through include/extend for instances.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name
+  # @param [Symbol,String] module_type_name
   #        
   #        Name to be used for this configuration module.
   #        
@@ -337,9 +311,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
   #          :attr_object_setting_<configuration_name>.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name_alias
+  # @param [Symbol,String] module_type_name_alias
   #        
   #        Additional names to use for this configuration module.
   #        
@@ -366,23 +338,17 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #
   # @overload define_configurations( instance, method_types, configuration_name, ... )
   #
-  #   @param [ Object ]
-  #   
-  #          instance
+  #   @param [ Object ] instance
   #   
   #          Instance in which configuration method will be defined.
   #   
-  #   @param [ Array< Symbol, String > ]
-  #   
-  #          method_types
+  #   @param [Array<Symbol,String>] method_types
   #   
   #          Type of method being defined: 
   #   
   #            :all, :module, :class, :instance, :local_instance, :object.
   #
-  #   @param [ Symbol, String, Hash{ Symbol, String => Symbol, String } ]
-  #
-  #          configuration_name
+  #   @param [ Symbol, String, Hash{ Symbol, String => Symbol, String } ] configuration_name
   #
   #          Name of configuration to be defined.
   #
@@ -407,29 +373,21 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Define configuration for instance.
   #
-  # @param [ Object ]
-  # 
-  #        instance
+  # @param [ Object ] instance
   # 
   #        Instance in which configuration method will be defined.
   # 
-  # @param [ Array< Symbol, String > ]
-  # 
-  #        method_types
+  # @param [Array<Symbol,String>] method_types
   # 
   #        Type of method being defined: 
   # 
   #          :all, :module, :class, :instance, :local_instance, :object.
   # 
-  # @param [ Symbol, String ]
-  # 
-  #        accessor_name
+  # @param [Symbol,String] accessor_name
   # 
   #        Name to use for configuration reader.
   # 
-  # @param [ Symbol, String ]
-  # 
-  #        write_accessor_name
+  # @param [Symbol,String] write_accessor_name
   # 
   #        Name to use for configuration writer.
   # 
@@ -476,9 +434,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Parses arguments from configuration definition to normalize configuration names.
   #
-  # @param configuration_names
-  #
-  #        [ Array< Symbol, String, Hash{ Symbol, String => Symbol, String } > ]
+  # @param [Array<Symbol,String,Hash{Symbol,String=>Symbol,String}>] configuration_names
   #
   #        Configuration names for both accessor and write accessor or Hash of accessor => write accessor pairs.
   #
@@ -521,9 +477,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Construct string for cascading method type (:all) with module type name.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name
+  # @param [Symbol,String] module_type_name
   #        
   #        Name to be used for this configuration module.
   #        
@@ -547,9 +501,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Construct string for cascading method type (:singleton) with singleton type name.
   #
-  # @param [ Symbol, String ]
-  #
-  #        singleton_type_name
+  # @param [Symbol,String] singleton_type_name
   #        
   #        Name to be used for this configuration module.
   #        
@@ -573,9 +525,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Construct string for cascading method type (:module) with module type name.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name
+  # @param [Symbol,String] module_type_name
   #        
   #        Name to be used for this configuration module.
   #        
@@ -599,9 +549,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Construct string for cascading method type (:class) with module type name.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name
+  # @param [Symbol,String] module_type_name
   #        
   #        Name to be used for this configuration module.
   #        
@@ -625,9 +573,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Construct string for cascading method type (:instance) with module type name.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name
+  # @param [Symbol,String] module_type_name
   #        
   #        Name to be used for this configuration module.
   #        
@@ -651,9 +597,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Construct string for cascading method type (:local_instance) with module type name.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name
+  # @param [Symbol,String] module_type_name
   #        
   #        Name to be used for this configuration module.
   #        
@@ -677,9 +621,7 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Construct string for cascading method type (:object) with module type name.
   #
-  # @param [ Symbol, String ]
-  #
-  #        module_type_name
+  # @param [Symbol,String] module_type_name
   #        
   #        Name to be used for this configuration module.
   #        
@@ -705,21 +647,15 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #
   # @overload define_configuration_definer( ccm_method_name, module_type_name_aliases, method_type, ... )
   #
-  #   @param [ Symbol, String ]
-  #
-  #          ccm_method_name
+  #   @param [Symbol,String] ccm_method_name
   #
   #          Name to use for configuration method.
   #   
-  #   @param [ Array< Symbol, String > ]
-  #
-  #          module_type_name_aliases
+  #   @param [Array<Symbol,String>] module_type_name_aliases
   #
   #          Aliases to use for configuration method.
   #   
-  #   @param [ Symbol, String ]
-  #
-  #          method_type
+  #   @param [Symbol,String] method_type
   #
   #          Type of method being defined: 
   #          
@@ -743,15 +679,11 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Define a configuration definition method.
   #
-  # @param [ Symbol, String ]
-  # 
-  #        ccm_method_name
+  # @param [Symbol,String] ccm_method_name
   # 
   #        Name to use for configuration method.
   # 
-  # @param [ Array< Symbol, String > ]
-  # 
-  #        method_types
+  # @param [Array<Symbol,String>] method_types
   # 
   #        Type of method being defined: 
   #        
@@ -786,15 +718,11 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Define aliases for a configuration definition method.
   #
-  # @param [ Symbol, String ]
-  # 
-  #        ccm_method_name
+  # @param [Symbol,String] ccm_method_name
   # 
   #        Name to use for configuration method.
   # 
-  # @param [ Array< Symbol, String > ]
-  # 
-  #        module_type_name_aliases
+  # @param [Array<Symbol,String>] module_type_name_aliases
   # 
   #        Aliases to use for configuration method.
   #   
@@ -817,27 +745,19 @@ class ::CascadingConfiguration::Core::Module < ::Module
   ###
   # Define actual methods for configuration.
   #
-  # @param [ CascadingConfiguration::Core::Module::Configuration ]
-  #
-  #        configuration_instance
+  # @param [ CascadingConfiguration::Core::Module::Configuration ] configuration_instance
   #
   #        Configuration instance for which methods are to be defined.
   #
-  # @param [ Symbol, String ]
-  #
-  #        accessor_name
+  # @param [Symbol,String] accessor_name
   #
   #        Name of method to be defined.
   #
-  # @param [ Proc ]
-  #
-  #        proc_instance
+  # @param [Proc] proc_instance
   #
   #        Proc for method body.
   #
-  # @param [ Array< Symbol, String > ]
-  #
-  #        method_types
+  # @param [Array<Symbol,String>] method_types
   #
   #        Type of method being defined: 
   #        
