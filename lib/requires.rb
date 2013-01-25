@@ -21,6 +21,7 @@ files = [
   'core/module/configuration',
   'core/module/configuration/class_configuration',
   'core/module/configuration/class_instance_configuration',
+  'core/module/configuration/class_inheriting_from_module_configuration',
   'core/module/configuration/module_configuration',
   'core/module/configuration/instance_configuration',
   'core/module/inheriting_values',

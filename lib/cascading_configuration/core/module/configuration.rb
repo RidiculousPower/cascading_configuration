@@ -40,8 +40,12 @@ class ::CascadingConfiguration::Core::Module::Configuration
       when ::Class
 
         extend( self.class::ClassConfiguration )
+
         if @instance.equal?( ::Class )
           extend( self.class::ClassInstanceConfiguration )
+        elsif instance_class = @instance.class and
+              instance_class < ::Module and not instance_class < ::Class
+          extend( self.class::ClassInheritingFromModuleConfiguration )
         end
 
       when ::Module
