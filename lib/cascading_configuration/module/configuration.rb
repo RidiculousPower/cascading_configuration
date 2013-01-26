@@ -14,29 +14,23 @@ class ::CascadingConfiguration::Module::Configuration
   ###
   # @overload new( instance, configuration_module, configuration_name, write_accessor_name = configuration_name )
   #
-  # @overload new( instance, ancestor_configuration )
+  # @overload new( instance, parent_configuration )
   #
   def initialize( instance, *args )
 
     @instance = instance
 
     case arg_zero = args[ 0 ]
-      
       when self.class
-        
-        # we assume all ancestor instances provided have matching module/name
-        parent_configuration = arg_zero
-        
-        @module = parent_configuration.module
-        @name = parent_configuration.name
-        @write_name = parent_configuration.write_name
-
+        # we assume all parent instances provided have matching module/name
+        @parent = arg_zero
+        @module = @parent.module
+        @name = @parent.name
+        @write_name = @parent.write_name
       else
-
         @module = arg_zero
         @name = args[ 1 ].accessor_name
         @write_name = args[ 2 ] || @name.write_accessor_name
-
     end
 
     @has_value = false
@@ -49,6 +43,11 @@ class ::CascadingConfiguration::Module::Configuration
   #  initialize_for_instance  #
   #############################
   
+  ###
+  # @private
+  #
+  # Extends self with appropriate module(s) given instance for which initilization is occuring.
+  #
   def initialize_for_instance
 
     # If we are defining configurations on ::Class we can only have explicit parents.
@@ -81,36 +80,78 @@ class ::CascadingConfiguration::Module::Configuration
   #  instance  #
   ##############
   
+  ###
+  # Instance for which configuration exists.
+  #
+  # @!attribute [r] instance
+  #
+  # @return [Object] instance.
+  #
   attr_reader :instance
   
   ##########
   #  name  #
   ##########
   
+  ###
+  # Configuration name and read accessor.
+  #
+  # @!attribute [r] name
+  #
+  # @return [Symbol,String] configuration name.
+  #
   attr_reader :name
 
   ################
   #  write_name  #
   ################
 
+  ###
+  # Configuration write accessor.
+  #
+  # @!attribute [r] write_name
+  #
+  # @return [Symbol,String] configuration write name.
+  #
   attr_reader :write_name
 
   ############
   #  module  #
   ############
   
+  ###
+  # Configuration module for which configuration exists.
+  #
+  # @!attribute [r] module
+  #
+  # @return [CascadingConfiguration::Module] Configuration module.
+  #
   attr_reader :module
 
-  ##############
-  #  ancestor  #
-  ##############
+  ##########################
+  #  parent_configuration  #
+  ##########################
   
-  attr_reader :ancestor
+  ###
+  # Parent configuration instance.
+  #
+  # @!attribute [r] parent_configuration
+  #
+  # @return [CascadingConfiguration::Module::Configuration] Parent configuration instance.
+  #
+  attr_reader :parent_configuration
   
   #######################
   #  extension_modules  #
   #######################
 
+  ###
+  # Extension modules associated with configuration.
+  #
+  # @!attribute [r] extension_modules
+  #
+  # @return [Array::Unique] Extension modules.
+  #
   attr_reader :extension_modules
 
   ################
@@ -156,7 +197,7 @@ class ::CascadingConfiguration::Module::Configuration
   #
   # @param [ Object ]
   #
-  #        value
+  #        object
   #
   #        Value of configuration.
   #

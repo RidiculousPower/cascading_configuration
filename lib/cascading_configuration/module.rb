@@ -81,7 +81,7 @@ class ::CascadingConfiguration::Module < ::Module
   #     CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
   #     :attr_setting_<configuration_name>.
   #
-  # @!attribute [r]
+  # @!attribute [r] module_type_name
   #
   # @return [ Symbol ]
   #
@@ -99,7 +99,7 @@ class ::CascadingConfiguration::Module < ::Module
   #     CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
   #     and therefore has the base method name :attr_setting_<configuration_name>.
   #
-  # @!attribute [r]
+  # @!attribute [r] module_type_name_aliases
   #
   # @return [ Symbol ]
   #
@@ -112,25 +112,27 @@ class ::CascadingConfiguration::Module < ::Module
   ###
   # Define all cascading definition methods.
   #
-  # @param [Symbol,String] module_type_name
-  #        
-  #        Name to be used for this configuration module.
-  #        
-  #        This name will be used as the base for all method definition names.
-  #        
-  #        For example: 
-  #        
-  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
-  #          :attr_setting_<configuration_name>.
+  # @overload define_cascading_definition_methods( module_type_name, module_type_name_alias, ... )
   #
-  # @param [Symbol,String] module_type_name_alias
-  #        
-  #        Additional names to use for this configuration module.
-  #        
-  #        For example: 
-  #        
-  #          CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
-  #          and therefore has the base method name :attr_setting_<configuration_name>.
+  #   @param [Symbol,String] module_type_name
+  #          
+  #          Name to be used for this configuration module.
+  #          
+  #          This name will be used as the base for all method definition names.
+  #          
+  #          For example: 
+  #          
+  #            CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #            :attr_setting_<configuration_name>.
+  #   
+  #   @param [Symbol,String] module_type_name_alias
+  #          
+  #          Additional names to use for this configuration module.
+  #          
+  #          For example: 
+  #          
+  #            CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #            and therefore has the base method name :attr_setting_<configuration_name>.
   #
   def define_cascading_definition_methods( module_type_name, *module_type_name_aliases )
     
@@ -150,25 +152,27 @@ class ::CascadingConfiguration::Module < ::Module
   # Define a definition method that will cause configurations to cascade through include/extend
   #   for both singletons (Modules and Classes) and instances.
   #
-  # @param [Symbol,String] module_type_name
-  #        
-  #        Name to be used for this configuration module.
-  #        
-  #        This name will be used as the base for all method definition names.
-  #        
-  #        For example: 
-  #        
-  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
-  #          :attr_setting_<configuration_name>.
+  # @overload define_cascading_definition_method( module_type_name, module_type_name_alias, ... )
   #
-  # @param [Symbol,String] module_type_name_alias
-  #        
-  #        Additional names to use for this configuration module.
-  #        
-  #        For example: 
-  #        
-  #          CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
-  #          and therefore has the base method name :attr_setting_<configuration_name>.
+  #   @param [Symbol,String] module_type_name
+  #          
+  #          Name to be used for this configuration module.
+  #          
+  #          This name will be used as the base for all method definition names.
+  #          
+  #          For example: 
+  #          
+  #            CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #            :attr_setting_<configuration_name>.
+  #   
+  #   @param [Symbol,String] module_type_name_alias
+  #          
+  #          Additional names to use for this configuration module.
+  #          
+  #          For example: 
+  #          
+  #            CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #            and therefore has the base method name :attr_setting_<configuration_name>.
   #
   def define_cascading_definition_method( module_type_name, *module_type_name_aliases )
 
@@ -187,25 +191,27 @@ class ::CascadingConfiguration::Module < ::Module
   # Define a definition method that will cause configurations to cascade through include/extend
   #   for singletons (Modules/Classes).
   #
-  # @param [Symbol,String] module_type_name
-  #        
-  #        Name to be used for this configuration module.
-  #        
-  #        This name will be used as the base for all method definition names.
-  #        
-  #        For example: 
-  #        
-  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
-  #          :attr_module_setting_<configuration_name>.
+  # @overload define_singleton_definition_method( module_type_name, module_type_name_alias, ... )
   #
-  # @param [Symbol,String] module_type_name_alias
-  #        
-  #        Additional names to use for this configuration module.
-  #        
-  #        For example: 
-  #        
-  #          CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
-  #          and therefore has the base method name :attr_module_setting_<configuration_name>.
+  #   @param [Symbol,String] module_type_name
+  #          
+  #          Name to be used for this configuration module.
+  #          
+  #          This name will be used as the base for all method definition names.
+  #          
+  #          For example: 
+  #          
+  #            CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #            :attr_module_setting_<configuration_name>.
+  #   
+  #   @param [Symbol,String] module_type_name_alias
+  #          
+  #          Additional names to use for this configuration module.
+  #          
+  #          For example: 
+  #          
+  #            CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #            and therefore has the base method name :attr_module_setting_<configuration_name>.
   #
   def define_singleton_definition_method( module_type_name, *module_type_name_aliases )
     
@@ -240,25 +246,27 @@ class ::CascadingConfiguration::Module < ::Module
   # Define a definition method that will cause configurations to cascade through include/extend
   #   for instances.
   #
-  # @param [Symbol,String] module_type_name
-  #        
-  #        Name to be used for this configuration module.
-  #        
-  #        This name will be used as the base for all method definition names.
-  #        
-  #        For example: 
-  #        
-  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
-  #          :attr_instance_setting_<configuration_name>.
+  # @overload define_instance_definition_method( module_type_name, module_type_name_alias, ... )
   #
-  # @param [Symbol,String] module_type_name_alias
-  #        
-  #        Additional names to use for this configuration module.
-  #        
-  #        For example: 
-  #        
-  #          CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
-  #          and therefore has the base method name :attr_instance_setting_<configuration_name>.
+  #   @param [Symbol,String] module_type_name
+  #          
+  #          Name to be used for this configuration module.
+  #          
+  #          This name will be used as the base for all method definition names.
+  #          
+  #          For example: 
+  #          
+  #            CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #            :attr_instance_setting_<configuration_name>.
+  #   
+  #   @param [Symbol,String] module_type_name_alias
+  #          
+  #          Additional names to use for this configuration module.
+  #          
+  #          For example: 
+  #          
+  #            CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #            and therefore has the base method name :attr_instance_setting_<configuration_name>.
   #
   def define_instance_definition_method( module_type_name, *module_type_name_aliases )
     
@@ -276,25 +284,27 @@ class ::CascadingConfiguration::Module < ::Module
   ###
   # Define a definition method that will create configurations that do not cascade.
   #
-  # @param [Symbol,String] module_type_name
-  #        
-  #        Name to be used for this configuration module.
-  #        
-  #        This name will be used as the base for all method definition names.
-  #        
-  #        For example: 
-  #        
-  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
-  #          :attr_local_instance_setting_<configuration_name>.
+  # @overload define_local_instance_definition_method( module_type_name, module_type_name_alias, ... )
   #
-  # @param [Symbol,String] module_type_name_alias
-  #        
-  #        Additional names to use for this configuration module.
-  #        
-  #        For example: 
-  #        
-  #          CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
-  #          and therefore has the base method name :attr_local_instance_setting_<configuration_name>.
+  #   @param [Symbol,String] module_type_name
+  #          
+  #          Name to be used for this configuration module.
+  #          
+  #          This name will be used as the base for all method definition names.
+  #          
+  #          For example: 
+  #          
+  #            CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #            :attr_local_instance_setting_<configuration_name>.
+  #   
+  #   @param [Symbol,String] module_type_name_alias
+  #          
+  #          Additional names to use for this configuration module.
+  #          
+  #          For example: 
+  #          
+  #            CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #            and therefore has the base method name :attr_local_instance_setting_<configuration_name>.
   #
   def define_local_instance_definition_method( module_type_name, *module_type_name_aliases )
     
@@ -313,25 +323,27 @@ class ::CascadingConfiguration::Module < ::Module
   # Define a definition method that will create configurations for the instance in which they are created
   #   as well as configurations that will cascade through include/extend for instances.
   #
-  # @param [Symbol,String] module_type_name
-  #        
-  #        Name to be used for this configuration module.
-  #        
-  #        This name will be used as the base for all method definition names.
-  #        
-  #        For example: 
-  #        
-  #          CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
-  #          :attr_object_setting_<configuration_name>.
+  # @overload define_object_definition_method( module_type_name, module_type_name_alias, ... )
   #
-  # @param [Symbol,String] module_type_name_alias
-  #        
-  #        Additional names to use for this configuration module.
-  #        
-  #        For example: 
-  #        
-  #          CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
-  #          and therefore has the base method name :attr_object_setting_<configuration_name>.
+  #   @param [Symbol,String] module_type_name
+  #          
+  #          Name to be used for this configuration module.
+  #          
+  #          This name will be used as the base for all method definition names.
+  #          
+  #          For example: 
+  #          
+  #            CascadingConfiguration::Setting uses the type name :setting, and therefore has the base method name 
+  #            :attr_object_setting_<configuration_name>.
+  #   
+  #   @param [Symbol,String] module_type_name_alias
+  #          
+  #          Additional names to use for this configuration module.
+  #          
+  #          For example: 
+  #          
+  #            CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
+  #            and therefore has the base method name :attr_object_setting_<configuration_name>.
   #
   def define_object_definition_method( module_type_name, *module_type_name_aliases )
 

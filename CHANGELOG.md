@@ -51,3 +51,10 @@ Register for parent needs to happen before not after include/extend.
 Updated for multiple parents for compositing objects. 
 First parent is treated as parent for purpose of extension modules, etc.
 Extension modules for other parents must be added manually - functions coming for that but not implemented yet.
+
+## 1/26/2013 ##
+
+Rewrite of internals to add configuration objects.
+Removed Core distinction. Internals are now considered public code, although they will still be marked private for documentation purposes, since they are only intended for developers.
+Tasty Sandwiches™ taste better!
+Also rewrote all specs except the public module specs. Those will have new specs soon.

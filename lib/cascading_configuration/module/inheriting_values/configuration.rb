@@ -12,7 +12,7 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
   ###
   # @overload new( instance, configuration_module, configuration_name, write_accessor_name = configuration_name )
   #
-  # @overload new( instance, ancestor_configuration )
+  # @overload new( instance, parent_configuration )
   #
   def initialize( instance, *args )
 
@@ -20,9 +20,8 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
       
       when self.class
         
-        parent_instance = args[ 0 ]
-        super( instance, parent_instance.module, parent_instance.name, parent_instance.write_name )
-        register_parent( parent_instance )
+        super( instance, *args )
+        register_parent( @parent )
         
       else
 
@@ -40,6 +39,13 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
   #  permits_multiple_parents?  #
   ###############################
   
+  ###
+  # Query whether configuration permits multiple parents.
+  #
+  # @return [false]
+  #
+  #         Whether multiple parents are permitted.
+  #
   def permits_multiple_parents?
     
     return false
@@ -97,7 +103,7 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
   # Get parent for configuration name on instance.
   #   Used in context where only one parent is permitted.
   #
-  # @!attribute [r]
+  # @!attribute [r] parent
   #
   # @return [nil,::Object]
   #
@@ -109,6 +115,17 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
   #  replace_parent  #
   ####################
 
+  ###
+  # Replace parent for configuration instance with a different parent.
+  #
+  # @param new_parent
+  #
+  #        New parent instance.
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
   def replace_parent( new_parent )
   
     unregister_parent
@@ -122,6 +139,13 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
   #  unregister_parent  #
   #######################
 
+  ###
+  # Remove parent for configuration instance .
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
   def unregister_parent
     
     @parent = nil
@@ -237,6 +261,11 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
   #  value  #
   ###########
 
+  ###
+  # Value of configuration.
+  #
+  # @return [Object] Configuration value.
+  #
   def value
 
     configuration_value = nil

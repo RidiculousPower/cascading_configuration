@@ -1,4 +1,7 @@
 
+###
+# Instance controller manages support modules and inheritance relations for CascadingConfiguration.
+#
 class ::CascadingConfiguration::InstanceController < ::Module
   
   @instance_controllers = { }

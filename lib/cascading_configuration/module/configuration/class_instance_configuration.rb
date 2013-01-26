@@ -1,7 +1,7 @@
 
 ###
-# Used to extend configuration when created for ::Class.
-# 
+# Configurations created for Class will be extended with this module.
+#
 module ::CascadingConfiguration::Module::Configuration::ClassInstanceConfiguration
   
   ############

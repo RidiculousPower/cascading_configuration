@@ -1,4 +1,7 @@
 
+###
+# Configurations that can be extended with modules when defined.
+#
 class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects < 
       ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations
   
@@ -18,6 +21,17 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #  compositing_object_class  #
   ##############################
   
+  ###
+  # Class for compositing object value.
+  #
+  # @!attribute [r] compositing_object_class
+  #
+  # @return [Array::Compositing,
+  #          Array::Compositing::Sorted,
+  #          Array::Compositing::Unique
+  #          Array::Compositing::Sorted::Unique
+  #          Hash::Compositing] Compositing object class.
+  #
   attr_reader :compositing_object_class
 
 end

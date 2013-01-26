@@ -12,7 +12,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   ###
   # @overload new( instance, configuration_module, configuration_name, write_accessor_name = configuration_name )
   #
-  # @overload new( instance, ancestor_configuration, ... )
+  # @overload new( instance, parent_configuration, ... )
   #
   def initialize( instance, *args )
 
@@ -20,7 +20,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
     
     case args[ 0 ]
       when self.class
-        # we assume all ancestor instances provided have matching module/name, so use the first to configure
+        # we assume all parent configuration instances provided have matching module/name, so use the first to configure
         super( instance, args[ 0 ] )
         # but we can have more than one parent, so we need to register the rest
         parents = args        
@@ -49,6 +49,13 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #  permits_multiple_parents?  #
   ###############################
   
+  ###
+  # Query whether configuration permits multiple parents.
+  #
+  # @return [true]
+  #
+  #         Whether multiple parents are permitted.
+  #
   def permits_multiple_parents?
     
     return true
@@ -76,9 +83,11 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   ###
   # Register configuration for instance with parent instance as parent for configuration.
   #
-  # @param parent
+  # @overload register_parent( parent, ... )
   #
-  #        Parent instance from which configurations are being inherited.
+  #   @param parent
+  #   
+  #          Parent instance from which configurations are being inherited.
   #
   # @return [self]
   #
@@ -116,7 +125,16 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   ######################################
   #  register_composite_object_parent  #
   ######################################
-
+  
+  ###
+  # Register a composite object instance as the parent of the instance associated with this configuration.
+  #
+  # @param parent_composite_object [Array::Compositing,Hash::Compositing]
+  #
+  #        Parent composite object instance.
+  #
+  # @return [CascadingConfiguration::Module::Configuration] Self.
+  #
   def register_composite_object_parent( parent_composite_object )
   
     @value.register_parent( parent_composite_object )
@@ -127,6 +145,19 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #  replace_parent  #
   ####################
 
+  ###
+  # Replace a current parent for configuration instance with a different parent.
+  #
+  # @param existing_parent
+  #
+  #        Current parent instance to replace.
+  #
+  # @param new_parent
+  #
+  #        New parent instance.
+  #
+  # @return [CascadingConfiguration::Module::Configuration] Self.
+  #
   def replace_parent( existing_parent, new_parent )
 
     unregister_parent( existing_parent )
@@ -140,6 +171,15 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #  unregister_parent  #
   #######################
 
+  ###
+  # Remove a current parent for configuration instance.
+  #
+  # @param existing_parent
+  #
+  #        Current parent instance to replace.
+  #
+  # @return [CascadingConfiguration::Module::Configuration] Self.
+  #
   def unregister_parent( existing_parent )
     
     case existing_parent
@@ -264,6 +304,18 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #  value=  #
   ############
   
+  ###
+  # Replace existing configuration object values with values provided.
+  #
+  # @param value [Array,Hash]
+  #
+  #        An object corresponding to compositing object class, 
+  #        but which does not have to be a compositing object.
+  #
+  # @return [Array::Compositing,Hash::Compositing]
+  #
+  #         Compositing Object.
+  #
   def value=( value )
 
     return @value.replace( value )

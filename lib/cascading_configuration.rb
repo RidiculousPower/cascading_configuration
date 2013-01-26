@@ -7,9 +7,6 @@ require_relative './namespaces'
 # source file requires
 require_relative './requires.rb'
 
-# any post-require setup
-require_relative './setup.rb'
-
 module ::CascadingConfiguration
   
   extend ::ParallelAncestry
@@ -63,7 +60,7 @@ module ::CascadingConfiguration
   ###
   # Get hash of configurations names and their corresponding configuration instances.
   #
-  # @param [ Object ]
+  # @param [ Object ] instance
   #
   #        Instance for which configurations are being queried.
   #

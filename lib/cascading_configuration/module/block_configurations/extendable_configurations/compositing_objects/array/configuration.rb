@@ -1,15 +1,18 @@
 
-class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::
-        Array::Configuration < 
-      ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::
-        Configuration
+###
+# Configurations with Array::Compositing Objects.
+#
+class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Array::Configuration < 
+      ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration
   
   ###########################
   #  insert_new_parents_at  #
   ###########################
   
   ###
-  # @!attribute [rw]
+  # Location where new parents should be inserted.
+  #
+  # @!attribute [rw] insert_new_parents_at
   #
   # @return [Integer,nil]
   #
@@ -23,7 +26,16 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   ######################################
   #  register_composite_object_parent  #
   ######################################
-
+  
+  ###
+  # Register a composite object instance as the parent of the instance associated with this configuration.
+  #
+  # @param parent_composite_object [Array::Compositing,Hash::Compositing]
+  #
+  #        Parent composite object instance.
+  #
+  # @return [CascadingConfiguration::Module::Configuration] Self.
+  #
   def register_composite_object_parent( parent_composite_object )
   
     @value.register_parent( parent_composite_object, @insert_new_parents_at )

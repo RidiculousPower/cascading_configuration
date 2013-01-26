@@ -1,4 +1,7 @@
 
+###
+# Module type used to create support modules.
+#
 class ::CascadingConfiguration::InstanceController::SupportModule < ::Module
 
   # Currently CascadingConfiguration uses three types:

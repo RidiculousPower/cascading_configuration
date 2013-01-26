@@ -1,4 +1,7 @@
 
+###
+# Configurations that accept a block.
+#
 class ::CascadingConfiguration::Module::BlockConfigurations < ::CascadingConfiguration::Module
 
   ###########################

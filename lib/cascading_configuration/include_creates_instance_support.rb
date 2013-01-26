@@ -1,4 +1,7 @@
 
+###
+# Enable module so that when it is included it will create instance controller and instance support module.
+#
 module ::CascadingConfiguration::IncludeCreatesInstanceSupport
 
   ##############
