@@ -103,8 +103,8 @@ module ::CascadingConfiguration::Setting
   #   @return self
   #
   
-  setting_module = ::CascadingConfiguration::Core::Module::InheritingValues.new( :setting, :configuration )
+  setting_module = ::CascadingConfiguration::Module::InheritingValues.new( :setting, :configuration )
   
-  ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( self, setting_module )
+  ::CascadingConfiguration.enable_instance_as_cascading_configuration_module( self, setting_module )
 
 end

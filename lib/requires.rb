@@ -7,41 +7,41 @@ require 'parallel_ancestry'
 require 'hash'
 require 'array'
 
+require_relative 'cascading_configuration_modules'
+
 basepath = 'cascading_configuration'
 
 files = [
-    
-  'core/include_creates_instance_support',
-
-  'core',
+      
+  'include_creates_instance_support',
   
-  'core/auto_nesting_id_hash',
+  'auto_nesting_id_hash',
   
-  'core/module',
-  'core/module/configuration',
-  'core/module/configuration/class_configuration',
-  'core/module/configuration/class_instance_configuration',
-  'core/module/configuration/class_inheriting_from_module_configuration',
-  'core/module/configuration/module_configuration',
-  'core/module/configuration/instance_configuration',
-  'core/module/inheriting_values',
-  'core/module/inheriting_values/configuration',
-  'core/module/block_configurations',
-  'core/module/block_configurations/cascading_variables',
-  'core/module/block_configurations/extendable_configurations',
-  'core/module/block_configurations/extendable_configurations/compositing_objects',
-  'core/module/block_configurations/extendable_configurations/compositing_objects/configuration',
-  'core/module/block_configurations/extendable_configurations/compositing_objects/array',
-  'core/module/block_configurations/extendable_configurations/compositing_objects/array/configuration',
-  'core/module/block_configurations/extendable_configurations/compositing_objects/hash',
-  'core/module/block_configurations/extendable_configurations/compositing_objects/hash/configuration',
+  'module',
+  'module/configuration',
+  'module/configuration/class_configuration',
+  'module/configuration/class_instance_configuration',
+  'module/configuration/class_inheriting_from_module_configuration',
+  'module/configuration/module_configuration',
+  'module/configuration/instance_configuration',
+  'module/inheriting_values',
+  'module/inheriting_values/configuration',
+  'module/block_configurations',
+  'module/block_configurations/cascading_variables',
+  'module/block_configurations/extendable_configurations',
+  'module/block_configurations/extendable_configurations/compositing_objects',
+  'module/block_configurations/extendable_configurations/compositing_objects/configuration',
+  'module/block_configurations/extendable_configurations/compositing_objects/array',
+  'module/block_configurations/extendable_configurations/compositing_objects/array/configuration',
+  'module/block_configurations/extendable_configurations/compositing_objects/hash',
+  'module/block_configurations/extendable_configurations/compositing_objects/hash/configuration',
     
-  'core/instance_controller/support_module',
-  'core/instance_controller/support_module/instance_support_module',
-  'core/instance_controller/support_module/singleton_support_module',
-  'core/instance_controller/support_module/local_instance_support_module',
-  'core/instance_controller/extension_module',
-  'core/instance_controller',
+  'instance_controller/support_module',
+  'instance_controller/support_module/instance_support_module',
+  'instance_controller/support_module/singleton_support_module',
+  'instance_controller/support_module/local_instance_support_module',
+  'instance_controller/extension_module',
+  'instance_controller',
   
   'setting',
   

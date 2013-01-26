@@ -1,9 +1,7 @@
 
 module ::CascadingConfiguration
-  module Core
-    class InstanceController < ::Module
-      module Methods
-      end
+  class InstanceController < ::Module
+    module Methods
     end
   end
 end

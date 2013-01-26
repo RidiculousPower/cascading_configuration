@@ -14,7 +14,7 @@ module ::CascadingConfiguration
   
   extend ::ParallelAncestry
   
-  @configurations = ::CascadingConfiguration::Core::AutoNestingIDHash.new
+  @configurations = ::CascadingConfiguration::AutoNestingIDHash.new
   
   ###################
   #  self.included  #
@@ -27,7 +27,7 @@ module ::CascadingConfiguration
     
     super if defined?( super )
     
-    configuration_modules = ::CascadingConfiguration::Core.configuration_modules
+    configuration_modules = ::CascadingConfiguration.configuration_modules
     
     instance.module_eval do
       configuration_modules.each do |this_member|
@@ -48,7 +48,7 @@ module ::CascadingConfiguration
     
     super if defined?( super )
     
-    configuration_modules = ::CascadingConfiguration::Core.configuration_modules
+    configuration_modules = ::CascadingConfiguration.configuration_modules
     
     configuration_modules.each do |this_member|
       instance.extend( this_member )
@@ -67,7 +67,7 @@ module ::CascadingConfiguration
   #
   #        Instance for which configurations are being queried.
   #
-  # @return [ Hash{ Symbol, String => CascadingConfiguration::Core::Module } ]
+  # @return [ Hash{ Symbol, String => CascadingConfiguration::Module } ]
   #
   #         Hash of configuration names pointing to corresponding configuration instances.
   # 
@@ -97,7 +97,7 @@ module ::CascadingConfiguration
   #
   #        Instance for which configurations are being queried.
   #
-  # @param [ CascadingConfiguration::Core::Module::Configuration ]
+  # @param [ CascadingConfiguration::Module::Configuration ]
   #
   #        configuration_instance
   #        
@@ -133,7 +133,7 @@ module ::CascadingConfiguration
   #
   #        Configuration name to retrieve.
   #
-  # @return [ CascadingConfiguration::Core::Module::Configuration ]
+  # @return [ CascadingConfiguration::Module::Configuration ]
   #
   #         Configuration instance for name on instance.
   #

@@ -25,7 +25,7 @@ module ::CascadingConfiguration::Array::Sorted
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -52,7 +52,7 @@ module ::CascadingConfiguration::Array::Sorted
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -79,7 +79,7 @@ module ::CascadingConfiguration::Array::Sorted
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -106,7 +106,7 @@ module ::CascadingConfiguration::Array::Sorted
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -132,17 +132,17 @@ module ::CascadingConfiguration::Array::Sorted
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::Core::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
 
-  sorted_array_module = ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableConfigurations::
+  sorted_array_module = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::
                           CompositingObjects::Array.new( :sorted_array, 
                                                          ::Array::Sorted::Compositing, 
                                                          :configuration_sorted_array )
   
-  ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( self, sorted_array_module )
+  ::CascadingConfiguration.enable_instance_as_cascading_configuration_module( self, sorted_array_module )
 
 end

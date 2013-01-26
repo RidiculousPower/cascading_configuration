@@ -31,7 +31,7 @@ Fixed for Object.
 
 Added Instance and Singleton support module subclasses - fixes case where singleton support is created after extending with an instance with singleton support, causing the extending instance's singleton support to be both improperly included and below the instance, stomping any of its methods.
 
-Added :initialize_configuration to CascadingConfiguration::Core::Module; subclasses override to perform object initialization post-creation. This is so that objects are initialized only after all objects have been instantiated.
+Added :initialize_configuration to CascadingConfiguration::Module; subclasses override to perform object initialization post-creation. This is so that objects are initialized only after all objects have been instantiated.
 
 ## 6/27/2012 ##
 
