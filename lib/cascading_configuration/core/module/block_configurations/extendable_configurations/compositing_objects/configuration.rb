@@ -12,42 +12,30 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableCon
   ###
   # @overload new( instance, configuration_module, configuration_name, write_accessor_name = configuration_name )
   #
-  # @overload new( instance, ancestor_configuration )
+  # @overload new( instance, ancestor_configuration, ... )
   #
   def initialize( instance, *args )
 
-    passed_parents = nil
+    parents = nil
     
     case args[ 0 ]
-      
       when self.class
-        
         # we assume all ancestor instances provided have matching module/name, so use the first to configure
-        parent_instance = args[ 0 ]
         super( instance, args[ 0 ] )
         # but we can have more than one parent, so we need to register the rest
-        args.shift
-        passed_parents = args
-        
+        parents = args        
       else
-
         super( instance, *args )
-
     end
     
     @value = @module.compositing_object_class.new( nil, instance )
     
-    @extension_modules = ::Array::Compositing::Unique.new( nil, self )
+    @parents = ::Array::Unique.new( self )
+    @extension_modules = ::Array::Compositing::Unique.new( nil, self )        
+    register_parent( *parents ) if parents
     
-    @parents = ::Array::Unique.new
-    
-    if passed_parents
-      register_parent( *passed_parents )
-    end
-    
-    unless @extension_modules.empty?
-      @value.extend( *@extension_modules )
-    end
+    # registering parent might have filled in extension modules
+    @value.extend( *@extension_modules ) unless @extension_modules.empty?
     
   end
 

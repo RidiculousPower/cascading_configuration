@@ -25,11 +25,11 @@ class ::CascadingConfiguration::Core::Module::Configuration
       when self.class
         
         # we assume all ancestor instances provided have matching module/name
-        @parent_configuration_instance = arg_zero
+        parent_configuration = arg_zero
         
-        @module = @parent_configuration_instance.module
-        @name = @parent_configuration_instance.name
-        @write_name = @parent_configuration_instance.write_name
+        @module = parent_configuration.module
+        @name = parent_configuration.name
+        @write_name = parent_configuration.write_name
 
       else
 
