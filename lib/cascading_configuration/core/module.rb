@@ -207,17 +207,30 @@ class ::CascadingConfiguration::Core::Module < ::Module
   #          CascadingConfiguration::Setting has the additional type alias :configuration_setting, 
   #          and therefore has the base method name :attr_module_setting_<configuration_name>.
   #
-  def define_module_definition_method( module_type_name, *module_type_name_aliases )
+  def define_singleton_definition_method( module_type_name, *module_type_name_aliases )
     
     ccm_method_name = singleton_method_name( module_type_name )
     ccm_alias_names = [ module_method_name( module_type_name ), 
                         class_method_name( module_type_name ) ]
+    ccm_alias_names.concat( module_type_name_aliases.collect { |this_alias| singleton_method_name( this_alias ) } )
     ccm_alias_names.concat( module_type_name_aliases.collect { |this_alias| module_method_name( this_alias ) } )
     ccm_alias_names.concat( module_type_name_aliases.collect { |this_alias| class_method_name( this_alias ) } )
     
     return define_configuration_definer( ccm_method_name, ccm_alias_names, :singleton )
     
   end
+
+  #####################################
+  #  define_module_definition_method  #
+  #####################################
+  
+  alias_method :define_module_definition_method, :define_singleton_definition_method
+
+  ####################################
+  #  define_class_definition_method  #
+  ####################################
+
+  alias_method :define_class_definition_method, :define_singleton_definition_method
 
   #######################################
   #  define_instance_definition_method  #
@@ -403,20 +416,14 @@ class ::CascadingConfiguration::Core::Module < ::Module
     #  configuration_name  #
     #======================#
 
-    getter_proc = ::Proc.new do
-      return ::CascadingConfiguration.configuration( self, accessor_name ).value
-    end
-
+    getter_proc = ::Proc.new { ::CascadingConfiguration.configuration( self, accessor_name ).value }
     define_configuration_method_types( configuration_instance, accessor_name, getter_proc, method_types )
 
     #=======================#
     #  configuration_name=  #
     #=======================#
 
-    setter_proc = ::Proc.new do |value|
-      return ::CascadingConfiguration.configuration( self, accessor_name ).value = value
-    end
-    
+    setter_proc = ::Proc.new { |value| ::CascadingConfiguration.configuration( self, accessor_name ).value = value }    
     define_configuration_method_types( configuration_instance, write_accessor_name, setter_proc, method_types )
 
     return self

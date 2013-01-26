@@ -22,12 +22,11 @@ class ::CascadingConfiguration::Core::Module::BlockConfigurations::ExtendableCon
       
       when self.class
         
-        # we assume all ancestor instances provided have matching module/name
+        # we assume all ancestor instances provided have matching module/name, so use the first to configure
         parent_instance = args[ 0 ]
-
-        super( instance, parent_instance.module, parent_instance.name, parent_instance.write_name )
-
-        # but we can have more than one parent
+        super( instance, args[ 0 ] )
+        # but we can have more than one parent, so we need to register the rest
+        args.shift
         passed_parents = args
         
       else

@@ -39,6 +39,7 @@ files = [
   'core/instance_controller/support_module',
   'core/instance_controller/support_module/instance_support_module',
   'core/instance_controller/support_module/singleton_support_module',
+  'core/instance_controller/support_module/local_instance_support_module',
   'core/instance_controller/extension_module',
   'core/instance_controller',
   

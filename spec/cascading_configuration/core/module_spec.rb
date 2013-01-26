@@ -1,32 +1,46 @@
 
 require_relative '../../../lib/cascading_configuration.rb'
 
+require_relative 'module/cascading_method_shared_examples.rb'
+
+require_relative '../../helpers/configuration_module.rb'
+
 require_relative '../../support/named_class_and_module.rb'
 
 describe ::CascadingConfiguration::Core::Module do
 
-  before :all do
-    @class_instance = ::CascadingConfiguration::Core::Module.new( :setting, '' ).name( :ClassInstance )
-    @ccm = ::Module.new.name( :CCM )
-    ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( @ccm, @class_instance )
+  let( :instance ) { ::CascadingConfiguration::Core::Module.new( ccm_name, *ccm_aliases ).name( :Instance ) }
+  let( :ccm ) do
+    ccm_instance = ::Module.new.name( :CCM )
+    ::CascadingConfiguration::Core.enable_instance_as_cascading_configuration_module( ccm_instance, instance )
+    ccm_instance
   end
-
-  ################
-  #  initialize  #
-  ################
-
-  it 'can initialize with a base name for a default encapsulation and with aliases' do
-    @class_instance.module_type_name.should == :setting
-    @class_instance.module_type_name_aliases.should == [ '' ]
-  end
+  let( :ccm_name ) { :setting }
+  let( :ccm_aliases ) { [ '' ] }
+  
+  ##################################################################################################
+  #   private ######################################################################################
+  ##################################################################################################
   
   ###########################
   #  cascading_method_name  #
   ###########################
   
-  it 'can return a cascading method name for a base name' do
-    @class_instance.module_eval do
-      cascading_method_name( 'some_name' ).should == 'attr_some_name'
+  context '#cascading_method_name' do
+    let( :cascading_method_name ) { instance.module_eval { cascading_method_name( 'some_name' ) } }
+    it 'can return a cascading method name for a base name' do
+      cascading_method_name.should == 'attr_some_name'
+    end
+  end
+
+  ###########################
+  #  singleton_method_name  #
+  ###########################
+
+  context '#singleton_method_name' do
+    let( :singleton_method_name ) { instance.module_eval { singleton_method_name( 'some_name' ) } }
+    it 'can return a singleton method name for a base name' do
+      singleton_method_name.should == 'attr_singleton_some_name'
     end
   end
 
@@ -34,9 +48,10 @@ describe ::CascadingConfiguration::Core::Module do
   #  module_method_name  #
   ########################
 
-  it 'can return a module method name for a base name' do
-    @class_instance.module_eval do
-      module_method_name( 'some_name' ).should == 'attr_module_some_name'
+  context '#module_method_name' do
+    let( :module_method_name ) { instance.module_eval { module_method_name( 'some_name' ) } }
+    it 'can return a module method name for a base name' do
+      module_method_name.should == 'attr_module_some_name'
     end
   end
 
@@ -44,9 +59,10 @@ describe ::CascadingConfiguration::Core::Module do
   #  class_method_name  #
   #######################
 
-  it 'can return a class method name for a base name' do
-    @class_instance.module_eval do
-      class_method_name( 'some_name' ).should == 'attr_class_some_name'
+  context '#class_method_name' do
+    let( :class_method_name ) { instance.module_eval { class_method_name( 'some_name' ) } }
+    it 'can return a class method name for a base name' do
+      class_method_name.should == 'attr_class_some_name'
     end
   end
 
@@ -54,9 +70,10 @@ describe ::CascadingConfiguration::Core::Module do
   #  instance_method_name  #
   ##########################
 
-  it 'can return an instance method name for a base name' do
-    @class_instance.module_eval do
-      instance_method_name( 'some_name' ).should == 'attr_instance_some_name'
+  context '#instance_method_name' do
+    let( :instance_method_name ) { instance.module_eval { instance_method_name( 'some_name' ) } }
+    it 'can return an instance method name for a base name' do
+      instance_method_name.should == 'attr_instance_some_name'
     end
   end
 
@@ -64,9 +81,10 @@ describe ::CascadingConfiguration::Core::Module do
   #  local_instance_method_name  #
   ################################
 
-  it 'can return a local instance method name for a base name' do
-    @class_instance.module_eval do
-      local_instance_method_name( 'some_name' ).should == 'attr_local_some_name'
+  context '#local_instance_method_name' do
+    let( :local_instance_method_name ) { instance.module_eval { local_instance_method_name( 'some_name' ) } }
+    it 'can return a local instance method name for a base name' do
+      local_instance_method_name.should == 'attr_local_some_name'
     end
   end
 
@@ -74,9 +92,10 @@ describe ::CascadingConfiguration::Core::Module do
   #  object_method_name  #
   ########################
 
-  it 'can return an object method name for a base name' do
-    @class_instance.module_eval do
-      object_method_name( 'some_name' ).should == 'attr_object_some_name'
+  context '#object_method_name' do
+    let( :object_method_name ) { instance.module_eval { object_method_name( 'some_name' ) } }
+    it 'can return an object method name for a base name' do
+      object_method_name.should == 'attr_object_some_name'
     end
   end
 
@@ -84,273 +103,214 @@ describe ::CascadingConfiguration::Core::Module do
   #  define_configuration_definer  #
   ##################################
 
-  it 'can define cascading configuration methods' do
-    @class_instance.module_eval do
-      # all
-      define_configuration_definer( :all_base, [ :all_other ], :all )
-      method_defined?( :all_base ).should == true
-      method_defined?( :all_other ).should == true
-      instance_method( :all_base ).should == instance_method( :all_other )
-      # module
-      define_configuration_definer( :module_base, [ :module_other ], :module )
-      method_defined?( :module_base ).should == true
-      method_defined?( :module_other ).should == true
-      instance_method( :module_base ).should == instance_method( :module_other )
-      # instance
-      define_configuration_definer( :instance_base, [ :instance_other ], :instance )
-      method_defined?( :instance_base ).should == true
-      method_defined?( :instance_other ).should == true
-      instance_method( :instance_base ).should == instance_method( :instance_other )
-      # local_instance
-      define_configuration_definer( :local_base, [ :local_other ], :local_instance )
-      method_defined?( :local_base ).should == true
-      method_defined?( :local_other ).should == true
-      instance_method( :local_base ).should == instance_method( :local_other )
-      # object
-      define_configuration_definer( :object_base, [ :object_other ], :object )
-      method_defined?( :object_base ).should == true
-      method_defined?( :object_other ).should == true
-      instance_method( :object_other ).should == instance_method( :object_base )
+  context '#define_configuration_definer' do
+    before :each do
+      _base_name = base_name
+      _alias_names = alias_names
+      _configuration_type = configuration_type
+      instance.module_eval { define_configuration_definer( _base_name, _alias_names, _configuration_type ) }
     end
-
-    ccm = @ccm
+    let( :configuration_definer_args ) { [ base_name, alias_names, configuration_type, ccm ] }
+    context 'for :all' do
+      it_behaves_like :cascading_method do
+        let( :base_name ) { :all_base }
+        let( :alias_names ) { [ :all_other ] }
+        let( :method_name ) { :attr_setting }
+        let( :method_aliases ) { [ :attr_configuration ] }
+      end
+    end
+    context 'for :singleton' do
+      it_behaves_like :singleton_method do
+        let( :base_name ) { :singleton_base }
+        let( :alias_names ) { [ :singleton_other ] }
+        let( :method_name ) { :attr_singleton_setting }
+        let( :method_aliases ) { [ :attr_singleton_configuration ] }
+      end
+    end
+    context 'for :module' do
+      it_behaves_like :singleton_method do
+        let( :base_name ) { :module_base }
+        let( :alias_names ) { [ :module_other ] }
+        let( :method_name ) { :attr_singleton_setting }
+        let( :method_aliases ) { [ :attr_singleton_configuration ] }
+      end
+    end
+    context 'for :class' do
+      it_behaves_like :singleton_method do
+        let( :base_name ) { :class_base }
+        let( :alias_names ) { [ :class_other ] }
+        let( :method_name ) { :attr_singleton_setting }
+        let( :method_aliases ) { [ :attr_singleton_configuration ] }
+      end
+    end
+    context 'for :instance' do
+      it_behaves_like :instance_method do
+        let( :base_name ) { :instance_base }
+        let( :alias_names ) { [ :instance_other ] }
+        let( :method_name ) { :attr_setting }
+        let( :method_aliases ) { [ :attr_configuration ] }
+      end
+    end
+    context 'for :local_instance' do
+      it_behaves_like :local_instance_method do
+        let( :base_name ) { :local_instance_base }
+        let( :alias_names ) { [ :local_instance_other ] }
+        let( :method_name ) { :attr_setting }
+        let( :method_aliases ) { [ :attr_configuration ] }
+      end
+    end
+    context 'for :object' do
+      it_behaves_like :object_method do
+        let( :base_name ) { :object_base }
+        let( :alias_names ) { [ :object_other ] }
+        let( :method_name ) { :attr_setting }
+        let( :method_aliases ) { [ :attr_configuration ] }
+      end
+    end
     
-    ::Module.new do
-      include ccm
+  end
+  
+  ##################################################################################################
+  #   public #######################################################################################
+  ##################################################################################################
+  
+  ######################
+  #  module_type_name  #
+  ######################
 
-      # all
-      all_base( :all )
-
-      instance_methods.include?( :all ).should == true
-      respond_to?( :all ).should == true
-
-      # module
-      module_base( :module )
-      instance_methods.include?( :module ).should == false
-      respond_to?( :module ).should == true
-
-      # instance
-      instance_base( :instance )
-      instance_methods.include?( :instance ).should == true
-      respond_to?( :instance ).should == false
-
-      # local instance
-      local_base( :local_instance )
-      instance_methods.include?( :local_instance ).should == true
-      respond_to?( :local_instance ).should == true
-
-      # object
-      object_base( :object )
-      instance_methods.include?( :object ).should == false
-      respond_to?( :object ).should == true
-
+  context '#module_type_name' do
+    it 'can initialize with a base name for a default encapsulation and with aliases' do
+      instance.module_type_name.should be ccm_name
     end
   end
   
-  ########################################
-  #  define_cascading_definition_method  #
-  ########################################
-  
-  it 'can define cascading configuration methods that define cascading configurations' do
-    @class_instance.module_eval do
+  ##############################
+  #  module_type_name_aliases  #
+  ##############################
 
-      define_cascading_definition_method( :base, :other )
-
-      method_defined?( :attr_base ).should == true
-      method_defined?( :attr_other ).should == true
-      instance_method( :attr_base ).should == instance_method( :attr_other )
-    end
-    
-    ccm = @ccm
-    
-    ::Module.new do
-      include ccm
-      attr_base( :all )
-      instance_methods.include?( :all ).should == true
-      respond_to?( :all ).should == true
+  context '#module_type_name_aliases' do
+    it 'can initialize with a base name for a default encapsulation and with aliases' do
+      instance.module_type_name_aliases.should == ccm_aliases
     end
   end
 
-  #####################################
-  #  define_module_definition_method  #
-  #####################################
+  context '=========  Defining Cascading Methods  ========' do
 
-  it 'can define cascading configuration methods that define module configurations' do
-    @class_instance.module_eval do
-      
-      define_module_definition_method( :base, :other )
-      
-      method_defined?( :attr_module_base ).should == true
-      method_defined?( :attr_module_other ).should == true
-      instance_method( :attr_module_base ).should == instance_method( :attr_module_other )
+    let( :base_name ) { :setting }
+    let( :alias_names ) { [ :configuration ] }
+    let( :configuration_definer_args ) { [ method_name, method_aliases, configuration_type, ccm ] }
     
-    end
-    
-    ccm = @ccm
-    
-    ::Module.new do
-      include ccm
-      attr_module_base( :module )
-      instance_methods.include?( :module ).should == false
-      respond_to?( :module ).should == true
-    end
-  end
-
-  #######################################
-  #  define_instance_definition_method  #
-  #######################################
-
-  it 'can define cascading configuration methods that define instance configurations' do
-    @class_instance.module_eval do
-
-      define_instance_definition_method( :base, :other )
-      
-      method_defined?( :attr_instance_base ).should == true
-      method_defined?( :attr_instance_other ).should == true
-      instance_method( :attr_instance_base ).should == instance_method( :attr_instance_other )
-      
-    end
-    
-    ccm = @ccm
-    
-    ::Module.new do
-      include ccm
-      module InstanceModule
-      end
-      attr_instance_base( :instance )
-      instance_methods.include?( :instance ).should == true
-      respond_to?( :instance ).should == false
-    end
-  end
-
-  ####################################
-  #  define_local_definition_method  #
-  ####################################
+    ########################################
+    #  define_cascading_definition_method  #
+    ########################################
   
-  it 'can define cascading configuration methods that define local configurations' do
-    @class_instance.module_eval do
-      
-      define_local_instance_definition_method( :base, :other )
-      
-      method_defined?( :attr_local_base ).should == true
-      method_defined?( :attr_local_other ).should == true
-      instance_method( :attr_local_base ).should == instance_method( :attr_local_other )
-      
-    end
-    
-    ccm = @ccm
-    
-    ::Module.new do
-      include ccm
-      module LocalInstanceModule
+    context '#define_cascading_definition_method' do
+      before( :each ) { instance.define_cascading_definition_method( base_name, *alias_names ) }
+      it_behaves_like :cascading_method do
+        let( :method_name ) { :attr_setting }
+        let( :method_aliases ) { [ :attr_configuration ] }
       end
-      attr_local_base( :local_instance )
-      instance_methods.include?( :local_instance ).should == true
-      respond_to?( :local_instance ).should == true
     end
-  end
+
+    ########################################
+    #  define_singleton_definition_method  #
+    ########################################
+
+    context '#define_singleton_definition_method' do
+      before( :each ) { instance.define_singleton_definition_method( base_name, *alias_names ) }
+      it_behaves_like :singleton_method do
+        let( :method_name ) { :attr_singleton_setting }
+        let( :method_aliases ) { [ :attr_singleton_configuration ] }
+      end
+    end
+    
+    #####################################
+    #  define_class_definition_method  #
+    #####################################
+
+    context '#define_class_definition_method' do
+      let( :definer_method ) { :define_class_definition_method }
+      let( :definer_alias ) { :define_singleton_definition_method }
+      it 'aliases #define_singleton_definition_method' do
+        instance.method( definer_method ).should == instance.method( definer_alias )
+      end
+    end
+
+    #####################################
+    #  define_module_definition_method  #
+    #####################################
+
+    context '#define_module_definition_method' do
+      let( :definer_method ) { :define_module_definition_method }
+      let( :definer_alias ) { :define_singleton_definition_method }
+      it 'aliases #define_singleton_definition_method' do
+        instance.method( definer_method ).should == instance.method( definer_alias )
+      end
+    end
+
+    #######################################
+    #  define_instance_definition_method  #
+    #######################################
+
+    context '#define_instance_definition_method' do
+      before( :each ) { instance.define_instance_definition_method( base_name, *alias_names ) }
+      it_behaves_like :instance_method do
+        let( :method_name ) { :attr_instance_setting }
+        let( :method_aliases ) { [ :attr_instance_configuration ] }
+      end
+    end
+
+    #############################################
+    #  define_local_instance_definition_method  #
+    #############################################
   
-  #####################################
-  #  define_object_definition_method  #
-  #####################################
-
-  it 'can define cascading configuration methods that define object configurations' do
-    @class_instance.module_eval do
-      
-      
-      define_object_definition_method( :base, :other )
-      
-      method_defined?( :attr_object_base ).should == true
-      method_defined?( :attr_object_other ).should == true
-      instance_method( :attr_object_other ).should == instance_method( :attr_object_base )
-    
+    context '#define_local_instance_definition_method' do
+      before( :each ) { instance.define_local_instance_definition_method( base_name, *alias_names ) }
+      it_behaves_like :local_instance_method do
+        let( :method_name ) { :attr_local_setting }
+        let( :method_aliases ) { [ :attr_local_configuration ] }
+      end
     end
-    
-    ccm = @ccm
+  
+    #####################################
+    #  define_object_definition_method  #
+    #####################################
 
-    ::Module.new do
-      include ccm
-      module ObjectModule
+    context '#define_object_definition_method' do
+      before( :each ) { instance.define_object_definition_method( base_name, *alias_names ) }
+      it_behaves_like :object_method do
+        let( :method_name ) { :attr_object_setting }
+        let( :method_aliases ) { [ :attr_object_configuration ] }
       end
-      attr_object_base( :object )
-      instance_methods.include?( :object ).should == false
-      respond_to?( :object ).should == true
-    end        
-  end
-  
-  #########################################
-  #  define_cascading_definition_methods  #
-  #########################################
-  
-  it 'can define cascading configuration methods that define all types of cascading configuration methods' do
-    @class_instance.module_eval do
-      
-      define_cascading_definition_methods( :base, :other )
-      
-      # all
-      method_defined?( :attr_base ).should == true
-      method_defined?( :attr_other ).should == true
-      instance_method( :attr_base ).should == instance_method( :attr_other )
-      
-      # module
-      method_defined?( :attr_module_base ).should == true
-      method_defined?( :attr_module_other ).should == true
-      instance_method( :attr_module_base ).should == instance_method( :attr_module_other )
-      
-      # instance
-      method_defined?( :attr_instance_base ).should == true
-      method_defined?( :attr_instance_other ).should == true
-      instance_method( :attr_instance_base ).should == instance_method( :attr_instance_other )
-      
-      # local instance
-      method_defined?( :attr_local_base ).should == true
-      method_defined?( :attr_local_other ).should == true
-      instance_method( :attr_local_base ).should == instance_method( :attr_local_other )
-      
-      # object
-      method_defined?( :attr_object_base ).should == true
-      method_defined?( :attr_object_other ).should == true
-      instance_method( :attr_object_other ).should == instance_method( :attr_object_base )
-    
     end
-    
-    ccm = @ccm
-    
-    ::Module.new do
-
-      include ccm
-      
-      # all
-      attr_base( :all ) do
+  
+    #########################################
+    #  define_cascading_definition_methods  #
+    #########################################
+  
+    context '#define_cascading_definition_methods' do
+      before( :each ) { instance.define_cascading_definition_methods( base_name, *alias_names ) }
+      it_behaves_like :cascading_method do
+        let( :method_name ) { :attr_setting }
+        let( :method_aliases ) { [ :attr_configuration ] }
       end
-      instance_methods.include?( :all ).should == true
-      respond_to?( :all ).should == true
-      
-      # module
-      attr_module_base( :module ) do
+      it_behaves_like :singleton_method do
+        let( :method_name ) { :attr_singleton_setting }
+        let( :method_aliases ) { [ :attr_singleton_configuration ] }
       end
-      instance_methods.include?( :module ).should == false
-      respond_to?( :module ).should == true
-      
-      # instance
-      attr_instance_base( :instance ) do
+      it_behaves_like :instance_method do
+        let( :method_name ) { :attr_instance_setting }
+        let( :method_aliases ) { [ :attr_instance_configuration ] }
       end
-      instance_methods.include?( :instance ).should == true
-      respond_to?( :instance ).should == false
-      
-      # local instance
-      attr_local_base( :local_instance ) do
+      it_behaves_like :local_instance_method do
+        let( :method_name ) { :attr_local_setting }
+        let( :method_aliases ) { [ :attr_local_configuration ] }
       end
-      instance_methods.include?( :local_instance ).should == true
-      respond_to?( :local_instance ).should == true
-
-      # object
-      attr_object_base( :object ) do
+      it_behaves_like :object_method do
+        let( :method_name ) { :attr_object_setting }
+        let( :method_aliases ) { [ :attr_object_configuration ] }
       end
-      instance_methods.include?( :object ).should == false
-      respond_to?( :object ).should == true
-    end        
-    
+    end
   end
 
 end

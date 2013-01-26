@@ -12,15 +12,32 @@ class ::CascadingConfiguration::Core::Module::Configuration
   ################
   
   ###
-  # 
+  # @overload new( instance, configuration_module, configuration_name, write_accessor_name = configuration_name )
   #
-  def initialize( instance, configuration_module, configuration_name, write_accessor_name = configuration_name )
+  # @overload new( instance, ancestor_configuration )
+  #
+  def initialize( instance, *args )
 
     @instance = instance
 
-    @module = configuration_module
-    @name = configuration_name.accessor_name
-    @write_name = write_accessor_name.write_accessor_name
+    case arg_zero = args[ 0 ]
+      
+      when self.class
+        
+        # we assume all ancestor instances provided have matching module/name
+        @parent_configuration_instance = arg_zero
+        
+        @module = @parent_configuration_instance.module
+        @name = @parent_configuration_instance.name
+        @write_name = @parent_configuration_instance.write_name
+
+      else
+
+        @module = arg_zero
+        @name = args[ 1 ].accessor_name
+        @write_name = args[ 2 ] || @name.write_accessor_name
+
+    end
 
     @has_value = false
     
