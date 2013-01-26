@@ -188,8 +188,8 @@ describe ::CascadingConfiguration::Core::InstanceController do
           let( :subclass_of_class_extended_by_extended_module ) { ::Class.new( class_extended_by_extended_module ) }
           let( :nth_subclass_of_class_extended_by_extended_module ) { ::Class.new( subclass_of_class_extended_by_extended_module ) }
           
-          it 'the support module will cascade to an extending module' do
-            extending_module.should have_been_extended_by( support_module )
+          it 'the support module will not cascade to an extending module' do
+            extending_module.should_not have_been_extended_by( support_module )
             extending_module.should_not have_included( support_module )
           end
           it 'the support module will not cascade past an extending module to an including module' do
@@ -201,16 +201,16 @@ describe ::CascadingConfiguration::Core::InstanceController do
             module_extended_by_extending_module.should_not have_included( support_module )
           end
 
-          it 'the support module will cascade to an extending class' do
-            class_extended_by_extended_module.should have_been_extended_by( support_module )
+          it 'the support module will notcascade to an extending class' do
+            class_extended_by_extended_module.should_not have_been_extended_by( support_module )
             class_extended_by_extended_module.should_not have_included( support_module )
           end
-          it 'the support module will cascade to a subclass of an extending class' do
-            subclass_of_class_extended_by_extended_module.should have_been_extended_by( support_module )
+          it 'the support module will not cascade to a subclass of an extending class' do
+            subclass_of_class_extended_by_extended_module.should_not have_been_extended_by( support_module )
             subclass_of_class_extended_by_extended_module.should_not have_included( support_module )
           end
-          it 'the support module will cascade to an nth subclass of an extending class' do
-            nth_subclass_of_class_extended_by_extended_module.should have_been_extended_by( support_module )
+          it 'the support module will not cascade to an nth subclass of an extending class' do
+            nth_subclass_of_class_extended_by_extended_module.should_not have_been_extended_by( support_module )
             nth_subclass_of_class_extended_by_extended_module.should_not have_included( support_module )
           end
           
@@ -244,16 +244,16 @@ describe ::CascadingConfiguration::Core::InstanceController do
           let( :nth_subclass_of_class_extended_by_extended_module ) do
             ::Class.new( subclass_of_class_extended_by_extended_module )
           end
-          it 'the support module will cascade to an extending class' do
-            class_extended_by_extended_module.should have_been_extended_by( support_module )
+          it 'the support module will not cascade to an extending class' do
+            class_extended_by_extended_module.should_not have_been_extended_by( support_module )
             class_extended_by_extended_module.should_not have_included( support_module )
           end
-          it 'the support module will cascade to a subclass of an extending class' do
-            subclass_of_class_extended_by_extended_module.should have_been_extended_by( support_module )
+          it 'the support module will not cascade to a subclass of an extending class' do
+            subclass_of_class_extended_by_extended_module.should_not have_been_extended_by( support_module )
             subclass_of_class_extended_by_extended_module.should_not have_included( support_module )
           end
-          it 'the support module will cascade to an nth subclass of an extending class' do
-            nth_subclass_of_class_extended_by_extended_module.should have_been_extended_by( support_module )
+          it 'the support module will not cascade to an nth subclass of an extending class' do
+            nth_subclass_of_class_extended_by_extended_module.should_not have_been_extended_by( support_module )
             nth_subclass_of_class_extended_by_extended_module.should_not have_included( support_module )
           end
         end       

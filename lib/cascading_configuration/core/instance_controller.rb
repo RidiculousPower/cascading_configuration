@@ -484,7 +484,8 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
   def create_support( module_type_name,
                       module_inheritance_model = :local_instance,
                       support_module_class = ::CascadingConfiguration::Core::InstanceController::SupportModule,
-                      module_constant_name = module_type_name.to_s.to_camel_case )
+                      module_constant_name = module_type_name.to_s.to_camel_case,
+                      cascading = true )
 
     # permit nil for support_module_class to default
     support_module_class ||= ::CascadingConfiguration::Core::InstanceController::SupportModule
@@ -503,7 +504,7 @@ class ::CascadingConfiguration::Core::InstanceController < ::Module
             when ::Module
               @instance.extend( support_module_instance )
               @instance.cluster( :cascading_configuration ).after_include.cascade.extend( support_module_instance )
-              @instance.cluster( :cascading_configuration ).after_extend.extend( support_module_instance )
+#              @instance.cluster( :cascading_configuration ).after_extend.extend( support_module_instance )
             else
               @instance.extend( support_module_instance )
           end
