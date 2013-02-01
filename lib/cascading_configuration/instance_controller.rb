@@ -133,11 +133,6 @@ class ::CascadingConfiguration::InstanceController < ::Module
             end
 
           end
-          
-          # if before/after include/extend hooks are called on a class that inherits from module
-          # then we want to define them as hooks on instances of class (which will be a module)
-          
-          # hooks occur by adding to #included or #extended
       
         when ::Module
         

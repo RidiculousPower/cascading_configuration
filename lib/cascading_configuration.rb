@@ -12,6 +12,15 @@ module ::CascadingConfiguration
   extend ::ParallelAncestry
   
   @configurations = ::CascadingConfiguration::AutoNestingIDHash.new
+  @cascade_type_instances = { }
+  
+  define_cascade_type( :all ) { true }
+  define_cascade_type( :singleton ) { |instance| ::Module === instance }
+  define_cascade_type( :class ) { |instance| ::Class === instance }
+  define_cascade_type( :module ) { |instance| ::Module === instance && ! ( ::Class === instance ) }
+  define_cascade_type( :instance ) { |instance| true }
+  define_cascade_type( :local_instance ) { true }
+  define_cascade_type( :object ) { true }
   
   ###################
   #  self.included  #
@@ -163,7 +172,7 @@ module ::CascadingConfiguration
     return configuration_instance
     
   end
-  
+
   ##########################
   #  self.register_parent  #
   ##########################
@@ -193,12 +202,15 @@ module ::CascadingConfiguration
     instance_configurations = configurations( instance )
 
     parent_configurations.each do |this_configuration_name, this_parent_configuration_instance|
-      if this_configuration_instance = instance_configurations[ this_configuration_name ]
-        this_configuration_instance.register_parent( parent )
-      else
-        this_configuration_class = this_parent_configuration_instance.class
-        this_configuration_instance = this_configuration_class.new( instance, this_parent_configuration_instance )
-        instance_configurations[ this_configuration_name ] = this_configuration_instance
+      if this_parent_configuration_instance.should_cascade?( instance )
+        if this_configuration_instance = instance_configurations[ this_configuration_name ]
+          # if we already have this configuration
+          this_configuration_instance.register_parent( this_parent_configuration_instance )
+        else
+          this_configuration_class = this_parent_configuration_instance.class
+          this_configuration_instance = this_configuration_class.new( instance, this_parent_configuration_instance )
+          instance_configurations[ this_configuration_name ] = this_configuration_instance
+        end
       end
     end
         

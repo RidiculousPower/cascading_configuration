@@ -11,7 +11,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations < ::CascadingConfigu
   ###
   # Define configurations for instance.
   #
-  # @overload define_configurations( instance, method_types, configuration_name, ... )
+  # @overload define_configurations( instance, cascade_type, configuration_name, ... )
   #
   #   @param [ Object ]
   #   
@@ -19,9 +19,9 @@ class ::CascadingConfiguration::Module::BlockConfigurations < ::CascadingConfigu
   #   
   #          Instance in which configuration method will be defined.
   #   
-  #   @param [ Array< Symbol, String > ]
+  #   @param [ Symbol, String ]
   #   
-  #          method_types
+  #          cascade_type
   #   
   #          Type of method being defined: 
   #   
@@ -39,13 +39,13 @@ class ::CascadingConfiguration::Module::BlockConfigurations < ::CascadingConfigu
   #
   # @return Self.
   #
-  def define_configurations( instance, method_types, *names_modules, & block )
+  def define_configurations( instance, cascade_type, *names_modules, & block )
     
     if block_given?
       @block = block
     end
     
-    super( instance, method_types, *names_modules )
+    super( instance, cascade_type, *names_modules )
     
     return self
     
@@ -68,9 +68,9 @@ class ::CascadingConfiguration::Module::BlockConfigurations < ::CascadingConfigu
   # 
   #        Name to use for configuration method.
   # 
-  # @param [ Array< Symbol, String > ]
+  # @param [ Symbol, String ]
   # 
-  #        method_types
+  #        cascade_type
   # 
   #        Type of method being defined: 
   #        
@@ -78,7 +78,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations < ::CascadingConfigu
   #
   # @return Self.
   #
-  def define_configuration_method( ccm_method_name, method_types )
+  def define_configuration_method( ccm_method_name, cascade_type )
     
     ccm = self
 
@@ -88,7 +88,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations < ::CascadingConfigu
     
     define_method( ccm_method_name ) do |*args, & block|
 
-      ccm.define_configurations( self, method_types, *args, & block )                  
+      ccm.define_configurations( self, cascade_type, *args, & block )                  
       
       return self
       

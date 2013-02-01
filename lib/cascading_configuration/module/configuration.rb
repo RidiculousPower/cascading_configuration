@@ -12,25 +12,32 @@ class ::CascadingConfiguration::Module::Configuration
   ################
   
   ###
-  # @overload new( instance, configuration_module, configuration_name, write_accessor_name = configuration_name )
+  # @overload new( instance, cascade_type, module, configuration_name, write_accessor_name = configuration_name )
   #
   # @overload new( instance, parent_configuration )
   #
   def initialize( instance, *args )
 
     @instance = instance
-
+        
     case arg_zero = args[ 0 ]
       when self.class
         # we assume all parent instances provided have matching module/name
         @parent = arg_zero
+        @cascade_type = @parent.cascade_type
         @module = @parent.module
         @name = @parent.name
         @write_name = @parent.write_name
       else
-        @module = arg_zero
-        @name = args[ 1 ].accessor_name
-        @write_name = args[ 2 ] || @name.write_accessor_name
+        @cascade_type = arg_zero
+        @module = args[ 1 ]
+        @name = args[ 2 ].accessor_name
+        @write_name = args[ 3 ] || @name.write_accessor_name
+    end
+
+    case @cascade_type
+      when ::Symbol, ::String
+        @cascade_type = ::CascadingConfiguration.cascade_type( @cascade_type )
     end
 
     @has_value = false
@@ -140,6 +147,42 @@ class ::CascadingConfiguration::Module::Configuration
   # @return [CascadingConfiguration::Module::Configuration] Parent configuration instance.
   #
   attr_reader :parent_configuration
+
+  ##################
+  #  cascade_type  #
+  ##################
+
+  ###
+  # Cascade type for determining whether configuration cascades into an instance.
+  #
+  # @!attribute [r] cascade_type
+  #
+  # @return [CascadingConfiguration::Module::Configuration::CascadeType] 
+  #
+  #         Cascade type.
+  #
+  attr_reader :cascade_type
+  
+  #####################
+  #  should_cascade?  #
+  #####################
+  
+  ###
+  # Query whether configuration should cascade into instance.
+  #
+  # @param [Object] into_instance
+  #
+  #        Instance for which configuration cascade is being queried.
+  #
+  # @return [true,false]
+  #
+  #         Whether configuration should cascade into instance.
+  #
+  def should_cascade?( into_instance )
+    
+    return @cascade_type.block.call( into_instance )
+    
+  end
   
   #######################
   #  extension_modules  #
