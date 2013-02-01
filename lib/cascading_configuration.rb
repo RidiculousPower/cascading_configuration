@@ -53,6 +53,26 @@ module ::CascadingConfiguration
     
   end
 
+  #####################################
+  #  self.create_instance_controller  #
+  #####################################
+  
+  def self.create_instance_controller( instance, extending = false )
+    
+    return ::CascadingConfiguration::InstanceController.create_instance_controller( instance, extending )
+    
+  end
+  
+  ##############################
+  #  self.instance_controller  #
+  ##############################
+  
+  def self.instance_controller( instance, ensure_exists = false )
+    
+    return ::CascadingConfiguration::InstanceController.instance_controller( instance, ensure_exists )
+    
+  end
+  
   #########################
   #  self.configurations  #
   #########################

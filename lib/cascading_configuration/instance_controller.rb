@@ -114,14 +114,25 @@ class ::CascadingConfiguration::InstanceController < ::Module
       case instance
       
         when ::Class
-        
-          # Subclasses need to be told to cascade separately, as their cascade behavior is distinct
-          instance.cluster( :cascading_configuration_inheritance ).subclass.cascade do |inheriting_instance|
-            reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
-          end
+                  
+          instance_class = instance.class
           
           # if our class is a subclass of ::Module we want instances to have include/extend hooks
-          
+          if instance < ::Module and not instance < ::Class
+
+            instance.cluster( :cascading_configuration_inheritance ).before_instance do |inheriting_instance|
+              reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
+              reference_to_self.initialize_inheritance_for_instance( inheriting_instance )
+            end
+                      
+          else
+
+            # Subclasses need to be told to cascade separately, as their cascade behavior is distinct
+            instance.cluster( :cascading_configuration_inheritance ).subclass.cascade do |inheriting_instance|
+              reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
+            end
+
+          end
           
           # if before/after include/extend hooks are called on a class that inherits from module
           # then we want to define them as hooks on instances of class (which will be a module)
