@@ -58,5 +58,3 @@ Rewrite of internals to add configuration objects.
 Removed Core distinction. Internals are now considered public code, although they will still be marked private for documentation purposes, since they are only intended for developers.
 Tasty Sandwiches™ taste better!
 Also rewrote all specs except the public module specs. Those will have new specs soon.
-Added :should_cascade? to configuration instances, resulting in inheritance being defined by configuration instance as well as by method inheritance.
-As a result, :attr_class\_... and :attr\_module are no longer the same as :attr\_singleton; singleton will define singleton-only cascading methods, while class will define methods that cascade to a class and module will define methods that cascade to a module.

@@ -6,7 +6,7 @@
 module ::CascadingConfiguration
 
   @configuration_modules = ::Array::Unique.new
-    
+
   ################################
   #  self.configuration_modules  #
   ################################
@@ -26,35 +26,6 @@ module ::CascadingConfiguration
     @configuration_modules.push( configuration_module )
     
     return self
-    
-  end
-  
-  #######################
-  #  self.cascade_type  #
-  #######################
-  
-  def self.cascade_type( type_name )
-    
-    unless type_instance = @cascade_type_instances[ type_name.to_sym ]
-      error = 'No type instance found for type :' << type_name.to_s
-      error << '.'
-      raise ::ArgumentError, error
-    end
-    
-    return type_instance
-    
-  end
-
-  ##############################
-  #  self.define_cascade_type  #
-  ##############################
-  
-  def self.define_cascade_type( type_name, & block )
-    
-    new_cascade_type = ::CascadingConfiguration::Module::Configuration::CascadeType.new( type_name, & block )
-    @cascade_type_instances[ type_name.to_sym ] = new_cascade_type
-    
-    return new_cascade_type
     
   end
   

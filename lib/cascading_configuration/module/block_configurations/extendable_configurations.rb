@@ -68,7 +68,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   ###
   # Define configurations for instance.
   #
-  # @overload define_configurations( instance, cascade_type, configuration_name, ... )
+  # @overload define_configurations( instance, method_types, configuration_name, ... )
   #
   #   @param [ Object ]
   #   
@@ -76,9 +76,9 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #   
   #          Instance in which configuration method will be defined.
   #   
-  #   @param [ Symbol, String ]
+  #   @param [ Array< Symbol, String > ]
   #   
-  #          cascade_type
+  #          method_types
   #   
   #          Type of method being defined: 
   #   
@@ -96,7 +96,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #
   # @return Self.
   #
-  def define_configurations( instance, cascade_type, *names_modules, & definer_block )
+  def define_configurations( instance, method_types, *names_modules, & definer_block )
     
     module_defined_by_block = nil
         
@@ -105,7 +105,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
 
     names = names_modules_hash.keys
 
-    super( instance, cascade_type, *names )
+    super( instance, method_types, *names )
 
     instance_controller = ::CascadingConfiguration::InstanceController.instance_controller( instance )
 

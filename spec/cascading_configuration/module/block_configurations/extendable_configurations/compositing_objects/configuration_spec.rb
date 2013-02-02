@@ -19,9 +19,9 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
   let( :parent_instance_two ) { ::Module.new.name( :ParentInstanceTwo ) }
   let( :child_instance ) { ::Module.new.name( :ChildInstance ) }
 
-  let( :parent_configuration ) { configuration_class.new( parent_instance, :all, configuration_module, :parent_name ) }
+  let( :parent_configuration ) { configuration_class.new( parent_instance, configuration_module, :parent_name ) }
   let( :parent_configuration_two ) do
-    configuration_class.new( parent_instance_two, :all, configuration_module, :parent_two_name?, :parent_two= )
+    configuration_class.new( parent_instance_two, configuration_module, :parent_two_name?, :parent_two= )
   end
   let( :child_configuration ) { configuration_class.new( child_instance, parent_configuration ) }
   
@@ -143,7 +143,6 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
     let( :configuration ) { ::CascadingConfiguration::Module::
                               BlockConfigurations::ExtendableConfigurations::
                               CompositingObjects::Configuration.new( configuration_instance, 
-                                                                     :all,
                                                                      configuration_module, 
                                                                      :configuration_name ) }
     it 'will replace the current values with new contents (assumes object responds to :replace)' do
@@ -172,7 +171,7 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
     let( :parent_A_B2_C1_D_E_F_instance ) { ::Module.new.name( :Parent_A_B2_C1_D_E_F_Instance ) }
 
     let( :parent_A ) do
-      parent_A = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( parent_A_instance, :all, configuration_module, :configuration_name )
+      parent_A = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( parent_A_instance, configuration_module, :configuration_name )
       parent_A.compositing_object.push( :A )
       parent_A
     end

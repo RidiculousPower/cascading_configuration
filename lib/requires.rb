@@ -19,7 +19,6 @@ files = [
   
   'module',
   'module/configuration',
-  'module/configuration/cascade_type',
   'module/configuration/class_configuration',
   'module/configuration/class_instance_configuration',
   'module/configuration/class_inheriting_from_module_configuration',
