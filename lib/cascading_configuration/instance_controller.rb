@@ -57,9 +57,9 @@ class ::CascadingConfiguration::InstanceController < ::Module
     end
 
     # We manage reference to self in singleton from here to avoid duplicative efforts.
-    reference_to_self = self
+    instance_controller = self
     self.class.class_eval do
-      @instance_controllers[ instance ] = reference_to_self
+      @instance_controllers[ instance ] = instance_controller
     end
 
     @support_modules = { }
@@ -109,7 +109,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
     if should_enable
       
       instance.extend( ::Module::Cluster )      
-      reference_to_self = self
+      instance_controller = self
 
       case instance
       
@@ -121,15 +121,15 @@ class ::CascadingConfiguration::InstanceController < ::Module
           if instance < ::Module and not instance < ::Class
 
             instance.cluster( :cascading_configuration_inheritance ).before_instance do |inheriting_instance|
-              reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
-              reference_to_self.initialize_inheritance_for_instance( inheriting_instance )
+              instance_controller.initialize_inheriting_instance( self, inheriting_instance )
+              instance_controller.initialize_inheritance_for_instance( inheriting_instance )
             end
                       
           else
 
             # Subclasses need to be told to cascade separately, as their cascade behavior is distinct
             instance.cluster( :cascading_configuration_inheritance ).subclass.cascade do |inheriting_instance|
-              reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
+              instance_controller.initialize_inheriting_instance( self, inheriting_instance )
             end
 
           end
@@ -152,16 +152,16 @@ class ::CascadingConfiguration::InstanceController < ::Module
             
             cluster = instance.cluster( :cascading_configuration_inheritance )
             cluster.before_include do |inheriting_instance|
-              reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
-              reference_to_self.initialize_inheritance_for_instance( inheriting_instance )
+              instance_controller.initialize_inheriting_instance( self, inheriting_instance )
+              instance_controller.initialize_inheritance_for_instance( inheriting_instance )
             end
 
             cluster.before_extend do |inheriting_instance|
-              reference_to_self.initialize_inheriting_instance( self, inheriting_instance )
+              instance_controller.initialize_inheriting_instance( self, inheriting_instance )
               # extend cascades down classes but not modules
               case inheriting_instance
                 when ::Class
-                  reference_to_self.initialize_inheritance_for_instance( inheriting_instance )
+                  instance_controller.initialize_inheritance_for_instance( inheriting_instance )
               end
             end
 

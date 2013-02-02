@@ -129,11 +129,11 @@ class ::CascadingConfiguration::InstanceController::SupportModule < ::Module
   
   def cascade_new_support_for_child_modules
     
-    reference_to_self = self
+    support_module = self
 
     @included.each do |this_class_or_module|
       this_class_or_module.module_eval do
-        include( reference_to_self )
+        include( support_module )
       end
     end
     
@@ -144,7 +144,7 @@ class ::CascadingConfiguration::InstanceController::SupportModule < ::Module
     child_modules.each do |this_child_module|
 
       this_child_module.module_eval do
-        include( reference_to_self )
+        include( support_module )
       end
 
       # and continue down this tree
