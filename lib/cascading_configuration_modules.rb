@@ -33,7 +33,7 @@ module ::CascadingConfiguration
   #  self.cascade_type  #
   #######################
   
-  def self.cascade_type( type_name, ensure_exists = true )
+  def self.cascade_type( type_name )
     
     unless type_instance = @cascade_type_instances[ type_name.to_sym ]
       error = 'No type instance found for type :' << type_name.to_s
