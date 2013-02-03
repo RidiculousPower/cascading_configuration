@@ -303,37 +303,37 @@ module ::CascadingConfiguration
     
     case cascade_configurations
       when :singleton_to_singleton_and_instance_to_instance
-        parent_configurations.each do |this_configuration_name, this_parent_configuration|
+        parent_configurations.each do |this_name, this_parent_configuration|
           case this_parent_configuration.cascade_type
             when :local_instance, :object
               # nothing to do
             else
-              register_child_configuration( instance, this_configuration_name, this_parent_configuration )
+              register_child_configuration( instance, parent, this_name, this_parent_configuration )
           end
         end
       when :instance_to_instance
-        parent_configurations.each do |this_configuration_name, this_parent_configuration|
+        parent_configurations.each do |this_name, this_parent_configuration|
           case this_parent_configuration.cascade_type
             when :instance
-              register_child_configuration( instance, this_configuration_name, this_parent_configuration )
+              register_child_configuration( instance, parent, this_name, this_parent_configuration )
             when :singleton_and_instance
-              register_child_configuration( instance, this_configuration_name, this_parent_configuration, :instance )
+              register_child_configuration( instance, parent, this_name, this_parent_configuration, :instance )
           end
         end
       when :instance_to_singleton
         case this_parent_configuration.cascade_type
           when :instance
-            register_child_configuration( instance, this_configuration_name, this_parent_configuration )
+            register_child_configuration( instance, parent, this_name, this_parent_configuration )
           when :singleton_and_instance
-            register_child_configuration( instance, this_configuration_name, this_parent_configuration, :singleton )
+            register_child_configuration( instance, parent, this_name, this_parent_configuration, :singleton )
         end
       when :singleton_to_singleton
-        parent_configurations.each do |this_configuration_name, this_parent_configuration|
+        parent_configurations.each do |this_name, this_parent_configuration|
           case this_parent_configuration.cascade_type
             when :singleton
-              register_child_configuration( instance, this_configuration_name, this_parent_configuration )
+              register_child_configuration( instance, parent, this_name, this_parent_configuration )
             when :singleton_and_instance
-              register_child_configuration( instance, this_configuration_name, this_parent_configuration, :singleton )
+              register_child_configuration( instance, parent, this_name, this_parent_configuration, :singleton )
           end
         end
     end
@@ -347,6 +347,7 @@ module ::CascadingConfiguration
   #######################################
   
   def self.register_child_configuration( instance, 
+                                         parent,
                                          configuration_name, 
                                          parent_configuration_instance, 
                                          cascade_type = :singleton_and_instance )
