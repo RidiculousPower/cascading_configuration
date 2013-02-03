@@ -28,9 +28,10 @@ class ::CascadingConfiguration::Module::Configuration
         @name = @parent.name
         @write_name = @parent.write_name
       else
-        @module = arg_zero
-        @name = args[ 1 ].accessor_name
-        @write_name = args[ 2 ] || @name.write_accessor_name
+        @cascade_type = arg_zero
+        @module = args[ 1 ]
+        @name = args[ 2 ].accessor_name
+        @write_name = args[ 3 ] || @name.write_accessor_name
     end
 
     @has_value = false
@@ -75,6 +76,19 @@ class ::CascadingConfiguration::Module::Configuration
     end
     
   end
+  
+  ##################
+  #  cascade_type  #
+  ##################
+  
+  ###
+  # Cascade type for which configuration was created.
+  #
+  # @!attribute [rw] instance
+  #
+  # @return [:singleton_and_instance,:singleton,:instance,:local_instance,:object] instance.
+  #
+  attr_accessor :cascade_type
 
   ##############
   #  instance  #

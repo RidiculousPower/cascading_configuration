@@ -21,7 +21,7 @@ RSpec::Matchers.define :have_defined_configuration do |base_name, alias_names, c
     should_be_defined = nil
 
     case configuration_type
-      when :all
+      when :singleton_and_instance
         should_respond = true
         should_be_defined = true
         case include_or_extend

@@ -13,6 +13,7 @@ shared_examples_for ::CascadingConfiguration::Module::Configuration do
   let( :configuration_base_class ) { ::CascadingConfiguration::Module::Configuration }
 
   let( :configuration ) { configuration_base_class.new( instance, 
+                                                        :singleton_and_instance,
                                                         configuration_module, 
                                                         configuration_name, 
                                                         configuration_write_name ) }

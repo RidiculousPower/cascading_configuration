@@ -11,7 +11,7 @@ describe ::CascadingConfiguration::Module::InheritingValues::Configuration do
   let( :child_instance ) { ::Module.new.name( :ChildInstance ) }
   
   let( :configuration_class ) { ::CascadingConfiguration::Module::InheritingValues::Configuration }
-  let( :parent_configuration ) { configuration_class.new( parent_instance, configuration_module, :parent_name ) }
+  let( :parent_configuration ) { configuration_class.new( parent_instance, :singleton_and_instance, configuration_module, :parent_name ) }
   let( :parent_configuration_two ) { configuration_class.new( parent_instance_two, parent_configuration ) }
   let( :child_configuration ) { configuration_class.new( child_instance, parent_configuration_two ) }
 

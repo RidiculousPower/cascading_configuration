@@ -179,7 +179,7 @@ class ::CascadingConfiguration::Module < ::Module
     ccm_method_name = cascading_method_name( module_type_name )
     ccm_alias_names = module_type_name_aliases.collect { |this_alias| cascading_method_name( this_alias ) }
 
-    return define_configuration_definer( ccm_method_name, ccm_alias_names, :all )
+    return define_configuration_definer( ccm_method_name, ccm_alias_names, :singleton_and_instance )
 
   end
 
@@ -361,17 +361,17 @@ class ::CascadingConfiguration::Module < ::Module
   ###
   # Define configurations for instance.
   #
-  # @overload define_configurations( instance, method_types, configuration_name, ... )
+  # @overload define_configurations( instance, method_type, configuration_name, ... )
   #
   #   @param [ Object ] instance
   #   
   #          Instance in which configuration method will be defined.
   #   
-  #   @param [Array<Symbol,String>] method_types
+  #   @param [Symbol,String] method_type
   #   
   #          Type of method being defined: 
   #   
-  #            :all, :module, :class, :instance, :local_instance, :object.
+  #            :singleton_and_instance, :module, :class, :instance, :local_instance, :object.
   #
   #   @param [ Symbol, String, Hash{ Symbol, String => Symbol, String } ] configuration_name
   #
@@ -379,12 +379,12 @@ class ::CascadingConfiguration::Module < ::Module
   #
   # @return self.
   #
-  def define_configurations( instance, method_types, *configuration_names )
+  def define_configurations( instance, method_type, *configuration_names )
 
     accessors = parse_names_for_accessors( configuration_names )
 
     accessors.each do |this_configuration_name, this_write_configuration_name|
-      define_configuration( instance, method_types, this_configuration_name, this_write_configuration_name )
+      define_configuration( instance, method_type, this_configuration_name, this_write_configuration_name )
     end
     
     return self
@@ -402,11 +402,11 @@ class ::CascadingConfiguration::Module < ::Module
   # 
   #        Instance in which configuration method will be defined.
   # 
-  # @param [Array<Symbol,String>] method_types
+  # @param [Symbol,String] method_type
   # 
   #        Type of method being defined: 
   # 
-  #          :all, :module, :class, :instance, :local_instance, :object.
+  #          :singleton_and_instance, :module, :class, :instance, :local_instance, :object.
   # 
   # @param [Symbol,String] accessor_name
   # 
@@ -418,9 +418,13 @@ class ::CascadingConfiguration::Module < ::Module
   # 
   # @return self.
   #
-  def define_configuration( instance, method_types, accessor_name, write_accessor_name )
+  def define_configuration( instance, method_type, accessor_name, write_accessor_name )
 
-    configuration_instance = self.class::Configuration.new( instance, self, accessor_name, write_accessor_name )
+    configuration_instance = self.class::Configuration.new( instance, 
+                                                            method_type, 
+                                                            self, 
+                                                            accessor_name, 
+                                                            write_accessor_name )
 
     ::CascadingConfiguration.define_configuration( instance, configuration_instance )
 
@@ -429,14 +433,14 @@ class ::CascadingConfiguration::Module < ::Module
     #======================#
 
     getter_proc = ::Proc.new { ::CascadingConfiguration.configuration( self, accessor_name ).value }
-    define_configuration_method_types( configuration_instance, accessor_name, getter_proc, method_types )
+    define_configuration_method_types( configuration_instance, accessor_name, getter_proc, method_type )
 
     #=======================#
     #  configuration_name=  #
     #=======================#
 
     setter_proc = ::Proc.new { |value| ::CascadingConfiguration.configuration( self, accessor_name ).value = value }    
-    define_configuration_method_types( configuration_instance, write_accessor_name, setter_proc, method_types )
+    define_configuration_method_types( configuration_instance, write_accessor_name, setter_proc, method_type )
 
     return self
     
@@ -494,7 +498,7 @@ class ::CascadingConfiguration::Module < ::Module
   ###########################
   
   ###
-  # Construct string for cascading method type (:all) with module type name.
+  # Construct string for cascading method type (:singleton_and_instance) with module type name.
   #
   # @param [Symbol,String] module_type_name
   #        
@@ -678,13 +682,13 @@ class ::CascadingConfiguration::Module < ::Module
   #
   #          Type of method being defined: 
   #          
-  #            :all, :singleton, :module, :class, :instance, :local_instance, :object.
+  #            :singleton_and_instance, :singleton, :module, :class, :instance, :local_instance, :object.
   #
   # @return Self.
   #
-  def define_configuration_definer( ccm_method_name, module_type_name_aliases, *method_types )
+  def define_configuration_definer( ccm_method_name, module_type_name_aliases, method_type )
     
-    define_configuration_method( ccm_method_name, method_types )
+    define_configuration_method( ccm_method_name, method_type )
     define_configuration_method_aliases( ccm_method_name, module_type_name_aliases )
     
     return self
@@ -702,15 +706,15 @@ class ::CascadingConfiguration::Module < ::Module
   # 
   #        Name to use for configuration method.
   # 
-  # @param [Array<Symbol,String>] method_types
+  # @param [Symbol,String] method_type
   # 
   #        Type of method being defined: 
   #        
-  #          :all, :singleton, :module, :class, :instance, :local_instance, :object.
+  #          :singleton_and_instance, :singleton, :module, :class, :instance, :local_instance, :object.
   #
   # @return Self.
   #
-  def define_configuration_method( ccm_method_name, method_types )
+  def define_configuration_method( ccm_method_name, method_type )
     
     ccm = self
      
@@ -720,7 +724,7 @@ class ::CascadingConfiguration::Module < ::Module
     
     define_method( ccm_method_name ) do |*args, & block|
 
-      ccm.define_configurations( self, method_types, *args )                  
+      ccm.define_configurations( self, method_type, *args )                  
       
       return self
       
@@ -776,51 +780,47 @@ class ::CascadingConfiguration::Module < ::Module
   #
   #        Proc for method body.
   #
-  # @param [Array<Symbol,String>] method_types
+  # @param [Symbol,String] method_type
   #
   #        Type of method being defined: 
   #        
-  #          :all, :singleton, :module, :class, :instance, :local_instance, :object.
+  #          :singleton_and_instance, :singleton, :module, :class, :instance, :local_instance, :object.
   #
   # @return Self.
   #
-  def define_configuration_method_types( configuration_instance, accessor_name, proc_instance, method_types )
+  def define_configuration_method_types( configuration_instance, accessor_name, proc_instance, method_type )
     
     instance = configuration_instance.instance
     instance_controller = ::CascadingConfiguration::InstanceController.instance_controller( instance )
 
-    method_types.each do |this_method_type|
+    case method_type
       
-      case this_method_type
-        
-        # Cascades through all includes, module and instance methods
-        when :all
+      # Cascades through all includes, module and instance methods
+      when :singleton_and_instance
 
-          instance_controller.define_singleton_method( accessor_name, & proc_instance )
-          instance_controller.define_instance_method_if_support( accessor_name, & proc_instance )
-        
-        # Module methods only
-        when :singleton, :module, :class
-        
-          instance_controller.define_singleton_method( accessor_name, & proc_instance )
-        
-        # Instance methods only
-        when :instance
+        instance_controller.define_singleton_method( accessor_name, & proc_instance )
+        instance_controller.define_instance_method_if_support( accessor_name, & proc_instance )
+      
+      # Module methods only
+      when :singleton, :module, :class
+      
+        instance_controller.define_singleton_method( accessor_name, & proc_instance )
+      
+      # Instance methods only
+      when :instance
 
-          instance_controller.define_instance_method( accessor_name, & proc_instance )
-        
-        # Methods local to this instance and instances of it only
-        when :local_instance
-        
-          instance_controller.define_local_instance_method( accessor_name, & proc_instance )
-          instance_controller.define_instance_method_if_support( accessor_name, & proc_instance )
+        instance_controller.define_instance_method( accessor_name, & proc_instance )
+      
+      # Methods local to this instance and instances of it only
+      when :local_instance
+      
+        instance_controller.define_local_instance_method( accessor_name, & proc_instance )
+        instance_controller.define_instance_method_if_support( accessor_name, & proc_instance )
 
-        # Methods local to this instance only
-        when :object
+      # Methods local to this instance only
+      when :object
 
-          instance_controller.define_local_instance_method( accessor_name, & proc_instance )
-        
-      end
+        instance_controller.define_local_instance_method( accessor_name, & proc_instance )
       
     end
     

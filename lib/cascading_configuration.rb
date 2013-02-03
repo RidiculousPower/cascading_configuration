@@ -185,25 +185,187 @@ module ::CascadingConfiguration
   #
   # @return self.
   #
-  def self.register_parent( instance, parent )
+  def self.register_parent( instance, parent, include_extend_subclass_instance = nil )
     
-    super
+    super( instance, parent )
     
     parent_configurations = configurations( parent )
-    instance_configurations = configurations( instance )
 
-    parent_configurations.each do |this_configuration_name, this_parent_configuration_instance|
-      if this_configuration_instance = instance_configurations[ this_configuration_name ]
-        this_configuration_instance.register_parent( parent )
-      else
-        this_configuration_class = this_parent_configuration_instance.class
-        this_configuration_instance = this_configuration_class.new( instance, this_parent_configuration_instance )
-        instance_configurations[ this_configuration_name ] = this_configuration_instance
-      end
-    end
+    # singleton => singleton
+    # instance => instance
+    # instance => singleton
+    # singleton => instance
+    
+    # :singleton_to_singleton_and_instance_to_instance
+    # singleton => singleton and instance => instance
+    # :instance_to_instance
+    # instance => instance
+    # :singleton_to_instance
+    # singleton => instance
+    # :instance_to_singleton
+    # instance => singleton
+    
+    cascade_configurations = nil
+    
+    case include_extend_subclass_instance
+
+      when :include
         
+        case instance
+          when ::Module, ::Class
+            # * module => class
+            #   singleton => singleton
+            #   instance => instance
+            # * module => module
+            #   singleton => singleton
+            #   instance => instance
+            cascade_configurations = :singleton_to_singleton_and_instance_to_instance
+        end
+        
+      when :extend
+        
+        # * module => class
+        #   instance => singleton
+        # * module => module
+        #   instance => singleton
+        # * module => instance (extend)
+        #   instance => singleton
+        cascade_configurations = :instance_to_singleton
+    
+      when :subclass
+        
+        # * class < module => class < module
+        #   singleton => singleton
+        #   instance => instance
+        # * class => class
+        #   singleton => singleton
+        #   instance => instance
+        cascade_configurations = :singleton_to_singleton_and_instance_to_instance
+    
+      when :instance
+
+        instance_class = instance.class
+        if instance_class < ::Module and not instance_class < ::Class
+          # * instance of class < module (a Module)
+          #   singleton => instance
+          cascade_configurations = :singleton_to_instance
+        else
+          # * instance of class (an Object)
+          #   instance => instance
+          cascade_configurations = :instance_to_instance
+        end
+      
+      when nil
+        
+        case parent
+          when ::Class
+            case instance
+              when ::Class, ::Module
+                # * class => class
+                #   singleton => singleton
+                #   instance => instance
+                # * class => module
+                #   singleton => singleton
+                #   instance => instance
+                cascade_configurations = :singleton_to_singleton_and_instance_to_instance
+              else
+                # * class => instance
+                #   instance => instance
+                cascade_configurations = :instance_to_instance
+            end
+          when ::Module
+            case instance
+              when ::Class, ::Module
+                # * module => module
+                #   singleton => singleton
+                #   instance => instance
+                # * module => class
+                #   singleton => singleton
+                #   instance => instance
+                cascade_configurations = :singleton_to_singleton_and_instance_to_instance
+              else
+                # * module => instance
+                #   instance => instance
+                cascade_configurations = :instance_to_instance
+            end
+          else
+            # * instance => instance
+            #   singleton => singleton
+            #   instance => instance
+            cascade_configurations = :singleton_to_singleton_and_instance_to_instance
+        end
+    
+      when :singleton_to_singleton
+
+        cascade_configurations = :singleton_to_singleton
+      
+    end
+    
+    case cascade_configurations
+      when :singleton_to_singleton_and_instance_to_instance
+        parent_configurations.each do |this_configuration_name, this_parent_configuration|
+          case this_parent_configuration.cascade_type
+            when :local_instance, :object
+              # nothing to do
+            else
+              register_child_configuration( instance, this_configuration_name, this_parent_configuration )
+          end
+        end
+      when :instance_to_instance
+        parent_configurations.each do |this_configuration_name, this_parent_configuration|
+          case this_parent_configuration.cascade_type
+            when :instance
+              register_child_configuration( instance, this_configuration_name, this_parent_configuration )
+            when :singleton_and_instance
+              register_child_configuration( instance, this_configuration_name, this_parent_configuration, :instance )
+          end
+        end
+      when :instance_to_singleton
+        case this_parent_configuration.cascade_type
+          when :instance
+            register_child_configuration( instance, this_configuration_name, this_parent_configuration )
+          when :singleton_and_instance
+            register_child_configuration( instance, this_configuration_name, this_parent_configuration, :singleton )
+        end
+      when :singleton_to_singleton
+        parent_configurations.each do |this_configuration_name, this_parent_configuration|
+          case this_parent_configuration.cascade_type
+            when :singleton
+              register_child_configuration( instance, this_configuration_name, this_parent_configuration )
+            when :singleton_and_instance
+              register_child_configuration( instance, this_configuration_name, this_parent_configuration, :singleton )
+          end
+        end
+    end
+          
     return self
     
+  end
+  
+  #######################################
+  #  self.register_child_configuration  #
+  #######################################
+  
+  def self.register_child_configuration( instance, 
+                                         configuration_name, 
+                                         parent_configuration_instance, 
+                                         cascade_type = :singleton_and_instance )
+
+    instance_configurations = configurations( instance )
+
+    if configuration_instance = instance_configurations[ configuration_name ]
+      configuration_instance.register_parent( parent )
+    else
+      configuration_class = parent_configuration_instance.class
+      configuration_instance = configuration_class.new( instance, parent_configuration_instance )
+      if cascade_type
+        configuration_instance.cascade_type = cascade_type
+      end
+      instance_configurations[ configuration_name ] = configuration_instance
+    end
+    
+    return self
+
   end
 
   ############################

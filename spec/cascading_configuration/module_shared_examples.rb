@@ -110,7 +110,7 @@ shared_examples_for :configuration_module do
     end
     let( :configuration_definer_args ) { [ base_name, alias_names, configuration_type, ccm ] }
     context 'for :all' do
-      it_behaves_like :cascading_method do
+      it_behaves_like :singleton_and_instance_method do
         let( :base_name ) { :all_base }
         let( :alias_names ) { [ :all_other ] }
         let( :method_name ) { :attr_setting }
@@ -204,7 +204,7 @@ shared_examples_for :configuration_module do
   
     context '#define_cascading_definition_method' do
       before( :each ) { instance.define_cascading_definition_method( base_name, *alias_names ) }
-      it_behaves_like :cascading_method do
+      it_behaves_like :singleton_and_instance_method do
         let( :method_name ) { :attr_setting }
         let( :method_aliases ) { [ :attr_configuration ] }
       end
@@ -288,7 +288,7 @@ shared_examples_for :configuration_module do
   
     context '#define_cascading_definition_methods' do
       before( :each ) { instance.define_cascading_definition_methods( base_name, *alias_names ) }
-      it_behaves_like :cascading_method do
+      it_behaves_like :singleton_and_instance_method do
         let( :method_name ) { :attr_setting }
         let( :method_aliases ) { [ :attr_configuration ] }
       end
