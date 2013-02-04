@@ -122,7 +122,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
 
             instance.cluster( :cascading_configuration_inheritance ).before_instance do |inheriting_instance|
               instance_controller.initialize_inheriting_instance( self, inheriting_instance )
-#              instance_controller.initialize_inheritance_for_instance( inheriting_instance )
+              instance_controller.initialize_inheritance_for_instance( inheriting_instance )
             end
             
           else
