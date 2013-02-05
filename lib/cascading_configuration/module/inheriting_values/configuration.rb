@@ -118,15 +118,38 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
   ###
   # Replace parent for configuration instance with a different parent.
   #
-  # @param new_parent
+  # @overload replace_parent( new_parent )
   #
-  #        New parent instance.
+  #   @param new_parent
+  #   
+  #          New parent instance.
+  #
+  # @overload replace_parent( existing_parent, new_parent )
+  #
+  #   @param existing_parent
+  #   
+  #          Existing parent instance (ignored).
+  #
+  #   @param new_parent
+  #   
+  #          New parent instance.
   #
   # @return [self]
   #
   #         Self.
   #
-  def replace_parent( new_parent )
+  def replace_parent( *args )
+    
+    new_parent = nil
+    existing_parent = nil
+    
+    case args.size
+    when 1
+      new_parent = args[ 0 ]
+    when 2
+      # existing_parent = args[ 0 ]
+      new_parent = args[ 1 ]
+    end
   
     unregister_parent
     register_parent( new_parent )
