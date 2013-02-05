@@ -32,7 +32,7 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
     @has_value = false
     
     initialize_for_instance
-    
+        
   end
   
   ###############################
@@ -86,9 +86,16 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
       else
         parent = ::CascadingConfiguration.configuration( parent, @name )
     end
-    
+
     unless @parent and is_parent?( parent )
+      
+      if parent.is_parent?( self )
+        raise ::ArgumentError, 'Registering instance ' << parent.instance.to_s + ' as parent of instance ' <<
+                               @instance.to_s << ' would cause cyclic reference.'
+      end
+      
       @parent = parent
+
     end
     
     return self
@@ -144,11 +151,11 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
     existing_parent = nil
     
     case args.size
-    when 1
-      new_parent = args[ 0 ]
-    when 2
-      # existing_parent = args[ 0 ]
-      new_parent = args[ 1 ]
+      when 1
+        new_parent = args[ 0 ]
+      when 2
+        # existing_parent = args[ 0 ]
+        new_parent = args[ 1 ]
     end
   
     unregister_parent
@@ -243,7 +250,6 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
   
   ###
   # Match first parent for which block returns true.
-  #   Used in context where only one parent is permitted.
   #
   # @yield match_block
   #
@@ -292,7 +298,7 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
   def value
 
     configuration_value = nil
-
+        
     matching_parent = match_parent_configuration do |this_parent_configuration|
       this_parent_configuration.has_value? ? true: false
     end
