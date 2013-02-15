@@ -7,15 +7,6 @@ require_relative '../support/named_class_and_module.rb'
 
 shared_examples_for :configuration_module do
   
-  let( :instance ) { ::CascadingConfiguration::Module.new( ccm_name, *ccm_aliases ).name( :Instance ) }
-  let( :ccm ) do
-    ccm_instance = ::Module.new.name( :CCM )
-    ::CascadingConfiguration.enable_instance_as_cascading_configuration_module( ccm_instance, instance )
-    ccm_instance
-  end
-  let( :ccm_name ) { :setting }
-  let( :ccm_aliases ) { [ '' ] }
-  
   ##################################################################################################
   #   private ######################################################################################
   ##################################################################################################

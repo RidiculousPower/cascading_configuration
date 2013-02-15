@@ -15,7 +15,7 @@ files = [
       
   'include_creates_instance_support',
   
-  'auto_nesting_id_hash',
+  'configuration_hash',
   
   'module',
   'module/configuration',

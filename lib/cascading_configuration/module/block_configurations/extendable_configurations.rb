@@ -105,18 +105,21 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
 
     names = names_modules_hash.keys
 
-    super( instance, method_type, *names )
+    names = super( instance, method_type, *names )
 
     instance_controller = ::CascadingConfiguration::InstanceController.instance_controller( instance )
 
     names_modules_hash.each do |this_configuration_name, these_modules|
+      if ::Hash === this_configuration_name
+        this_configuration_name = this_configuration_name.first[ 0 ]
+      end
       this_configuration = ::CascadingConfiguration.configuration( instance, this_configuration_name )
       if block_given?
         this_module_defined_by_block = instance_controller.class::ExtensionModule.new( self, 
                                                                                        this_configuration_name, 
                                                                                        & definer_block )
         constant_name = this_configuration_name.to_s.to_camel_case
-        if instance.__is_a__?( ::Module )
+        if ::Module === instance
           instance.const_set( constant_name, this_module_defined_by_block )
         end
         these_modules.push( this_module_defined_by_block )

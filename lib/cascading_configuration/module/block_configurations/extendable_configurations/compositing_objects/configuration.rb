@@ -101,7 +101,11 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
         when ::CascadingConfiguration::Module::Configuration
           # parent is what we want already
         else
-          this_parent = ::CascadingConfiguration.configuration( this_parent, @name )
+          if ::CascadingConfiguration.has_configuration?( this_parent, @name )
+            this_parent = ::CascadingConfiguration.configuration( this_parent, @name )
+          else
+            next
+          end
       end
 
       # is the new parent already part of the parent chain?
@@ -115,7 +119,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
         parent_extension_modules = this_parent.extension_modules
         @extension_modules.register_parent( parent_extension_modules )
         unless parent_extension_modules.empty?
-          @value.extend( *this_parent.extension_modules )
+          @value.extend( *parent_extension_modules )
         end
         register_composite_object_parent( this_parent.compositing_object )
       end
@@ -190,12 +194,18 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
       when ::CascadingConfiguration::Module::Configuration
         # parent is what we want already
       else
-        existing_parent = ::CascadingConfiguration.configuration( existing_parent, @name )
+        if ::CascadingConfiguration.has_configuration?( existing_parent, @name )
+          existing_parent = ::CascadingConfiguration.configuration( existing_parent, @name )
+        else
+          existing_parent = nil
+        end
     end
 
-    @value.unregister_parent( existing_parent.compositing_object )
-    @parents.delete( existing_parent )
-
+    if existing_parent
+      @value.unregister_parent( existing_parent.compositing_object )
+      @parents.delete( existing_parent )
+    end
+    
     return self
   
   end

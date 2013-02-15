@@ -44,7 +44,7 @@ class ::CascadingConfiguration::Module < ::Module
     
     @module_type_name = module_type_name
     @module_type_name_aliases = module_type_name_aliases
-    
+
     define_cascading_definition_methods( @module_type_name, *@module_type_name_aliases )
         
   end
@@ -387,7 +387,7 @@ class ::CascadingConfiguration::Module < ::Module
       define_configuration( instance, method_type, this_configuration_name, this_write_configuration_name )
     end
     
-    return self
+    return accessors
     
   end
 
@@ -420,28 +420,28 @@ class ::CascadingConfiguration::Module < ::Module
   #
   def define_configuration( instance, method_type, accessor_name, write_accessor_name )
 
-    configuration_instance = self.class::Configuration.new( instance, 
-                                                            method_type, 
-                                                            self, 
-                                                            accessor_name, 
-                                                            write_accessor_name )
+    configuration = self.class::Configuration.new( instance, 
+                                                   method_type, 
+                                                   self, 
+                                                   accessor_name, 
+                                                   write_accessor_name )
 
-    ::CascadingConfiguration.define_configuration( instance, configuration_instance )
+    ::CascadingConfiguration.define_configuration( instance, configuration )
 
     #======================#
     #  configuration_name  #
     #======================#
 
     getter_proc = ::Proc.new { ::CascadingConfiguration.configuration( self, accessor_name ).value }
-    define_configuration_method_types( configuration_instance, accessor_name, getter_proc, method_type )
+    define_configuration_method_types( configuration, accessor_name, getter_proc, method_type )
 
     #=======================#
     #  configuration_name=  #
     #=======================#
 
     setter_proc = ::Proc.new { |value| ::CascadingConfiguration.configuration( self, accessor_name ).value = value }    
-    define_configuration_method_types( configuration_instance, write_accessor_name, setter_proc, method_type )
-
+    define_configuration_method_types( configuration, write_accessor_name, setter_proc, method_type )
+    
     return self
     
   end
@@ -768,7 +768,7 @@ class ::CascadingConfiguration::Module < ::Module
   ###
   # Define actual methods for configuration.
   #
-  # @param [ CascadingConfiguration::Module::Configuration ] configuration_instance
+  # @param [ CascadingConfiguration::Module::Configuration ] configuration
   #
   #        Configuration instance for which methods are to be defined.
   #
@@ -788,9 +788,9 @@ class ::CascadingConfiguration::Module < ::Module
   #
   # @return Self.
   #
-  def define_configuration_method_types( configuration_instance, accessor_name, proc_instance, method_type )
+  def define_configuration_method_types( configuration, accessor_name, proc_instance, method_type )
     
-    instance = configuration_instance.instance
+    instance = configuration.instance
     instance_controller = ::CascadingConfiguration::InstanceController.instance_controller( instance )
 
     case method_type

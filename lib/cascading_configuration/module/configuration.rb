@@ -12,9 +12,9 @@ class ::CascadingConfiguration::Module::Configuration
   ################
   
   ###
-  # @overload new( instance, configuration_module, configuration_name, write_accessor_name = configuration_name )
+  # @overload new( instance, cascade_type, configuration_module, configuration_name, write_accessor_name = configuration_name )
   #
-  # @overload new( instance, parent_configuration )
+  # @overload new( instance, parent_configuration, cascade_type = nil )
   #
   def initialize( instance, *args )
 
@@ -27,11 +27,12 @@ class ::CascadingConfiguration::Module::Configuration
         @module = @parent.module
         @name = @parent.name
         @write_name = @parent.write_name
+        @cascade_type = args[ 1 ] || @parent.cascade_type
       else
         @cascade_type = arg_zero
         @module = args[ 1 ]
         @name = args[ 2 ].accessor_name
-        @write_name = args[ 3 ] || @name.write_accessor_name
+        @write_name = ( args[ 3 ] || @name ).write_accessor_name
     end
 
     @has_value = false
@@ -77,6 +78,179 @@ class ::CascadingConfiguration::Module::Configuration
     
   end
   
+  ###############################
+  #  permits_multiple_parents?  #
+  ###############################
+  
+  ###
+  # Query whether configuration permits multiple parents.
+  #
+  # @return [false]
+  #
+  #         Whether multiple parents are permitted.
+  #
+  def permits_multiple_parents?
+    
+    return false
+    
+  end
+
+  #####################
+  #  register_parent  #
+  #####################
+  
+  ###
+  # Register configuration for instance with parent instance as parent for configuration.
+  #
+  # @param parent
+  #
+  #        Parent instance from which configurations are being inherited.
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
+  def register_parent( parent )
+        
+    @parent = parent
+    
+    return self
+    
+  end
+
+  ############
+  #  parent  #
+  ############
+  
+  ###
+  # Get parent for configuration name on instance.
+  #   Used in context where only one parent is permitted.
+  #
+  # @!attribute [r] parent
+  #
+  # @return [nil,::Object]
+  #
+  #         Parent instance registered for configuration.
+  #
+  attr_reader :parent
+
+  ####################
+  #  replace_parent  #
+  ####################
+
+  ###
+  # Replace parent for configuration instance with a different parent.
+  #
+  # @overload replace_parent( new_parent )
+  #
+  #   @param new_parent
+  #   
+  #          New parent instance.
+  #
+  # @overload replace_parent( existing_parent, new_parent )
+  #
+  #   @param existing_parent
+  #   
+  #          Existing parent instance (ignored).
+  #
+  #   @param new_parent
+  #   
+  #          New parent instance.
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
+  def replace_parent( *args )
+    
+    new_parent = nil
+    existing_parent = nil
+    
+    case args.size
+      when 1
+        new_parent = args[ 0 ]
+      when 2
+        # existing_parent = args[ 0 ]
+        new_parent = args[ 1 ]
+    end
+  
+    unregister_parent
+    register_parent( new_parent )
+
+    return self
+    
+  end
+
+  #######################
+  #  unregister_parent  #
+  #######################
+
+  ###
+  # Remove parent for configuration instance .
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
+  def unregister_parent( *args )
+    
+    @parent = nil
+
+    return self
+  
+  end
+
+  ##################
+  #  has_parents?  #
+  ##################
+
+  ###
+  # Query whether one or more parents exist.
+  #   Used in context where only one parent is permitted.
+  #
+  # @param [ Object ]
+  #
+  #        instance
+  #
+  #        Instance for which configurations are being queried.
+  #
+  # @param [Symbol,String]
+  #
+  #        configuration_name
+  #
+  #        Name of configuration.
+  #
+  # @return [ true, false ]
+  #
+  #         Whether parent exists for configuration.
+  #
+  def has_parents?
+    
+    return @parent ? true : false
+    
+  end
+
+  ################
+  #  is_parent?  #
+  ################
+  
+  ###
+  # Query whether potential parent instance is a parent for configuration in instance.
+  #
+  # @param potential_parent
+  #
+  #        Potential parent instance being queried.
+  #
+  # @return [ true, false ]
+  #
+  #         Whether potential parent instance is parent for configuration name.
+  #
+  def is_parent?( potential_parent )
+    
+    return potential_parent.equal?( @parent )
+    
+  end
+    
   ##################
   #  cascade_type  #
   ##################
@@ -142,19 +316,6 @@ class ::CascadingConfiguration::Module::Configuration
   #
   attr_reader :module
 
-  ##########################
-  #  parent_configuration  #
-  ##########################
-  
-  ###
-  # Parent configuration instance.
-  #
-  # @!attribute [r] parent_configuration
-  #
-  # @return [CascadingConfiguration::Module::Configuration] Parent configuration instance.
-  #
-  attr_reader :parent_configuration
-  
   #######################
   #  extension_modules  #
   #######################
@@ -218,7 +379,6 @@ class ::CascadingConfiguration::Module::Configuration
   def value=( object )
     
     @has_value = true
-    
     @value = object
     
   end
@@ -234,10 +394,9 @@ class ::CascadingConfiguration::Module::Configuration
   #
   def remove_value
     
-    @value = nil
-    
     @has_value = false
-    
+    @value = nil
+        
     return self
 
   end
