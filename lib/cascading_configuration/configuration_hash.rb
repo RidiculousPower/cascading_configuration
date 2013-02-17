@@ -5,19 +5,31 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
   #  initialize  #
   ################
   
-  def initialize( parent_hash, configuration_instance, *args )
+  def initialize( configuration_instance, *args )
     
-    super
+    super( nil, configuration_instance, *args )
     
     @include_extend_subclass_instance = { }
     
   end
 
+  #####################
+  #  register_parent  #
+  #####################
+
+  def register_parent( parent_hash, include_extend_subclass_instance = nil )
+
+    @include_extend_subclass_instance[ parent_hash ] = include_extend_subclass_instance
+    
+    super( parent_hash )
+    
+  end
+  
   #########################
   #  register_parent_key  #
   #########################
   
-  def register_parent_key( parent_hash, parent_configuration_name, include_extend_subclass_instance = nil )
+  def register_parent_key( parent_hash, parent_configuration_name )
     
     parent_configuration = parent_hash[ parent_configuration_name ]
 
@@ -34,7 +46,6 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
         else
           # otherwise we have normal key handling
           super( parent_hash, parent_configuration_name )
-          @include_extend_subclass_instance[ parent_configuration_name ] = include_extend_subclass_instance
       end
     end
         
@@ -78,7 +89,7 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
   #  cascade_model  #
   ###################
   
-  def cascade_model( parent_hash, configuration_name )
+  def cascade_model( parent_hash )
     
     # singleton => singleton
     # instance => instance
@@ -97,7 +108,7 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     instance = configuration_instance
     parent = parent_hash.configuration_instance
 
-    case @include_extend_subclass_instance[ configuration_name ]
+    case @include_extend_subclass_instance[ parent_hash ]
 
       when :include, :subclass
         
@@ -198,7 +209,7 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     
     instance = configuration_instance
     
-    case cascade_model( parent_hash, configuration_name )
+    case cascade_model( parent_hash )
       when :singleton_to_singleton_and_instance_to_instance
         # we already handled :local_instance and :object in #register_parent_key
         child_instance = parent_configuration.class.new( instance, parent_configuration )

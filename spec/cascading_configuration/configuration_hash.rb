@@ -17,22 +17,18 @@ shared_examples_for :configuration_hash do
   
   let( :hash_instance ) { parent_hash_instance }
   let( :parent_hash_instance ) do
-    parent_hash = ::CascadingConfiguration::ConfigurationHash.new( nil, parent_configuration_instance )
+    parent_hash = ::CascadingConfiguration::ConfigurationHash.new( parent_configuration_instance )
     parent_hash[ :configuration_A ] = configuration_A
     parent_hash[ :configuration_B ] = configuration_B
     parent_hash
   end
   let( :child_hash_instance ) do
-    child_hash = ::CascadingConfiguration::ConfigurationHash.new( nil, child_configuration_instance )
-    _include_extend_subclass_instance = include_extend_subclass_instance
-    child_hash.instance_eval do
-      @include_extend_subclass_instance[ :configuration_A ] = _include_extend_subclass_instance
-      @include_extend_subclass_instance[ :configuration_B ] = _include_extend_subclass_instance
-    end
+    child_hash = ::CascadingConfiguration::ConfigurationHash.new( child_configuration_instance )
+    child_hash.register_parent( parent_hash_instance, include_extend_subclass_instance )
     child_hash
   end
   let( :other_hash_instance ) do
-    other_hash = ::CascadingConfiguration::ConfigurationHash.new( nil, child_configuration_instance )
+    other_hash = ::CascadingConfiguration::ConfigurationHash.new( child_configuration_instance )
     other_hash[ :configuration_A ] = other_configuration_A
     other_hash[ :configuration_B ] = other_configuration_B
     other_hash
@@ -46,7 +42,7 @@ shared_examples_for :configuration_hash do
   
   context '#register_parent_key' do
     let( :inheriting_hash ) do
-      child_hash_instance.register_parent_key( hash_instance, :configuration_A, include_extend_subclass_instance )
+      child_hash_instance.register_parent( hash_instance, include_extend_subclass_instance )
       child_hash_instance
     end
     context 'configuration is :local_instance' do
@@ -72,7 +68,8 @@ shared_examples_for :configuration_hash do
     context 'child already has configuration' do
       let( :inheriting_hash ) do
         child_hash_instance[ :configuration_A ] = child_configuration_A
-        child_hash_instance.register_parent_key( hash_instance, :configuration_A, include_extend_subclass_instance )
+        child_hash_instance.register_parent( hash_instance, include_extend_subclass_instance )
+        child_hash_instance.register_parent_key( hash_instance, :configuration_A )
         child_hash_instance
       end
       it 'will keep the original configuration' do
@@ -92,19 +89,19 @@ shared_examples_for :configuration_hash do
     context ':include' do
       let( :include_extend_subclass_instance ) { :include }
       it 'will return symbol describing model for cascading configuration' do
-        child_hash_instance.cascade_model( parent_hash_instance, :configuration_A ).should == :singleton_to_singleton_and_instance_to_instance
+        child_hash_instance.cascade_model( parent_hash_instance ).should == :singleton_to_singleton_and_instance_to_instance
       end
     end
     context ':subclass' do
       let( :include_extend_subclass_instance ) { :subclass }
       it 'will return symbol describing model for cascading configuration' do
-        child_hash_instance.cascade_model( parent_hash_instance, :configuration_A ).should == :singleton_to_singleton_and_instance_to_instance
+        child_hash_instance.cascade_model( parent_hash_instance ).should == :singleton_to_singleton_and_instance_to_instance
       end
     end
     context ':extend' do
       let( :include_extend_subclass_instance ) { :extend }
       it 'will return symbol describing model for cascading configuration' do
-        child_hash_instance.cascade_model( parent_hash_instance, :configuration_A ).should == :instance_to_singleton
+        child_hash_instance.cascade_model( parent_hash_instance ).should == :instance_to_singleton
       end
     end
     context ':instance' do
@@ -112,20 +109,20 @@ shared_examples_for :configuration_hash do
       context 'instance of Object' do
         let( :child_configuration_instance ) { ::Object.new.name( :ObjectChildConfigurationInstance ) }
         it 'will return symbol describing model for cascading configuration' do
-          child_hash_instance.cascade_model( parent_hash_instance, :configuration_A ).should == :instance_to_instance
+          child_hash_instance.cascade_model( parent_hash_instance ).should == :instance_to_instance
         end
       end
       context 'instance of class inheriting from Module' do
         let( :child_configuration_instance ) { ::Class.new( ::Module ).name( :ClassInheritingFromModuleChildConfigurationInstance ) }
         it 'will return symbol describing model for cascading configuration' do
-          child_hash_instance.cascade_model( parent_hash_instance, :configuration_A ).should == :instance_to_singleton
+          child_hash_instance.cascade_model( parent_hash_instance ).should == :instance_to_singleton
         end
       end
     end
     context ':singleton_to_singleton' do
       let( :include_extend_subclass_instance ) { :singleton_to_singleton }
       it 'will return symbol describing model for cascading configuration' do
-        child_hash_instance.cascade_model( parent_hash_instance, :configuration_A ).should == :singleton_to_singleton
+        child_hash_instance.cascade_model( parent_hash_instance ).should == :singleton_to_singleton
       end
     end
     context 'nil' do
@@ -133,19 +130,19 @@ shared_examples_for :configuration_hash do
       context 'parent instance is module' do
         context 'child instance is module' do
           it 'will return symbol describing model for cascading configuration' do
-            child_hash_instance.cascade_model( parent_hash_instance, :configuration_A ).should == :singleton_to_singleton_and_instance_to_instance
+            child_hash_instance.cascade_model( parent_hash_instance ).should == :singleton_to_singleton_and_instance_to_instance
           end
         end
         context 'child instance is class' do
           let( :child_configuration_instance ) { ::Class.new.name( :ChildClassConfigurationInstance ) }
           it 'will return symbol describing model for cascading configuration' do
-            child_hash_instance.cascade_model( parent_hash_instance, :configuration_A ).should == :singleton_to_singleton_and_instance_to_instance
+            child_hash_instance.cascade_model( parent_hash_instance ).should == :singleton_to_singleton_and_instance_to_instance
           end
         end
         context 'child instance is instance of Object' do
           let( :child_configuration_instance ) { ::Object.new.name( :ChildObjectConfigurationInstance ) }
           it 'will return symbol describing model for cascading configuration' do
-            child_hash_instance.cascade_model( parent_hash_instance, :configuration_A ).should == :instance_to_instance
+            child_hash_instance.cascade_model( parent_hash_instance ).should == :instance_to_instance
           end
         end
       end
@@ -154,20 +151,20 @@ shared_examples_for :configuration_hash do
         context 'child instance is class' do
           let( :child_configuration_instance ) { ::Class.new.name( :ChildClassConfigurationInstance ) }
           it 'will return symbol describing model for cascading configuration' do
-            child_hash_instance.cascade_model( parent_hash_instance, :configuration_A ).should == :singleton_to_singleton_and_instance_to_instance
+            child_hash_instance.cascade_model( parent_hash_instance ).should == :singleton_to_singleton_and_instance_to_instance
           end
         end
         context 'child instance is instance' do
           let( :child_configuration_instance ) { ::Object.new.name( :ChildObjectConfigurationInstance ) }
           it 'will return symbol describing model for cascading configuration' do
-            child_hash_instance.cascade_model( parent_hash_instance, :configuration_A ).should == :instance_to_instance
+            child_hash_instance.cascade_model( parent_hash_instance ).should == :instance_to_instance
           end
         end
       end
       context 'parent instance is instance' do
         let( :parent_configuration_instance ) { ::Object.new.name( :ParentObjectConfigurationInstance ) }
         it 'will return symbol describing model for cascading configuration' do
-          child_hash_instance.cascade_model( parent_hash_instance, :configuration_A ).should == :singleton_to_singleton_and_instance_to_instance
+          child_hash_instance.cascade_model( parent_hash_instance ).should == :singleton_to_singleton_and_instance_to_instance
         end
       end
     end

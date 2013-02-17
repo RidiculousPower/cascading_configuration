@@ -84,11 +84,8 @@ module ::CascadingConfiguration
     configurations_hash = nil
     
     unless configurations_hash = @configurations[ instance_id = instance.__id__ ]
-      configurations_hash = ::CascadingConfiguration::ConfigurationHash.new( nil, instance )
-      @configurations[ instance_id ] = configurations_hash
-      unless instance.equal?( ::Class )
-        register_parent( instance, instance.class )
-      end
+      @configurations[ instance_id ] = configurations_hash = self::ConfigurationHash.new( instance )
+      register_parent( instance, instance.class ) unless instance.equal?( ::Class )
     end
     
     return configurations_hash
