@@ -12,19 +12,32 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     @include_extend_subclass_instance = { }
     
   end
-  
-  #####################
-  #  register_parent  #
-  #####################
-  
-  def register_parent( parent, include_extend_subclass_instance = nil )
 
-    super( parent )
+  #########################
+  #  register_parent_key  #
+  #########################
+  
+  def register_parent_key( parent_hash, parent_configuration_name, include_extend_subclass_instance = nil )
     
-    parent.keys.each do |this_configuration_name|
-      @include_extend_subclass_instance[ this_configuration_name ] = include_extend_subclass_instance
+    parent_configuration = parent_hash[ parent_configuration_name ]
+
+    if has_key?( parent_configuration_name )
+      # if we already have a configuration then we want to register the parent as its parent
+      # then we are done with lookup
+      child_configuration = self[ parent_configuration_name ]
+      child_configuration.register_parent( parent_configuration )
+    else
+      case parent_configuration.cascade_type
+        when :local_instance, :object
+          # if we have a configuration that is not intended to inherit, we want to skip it
+          # nothing to do
+        else
+          # otherwise we have normal key handling
+          super( parent_hash, parent_configuration_name )
+          @include_extend_subclass_instance[ parent_configuration_name ] = include_extend_subclass_instance
+      end
     end
-    
+        
     return self
     
   end
@@ -53,8 +66,6 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
   ####################
   
   def replace_parent( parent_hash, new_parent_hash, include_extend_subclass_instance = nil )
-    
-    super( parent_hash, new_parent_hash )
     
     unregister_parent( parent_hash )
     register_parent( new_parent_hash, include_extend_subclass_instance )
@@ -185,47 +196,20 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     
     child_instance = nil
     
+    instance = configuration_instance
+    
     case cascade_model( parent_hash, configuration_name )
       when :singleton_to_singleton_and_instance_to_instance
-        case cascade_type = parent_configuration.cascade_type
-          when :local_instance, :object
-            # nothing to do
-          else
-            child_instance = register_child_configuration( configuration_name, parent_configuration, cascade_type )
-        end
+        # we already handled :local_instance and :object in #register_parent_key
+        child_instance = parent_configuration.class.new( instance, parent_configuration )
       when :instance_to_instance
-        case parent_configuration.cascade_type
-          when :instance, :singleton_and_instance
-            child_instance = register_child_configuration( configuration_name, parent_configuration, :instance )
-        end
+        child_instance = parent_configuration.class.new( instance, parent_configuration, :instance )
       when :instance_to_singleton, :singleton_to_singleton
-        case parent_configuration.cascade_type
-          when :instance, :singleton, :singleton_and_instance
-            child_instance = register_child_configuration( configuration_name, parent_configuration, :singleton )
-        end
+        child_instance = parent_configuration.class.new( instance, parent_configuration, :singleton )
     end
     
     return child_instance
     
-  end
-  
-  ##################################
-  #  register_child_configuration  #
-  ##################################
-  
-  def register_child_configuration( configuration_name, parent_configuration, cascade_type = :singleton_and_instance )
-    
-    if configuration = self[ configuration_name ]
-      # if we already have a configuration, register as its parent
-      configuration.register_parent( parent_configuration )
-    else
-      # otherwise create a new configuration
-      configuration = parent_configuration.class.new( configuration_instance, parent_configuration, cascade_type )
-      self[ configuration_name ] = configuration
-    end
-    
-    return configuration
-
   end
 
 end

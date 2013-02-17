@@ -69,65 +69,6 @@ shared_examples_for ::CascadingConfiguration::Module::Configuration do
       end
     end
   end
-
-  ###############################
-  #  permits_multiple_parents?  #
-  ###############################
-  
-  context '#permits_multiple_parents?' do
-    it 'does not permit multiple parents by default' do
-      parent_configuration.permits_multiple_parents?.should be false
-    end
-  end
-
-  ############
-  #  parent  #
-  ############
-  
-  context '#parent' do
-    it 'can register/report a parent, which is implied by initializing with an ancestor' do
-      child_configuration.parent.should be parent_configuration_two
-    end
-  end
-  
-  ####################
-  #  replace_parent  #
-  ####################
-
-  context '#replace_parent' do
-    it 'can replace a parent' do
-      child_configuration.replace_parent( parent_configuration )
-      child_configuration.parent.should be parent_configuration
-    end
-  end
-
-  #######################
-  #  unregister_parent  #
-  #######################
-
-  context '#unregister_parent' do
-    it 'can remove a parent' do
-      child_configuration.unregister_parent
-      child_configuration.parent.should be nil
-    end
-  end
-
-  ##################
-  #  has_parents?  #
-  ##################
-
-  context '#has_parents?' do
-    context 'when no parents' do
-      it 'a child can report it has parents' do
-        child_configuration.has_parents?.should be true
-      end
-    end
-    context 'when it has parents' do
-      it 'a parent can report it has no parents' do
-        parent_configuration.has_parents?.should be false
-      end
-    end
-  end
   
   ##################
   #  has_value?    #

@@ -110,17 +110,15 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
 
       # is the new parent already part of the parent chain?
       unless is_parent?( this_parent )
+        # avoid cyclic references
         if this_parent.is_parent?( self )
           raise ::ArgumentError, 'Registering instance ' << parent.instance.to_s + ' as parent of instance ' <<
                                  @instance.to_s << ' would cause cyclic reference.'
         end
-        # if not, register it
+        # if not already a parent, register it
         @parents.push( this_parent )
-        parent_extension_modules = this_parent.extension_modules
-        @extension_modules.register_parent( parent_extension_modules )
-        unless parent_extension_modules.empty?
-          @value.extend( *parent_extension_modules )
-        end
+        @extension_modules.register_parent( parent_extension_modules = this_parent.extension_modules )
+        @value.extend( *parent_extension_modules ) unless parent_extension_modules.empty?
         register_composite_object_parent( this_parent.compositing_object )
       end
 

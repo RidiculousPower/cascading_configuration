@@ -71,11 +71,11 @@ module ::CascadingConfiguration
   ###
   # Get hash of configurations names and their corresponding configuration instances.
   #
-  # @param [ Object ] instance
+  # @param [Object] instance
   #
   #        Instance for which configurations are being queried.
   #
-  # @return [ Hash{ Symbol, String => CascadingConfiguration::Module } ]
+  # @return [CascadingConfiguration::ConfigurationHash{Symbol,String => CascadingConfiguration::Module}]
   #
   #         Hash of configuration names pointing to corresponding configuration instances.
   # 

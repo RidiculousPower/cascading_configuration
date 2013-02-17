@@ -19,17 +19,6 @@ describe ::CascadingConfiguration::Module::Configuration do
   context '#register_parent' do
     it 'will keep existing parent if new parent is parent of existing parent' do
       child_configuration.register_parent( parent_configuration )
-      child_configuration.parent.should be parent_configuration
-    end
-  end
-
-  ################
-  #  is_parent?  #
-  ################
-  
-  context '#is_parent?' do
-    it 'can report if an instance is a parent' do
-      child_configuration.is_parent?( parent_configuration_two ).should be true
     end
   end
   

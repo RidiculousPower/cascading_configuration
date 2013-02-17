@@ -35,6 +35,189 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
         
   end
   
+  ###############################
+  #  permits_multiple_parents?  #
+  ###############################
+  
+  ###
+  # Query whether configuration permits multiple parents.
+  #
+  # @return [false]
+  #
+  #         Whether multiple parents are permitted.
+  #
+  def permits_multiple_parents?
+    
+    return false
+    
+  end
+
+  #####################
+  #  register_parent  #
+  #####################
+  
+  ###
+  # Register configuration for instance with parent instance as parent for configuration.
+  #
+  # @param parent
+  #
+  #        Parent instance from which configurations are being inherited.
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
+  def register_parent( parent )
+        
+    # if we have an existing parent we need to know:
+    #
+    # * is it the parent we're registering? => keep, no change
+    # * is it a child of the parent we're registering? => keep, no change
+    # * is it a parent of the parent we're registering? => replace with parent
+    # * otherwise => set parent 
+    #
+    # :is_parent? will answer all of these questions, checking up the chain
+    
+    # if we have a configuration we use it as parent
+    # otherwise we look up configuration for parent
+    case parent
+      when ::CascadingConfiguration::Module::Configuration
+        # parent is what we want already
+      else
+        if ::CascadingConfiguration.has_configuration?( parent, @name )
+          parent = ::CascadingConfiguration.configuration( parent, @name )
+        else
+          parent = nil
+        end
+    end
+
+    unless parent.nil? or @parent && is_parent?( parent )
+      
+      if parent.is_parent?( self )
+        raise ::ArgumentError, 'Registering instance ' << parent.instance.to_s + ' as parent of instance ' <<
+                               @instance.to_s << ' would cause cyclic reference.'
+      end
+      
+      @parent = parent
+
+    end
+    
+    return self
+    
+  end
+
+  ############
+  #  parent  #
+  ############
+  
+  ###
+  # Get parent for configuration name on instance.
+  #   Used in context where only one parent is permitted.
+  #
+  # @!attribute [r] parent
+  #
+  # @return [nil,::Object]
+  #
+  #         Parent instance registered for configuration.
+  #
+  attr_reader :parent
+
+  ####################
+  #  replace_parent  #
+  ####################
+
+  ###
+  # Replace parent for configuration instance with a different parent.
+  #
+  # @overload replace_parent( new_parent )
+  #
+  #   @param new_parent
+  #   
+  #          New parent instance.
+  #
+  # @overload replace_parent( existing_parent, new_parent )
+  #
+  #   @param existing_parent
+  #   
+  #          Existing parent instance (ignored).
+  #
+  #   @param new_parent
+  #   
+  #          New parent instance.
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
+  def replace_parent( *args )
+    
+    new_parent = nil
+    existing_parent = nil
+    
+    case args.size
+      when 1
+        new_parent = args[ 0 ]
+      when 2
+        # existing_parent = args[ 0 ]
+        new_parent = args[ 1 ]
+    end
+  
+    unregister_parent
+    register_parent( new_parent )
+
+    return self
+    
+  end
+
+  #######################
+  #  unregister_parent  #
+  #######################
+
+  ###
+  # Remove parent for configuration instance .
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
+  def unregister_parent( *args )
+    
+    @parent = nil
+
+    return self
+  
+  end
+
+  ##################
+  #  has_parents?  #
+  ##################
+
+  ###
+  # Query whether one or more parents exist.
+  #   Used in context where only one parent is permitted.
+  #
+  # @param [ Object ]
+  #
+  #        instance
+  #
+  #        Instance for which configurations are being queried.
+  #
+  # @param [Symbol,String]
+  #
+  #        configuration_name
+  #
+  #        Name of configuration.
+  #
+  # @return [ true, false ]
+  #
+  #         Whether parent exists for configuration.
+  #
+  def has_parents?
+    
+    return @parent ? true : false
+    
+  end
+
   ################################
   #  match_parent_configuration  #
   ################################
@@ -98,60 +281,6 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
     return match_parent_configuration do |this_parent_configuration|
       this_parent_configuration.equal?( potential_parent )
     end ? true : false
-    
-  end
-
-  #####################
-  #  register_parent  #
-  #####################
-  
-  ###
-  # Register configuration for instance with parent instance as parent for configuration.
-  #
-  # @param parent
-  #
-  #        Parent instance from which configurations are being inherited.
-  #
-  # @return [self]
-  #
-  #         Self.
-  #
-  def register_parent( parent )
-        
-    # if we have an existing parent we need to know:
-    #
-    # * is it the parent we're registering? => keep, no change
-    # * is it a child of the parent we're registering? => keep, no change
-    # * is it a parent of the parent we're registering? => replace with parent
-    # * otherwise => set parent 
-    #
-    # :is_parent? will answer all of these questions, checking up the chain
-    
-    # if we have a configuration we use it as parent
-    # otherwise we look up configuration for parent
-    case parent
-      when ::CascadingConfiguration::Module::Configuration
-        # parent is what we want already
-      else
-        if ::CascadingConfiguration.has_configuration?( parent, @name )
-          parent = ::CascadingConfiguration.configuration( parent, @name )
-        else
-          parent = nil
-        end
-    end
-
-    unless parent.nil? or @parent && is_parent?( parent )
-      
-      if parent.is_parent?( self )
-        raise ::ArgumentError, 'Registering instance ' << parent.instance.to_s + ' as parent of instance ' <<
-                               @instance.to_s << ' would cause cyclic reference.'
-      end
-      
-      @parent = parent
-
-    end
-    
-    return self
     
   end
 

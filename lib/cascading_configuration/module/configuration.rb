@@ -77,23 +77,6 @@ class ::CascadingConfiguration::Module::Configuration
     end
     
   end
-  
-  ###############################
-  #  permits_multiple_parents?  #
-  ###############################
-  
-  ###
-  # Query whether configuration permits multiple parents.
-  #
-  # @return [false]
-  #
-  #         Whether multiple parents are permitted.
-  #
-  def permits_multiple_parents?
-    
-    return false
-    
-  end
 
   #####################
   #  register_parent  #
@@ -111,146 +94,11 @@ class ::CascadingConfiguration::Module::Configuration
   #         Self.
   #
   def register_parent( parent )
-        
-    @parent = parent
-    
+            
     return self
     
   end
 
-  ############
-  #  parent  #
-  ############
-  
-  ###
-  # Get parent for configuration name on instance.
-  #   Used in context where only one parent is permitted.
-  #
-  # @!attribute [r] parent
-  #
-  # @return [nil,::Object]
-  #
-  #         Parent instance registered for configuration.
-  #
-  attr_reader :parent
-
-  ####################
-  #  replace_parent  #
-  ####################
-
-  ###
-  # Replace parent for configuration instance with a different parent.
-  #
-  # @overload replace_parent( new_parent )
-  #
-  #   @param new_parent
-  #   
-  #          New parent instance.
-  #
-  # @overload replace_parent( existing_parent, new_parent )
-  #
-  #   @param existing_parent
-  #   
-  #          Existing parent instance (ignored).
-  #
-  #   @param new_parent
-  #   
-  #          New parent instance.
-  #
-  # @return [self]
-  #
-  #         Self.
-  #
-  def replace_parent( *args )
-    
-    new_parent = nil
-    existing_parent = nil
-    
-    case args.size
-      when 1
-        new_parent = args[ 0 ]
-      when 2
-        # existing_parent = args[ 0 ]
-        new_parent = args[ 1 ]
-    end
-  
-    unregister_parent
-    register_parent( new_parent )
-
-    return self
-    
-  end
-
-  #######################
-  #  unregister_parent  #
-  #######################
-
-  ###
-  # Remove parent for configuration instance .
-  #
-  # @return [self]
-  #
-  #         Self.
-  #
-  def unregister_parent( *args )
-    
-    @parent = nil
-
-    return self
-  
-  end
-
-  ##################
-  #  has_parents?  #
-  ##################
-
-  ###
-  # Query whether one or more parents exist.
-  #   Used in context where only one parent is permitted.
-  #
-  # @param [ Object ]
-  #
-  #        instance
-  #
-  #        Instance for which configurations are being queried.
-  #
-  # @param [Symbol,String]
-  #
-  #        configuration_name
-  #
-  #        Name of configuration.
-  #
-  # @return [ true, false ]
-  #
-  #         Whether parent exists for configuration.
-  #
-  def has_parents?
-    
-    return @parent ? true : false
-    
-  end
-
-  ################
-  #  is_parent?  #
-  ################
-  
-  ###
-  # Query whether potential parent instance is a parent for configuration in instance.
-  #
-  # @param potential_parent
-  #
-  #        Potential parent instance being queried.
-  #
-  # @return [ true, false ]
-  #
-  #         Whether potential parent instance is parent for configuration name.
-  #
-  def is_parent?( potential_parent )
-    
-    return potential_parent.equal?( @parent )
-    
-  end
-    
   ##################
   #  cascade_type  #
   ##################
