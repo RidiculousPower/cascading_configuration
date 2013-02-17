@@ -1,5 +1,5 @@
 
-shared_examples_for :configuration_inheritance do
+shared_examples_for :configuration_hash do
 
   let( :include_extend_subclass_instance ) { :include }
   
