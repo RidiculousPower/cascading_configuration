@@ -246,7 +246,7 @@ module ::CascadingConfiguration
   #
   def self.replace_parent( instance, parent, new_parent )
     
-    configurations( instance ).replace_parent( configurations( parent ) )
+    configurations( instance ).replace_parent( configurations( parent ), configurations( new_parent ) )
     
     return self
     
