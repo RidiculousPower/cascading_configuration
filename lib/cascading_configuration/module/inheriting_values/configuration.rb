@@ -271,15 +271,17 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
   #
   def is_parent?( potential_parent )
     
+    potential_parent_configuration = nil
+    
     case potential_parent
       when ::CascadingConfiguration::Module::Configuration
-        # parent is what we want already
+        potential_parent_configuration = potential_parent
       else
-        potential_parent = ::CascadingConfiguration.configuration( potential_parent, @name )
+        potential_parent_configuration = ::CascadingConfiguration.configuration( potential_parent, @name )
     end
-    
+
     return match_parent_configuration do |this_parent_configuration|
-      this_parent_configuration.equal?( potential_parent )
+      this_parent_configuration.equal?( potential_parent_configuration )
     end ? true : false
     
   end

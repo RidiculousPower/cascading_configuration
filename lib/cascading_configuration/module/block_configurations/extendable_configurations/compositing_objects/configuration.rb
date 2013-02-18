@@ -255,14 +255,17 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #
   def is_parent?( potential_parent )
     
+    potential_parent_configuration = nil
+    
     case potential_parent
       when ::CascadingConfiguration::Module::Configuration
-        # parent is what we want already
+        potential_parent_configuration = potential_parent
       else
-        potential_parent = ::CascadingConfiguration.configuration( potential_parent, @name )
+        potential_parent_configuration = ::CascadingConfiguration.configuration( potential_parent, @name )
     end
     
-    return @parents.include?( potential_parent )
+    return @parents.include?( potential_parent_configuration ) ||
+           @parents.any? { |this_parent| this_parent.is_parent?( potential_parent ) }
     
   end
 
