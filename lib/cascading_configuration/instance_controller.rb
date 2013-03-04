@@ -513,7 +513,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
               @instance.extend( support_module_instance )
             when ::Module
               @instance.extend( support_module_instance )
-              @instance.cluster( :cascading_configuration ).after_include.cascade.extend( support_module_instance )
+              @instance.cluster( :cascading_configuration ).before_include.cascade.extend( support_module_instance )
             else
               @instance.extend( support_module_instance )
           end
@@ -523,7 +523,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
               @instance.class_eval { include( support_module_instance ) }
             when ::Module
               @instance.module_eval { include( support_module_instance ) }
-              @instance.cluster( :cascading_configuration ).after_include.cascade.include( support_module_instance )
+              @instance.cluster( :cascading_configuration ).before_include.cascade.include( support_module_instance )
             else
               # we might be told to create instance support on instances, in which case we need to extend
               @instance.extend( support_module_instance )

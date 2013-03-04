@@ -104,7 +104,7 @@ module ::CascadingConfiguration::Setting
   #   @return self
   #
   
-  setting_module = ::CascadingConfiguration::Module::InheritingValues.new( :setting, :configuration )
+  setting_module = ::CascadingConfiguration::Module::CascadingSettings.new( :setting, :configuration )
   
   ::CascadingConfiguration.enable_instance_as_cascading_configuration_module( self, setting_module )
 

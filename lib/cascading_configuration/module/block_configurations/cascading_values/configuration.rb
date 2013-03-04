@@ -83,6 +83,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
     unless is_child?( child )
       child.register_parent( self ) if register_parent
       @children.push( child )
+      cascade_value_to_child( child ) if @value
     end
     
     return self
@@ -300,10 +301,30 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
   def value=( object )
     
     super
+    
+    cascade_value
+    
+  end
+  
+  ###################
+  #  cascade_value  #
+  ###################
 
-    @children.each do |this_child|
-      this_child.value = this_child.instance_exec( object, self, & this_child.cascade_block )
-    end if @children
+  def cascade_value
+    
+    @children.each { |this_child| cascade_value_to_child( this_child ) } if @children
+    
+  end
+
+  ############################
+  #  cascade_value_to_child  #
+  ############################
+
+  def cascade_value_to_child( child )
+    
+    child.value = child.instance_exec( @value, self, & child.cascade_block )
+    
+    return self
     
   end
   

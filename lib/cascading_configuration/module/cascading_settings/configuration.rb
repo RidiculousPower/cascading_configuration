@@ -3,7 +3,7 @@
 ###
 # Configurations for inheriting values.
 #
-class ::CascadingConfiguration::Module::InheritingValues::Configuration < 
+class ::CascadingConfiguration::Module::CascadingSettings::Configuration < 
       ::CascadingConfiguration::Module::Configuration
   
   ################

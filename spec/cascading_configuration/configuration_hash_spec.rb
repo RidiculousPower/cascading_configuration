@@ -14,8 +14,8 @@ describe CascadingConfiguration::ConfigurationHash do
   end
   # inheriting values
   it_behaves_like :configuration_hash do
-    let( :configuration_module ) { ::CascadingConfiguration::Module::InheritingValues.new( 'config_module' ) }  
-    let( :configuration_class ) { ::CascadingConfiguration::Module::InheritingValues::Configuration }
+    let( :configuration_module ) { ::CascadingConfiguration::Module::CascadingSettings.new( 'config_module' ) }  
+    let( :configuration_class ) { ::CascadingConfiguration::Module::CascadingSettings::Configuration }
   end
   # block configurations
   it_behaves_like :configuration_hash do

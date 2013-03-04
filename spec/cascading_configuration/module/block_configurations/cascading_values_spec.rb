@@ -16,7 +16,7 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues 
   it_behaves_like :configuration_module do
     let( :instance ) do 
       instance = ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues.new( ccm_name, *ccm_aliases )
-      instance.name( :InheritingValuesInstance )
+      instance.name( :CascadingSettingsInstance )
       instance
     end
   end

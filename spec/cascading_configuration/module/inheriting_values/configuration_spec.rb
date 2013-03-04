@@ -7,11 +7,11 @@ require_relative '../../../support/named_class_and_module.rb'
 require_relative '../configuration_shared.rb'
 require_relative '../configuration_setup.rb'
 
-describe ::CascadingConfiguration::Module::InheritingValues::Configuration do
+describe ::CascadingConfiguration::Module::CascadingSettings::Configuration do
   
   setup_configuration_tests
   
-  let( :configuration_class ) { ::CascadingConfiguration::Module::InheritingValues::Configuration }
+  let( :configuration_class ) { ::CascadingConfiguration::Module::CascadingSettings::Configuration }
   
   it_behaves_like ::CascadingConfiguration::Module::Configuration
 
