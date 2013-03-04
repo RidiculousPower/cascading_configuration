@@ -430,19 +430,26 @@ class ::CascadingConfiguration::Module < ::Module
 
     ::CascadingConfiguration.define_configuration( instance, configuration )
 
+    #=======================#
+    #  •configuration_name  #
+    #=======================#
+
+    configuration_getter_proc = ::Proc.new { ::CascadingConfiguration.configuration( self, accessor_name ).value }
+    define_configuration_method_types( configuration, accessor_name, configuration_getter_proc, method_type )
+
     #======================#
     #  configuration_name  #
     #======================#
 
-    getter_proc = ::Proc.new { ::CascadingConfiguration.configuration( self, accessor_name ).value }
-    define_configuration_method_types( configuration, accessor_name, getter_proc, method_type )
+    value_getter_proc = ::Proc.new { ::CascadingConfiguration.configuration( self, accessor_name ).value }
+    define_configuration_method_types( configuration, accessor_name, value_getter_proc, method_type )
 
     #=======================#
     #  configuration_name=  #
     #=======================#
 
-    setter_proc = ::Proc.new { |value| ::CascadingConfiguration.configuration( self, accessor_name ).value = value }    
-    define_configuration_method_types( configuration, write_accessor_name, setter_proc, method_type )
+    value_setter_proc = ::Proc.new { |value| ::CascadingConfiguration.configuration( self, accessor_name ).value = value }    
+    define_configuration_method_types( configuration, write_accessor_name, value_setter_proc, method_type )
     
     return self
     

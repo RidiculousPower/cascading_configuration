@@ -62,4 +62,4 @@ Also rewrote all specs except the public module specs. Those will have new specs
 ## 3/4/2013 ##
 
 Added CascadingConfiguration::Value (:attr_value) for inheriting values that transform as they cascade. 
-
+Added definition of :•configuration_name to retrieve configuration instance in addition to :configuration_name and :configuration_name= to get/set value.
