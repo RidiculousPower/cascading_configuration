@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 # Support for enabling Configuration Modules. 

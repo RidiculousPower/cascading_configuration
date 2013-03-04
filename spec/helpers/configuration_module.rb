@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 RSpec::Matchers.define :have_defined_configuration do |base_name, alias_names, configuration_type, ccm|
 
@@ -14,8 +15,8 @@ RSpec::Matchers.define :have_defined_configuration do |base_name, alias_names, c
     
     instance.module_eval { __send__( include_or_extend, ccm ) }
     
-    instance.__send__( base_name, :configuration_name )    
-    instance.__send__( base_name, :configuration_name? => :__configuration_name__= )
+    instance.__send__( base_name, :configuration_name, & ccm_block )    
+    instance.__send__( base_name, :configuration_name? => :__configuration_name__=, & ccm_block )
 
     should_respond = nil
     should_be_defined = nil

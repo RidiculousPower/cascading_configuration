@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 require_relative 'module/cascading_method_shared_examples.rb'
 

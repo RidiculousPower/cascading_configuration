@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 # Configurations that cascade downward, possibly changing at each inheritance.
@@ -5,7 +6,7 @@
 #
 #   Not yet implemented.
 #
-class ::CascadingConfiguration::Module::BlockConfigurations::CascadingVariables < 
+class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues < 
       ::CascadingConfiguration::Module::BlockConfigurations
 
 end

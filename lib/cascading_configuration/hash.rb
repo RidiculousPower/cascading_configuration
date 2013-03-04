@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 #  CascadingConfiguration::Hash allows definition of hash attributes that will composite downward through
@@ -14,7 +15,7 @@ module ::CascadingConfiguration::Hash
   #
   # @method attr_hash
   #
-  # @overload attr_hash( *names )
+  # @overload attr_hash( name, ... )
   #   
   #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String }, Module ] 
   #
@@ -41,9 +42,9 @@ module ::CascadingConfiguration::Hash
   #
   # @method attr_module_hash
   #
-  # @overload attr_module_hash( *names )
+  # @overload attr_module_hash( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -68,9 +69,9 @@ module ::CascadingConfiguration::Hash
   #
   # @method attr_instance_hash
   #
-  # @overload attr_instance_hash( *names )
+  # @overload attr_instance_hash( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -95,9 +96,9 @@ module ::CascadingConfiguration::Hash
   #
   # @method attr_local_hash
   #
-  # @overload attr_local_hash( *names )
+  # @overload attr_local_hash( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -121,9 +122,9 @@ module ::CascadingConfiguration::Hash
   #
   # @method attr_object_hash
   #
-  # @overload attr_object_hash( *names )
+  # @overload attr_object_hash( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 def setup_module_tests
 
@@ -9,5 +10,6 @@ def setup_module_tests
   end
   let( :ccm_name ) { :setting }
   let( :ccm_aliases ) { [ '' ] }
+  let( :ccm_block ) { nil }
   
 end

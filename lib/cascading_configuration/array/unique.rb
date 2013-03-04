@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 #  CascadingConfiguration::Array allows definition of array attributes that will composite downward through
@@ -14,9 +15,9 @@ module ::CascadingConfiguration::Array::Unique
   #
   # @method attr_unique_array
   #
-  # @overload attr_unique_array( *names )
+  # @overload attr_unique_array( name, ... )
   #   
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -41,9 +42,9 @@ module ::CascadingConfiguration::Array::Unique
   #
   # @method attr_module_unique_array
   #
-  # @overload attr_module_unique_array( *names )
+  # @overload attr_module_unique_array( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -68,9 +69,9 @@ module ::CascadingConfiguration::Array::Unique
   #
   # @method attr_instance_unique_array
   #
-  # @overload attr_instance_unique_array( *names )
+  # @overload attr_instance_unique_array( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -95,9 +96,9 @@ module ::CascadingConfiguration::Array::Unique
   #
   # @method attr_local_unique_array
   #
-  # @overload attr_local_unique_array( *names )
+  # @overload attr_local_unique_array( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -121,9 +122,9 @@ module ::CascadingConfiguration::Array::Unique
   #
   # @method attr_object_unique_array
   #
-  # @overload attr_object_unique_array( *names )
+  # @overload attr_object_unique_array( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #

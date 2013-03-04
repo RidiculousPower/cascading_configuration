@@ -1,5 +1,4 @@
-
-begin ; require 'development' ; rescue ::LoadError ; end
+# -*- encoding : utf-8 -*-
 
 require 'to_camel_case'
 require 'accessor_utilities'
@@ -27,7 +26,8 @@ files = [
   'module/inheriting_values',
   'module/inheriting_values/configuration',
   'module/block_configurations',
-  'module/block_configurations/cascading_variables',
+  'module/block_configurations/cascading_values',
+  'module/block_configurations/cascading_values/configuration',
   'module/block_configurations/extendable_configurations',
   'module/block_configurations/extendable_configurations/compositing_objects',
   'module/block_configurations/extendable_configurations/compositing_objects/configuration',
@@ -43,6 +43,8 @@ files = [
   'instance_controller/extension_module',
   'instance_controller',
   
+  'value',
+
   'setting',
   
   'hash',

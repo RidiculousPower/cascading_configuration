@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 RSpec::Matchers.define :have_created_support do |support_module,
                                                  module_type_name, 

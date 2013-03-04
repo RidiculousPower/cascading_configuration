@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 # Configurations that accept modules as arguments and a block to define a new module.
@@ -118,7 +119,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
         this_module_defined_by_block = instance_controller.class::ExtensionModule.new( self, 
                                                                                        this_configuration_name, 
                                                                                        & definer_block )
-        constant_name = this_configuration_name.to_s.to_camel_case
+        constant_name = 'ExtMod_' << this_configuration_name.to_s.to_camel_case
         if ::Module === instance
           instance.const_set( constant_name, this_module_defined_by_block )
         end

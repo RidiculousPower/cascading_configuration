@@ -25,6 +25,7 @@ Each module supports the same pattern for naming methods it provides.
 The module has a name, which is used in each of the method types:
 
 ```ruby
+:value                  # =>  :attr_value
 :setting                # =>  :attr_setting
 :hash                   # =>  :attr_hash
 :array                  # =>  :attr_array
@@ -161,17 +162,29 @@ ClassA.some_array == [ :another_value ]
 
 ## Downward-Transforming Values ##
 
-Downward-Transforming Values are not yet 100% implemented, but the remainder is minimal and will be coming soon.
-
 Each time a child is registered, Downward-Transforming Values are processed via a block to produce the new value that the inheriting instance will receive. 
 
-Final details still being determined.
+```ruby
+module ModuleA
+  include CascadingConfiguration::Value
+  attr_value  :cascading_value do |parent_value, parent_instance|
+    # return child value - self is child
+    child_value = parent_value + 1 # assume parent_value is a number
+  end
+  self.cascading_value = 1
+end
 
+module ModuleB
+  include ModuleA
+  # cascading_value == 2
+end
+```
 
 ## Configuration Modules ##
 
 Including or extending CascadingConfiguration includes or extends all of its configuration modules:
 
+* CascadingConfiguration::Value
 * CascadingConfiguration::Setting
 * CascadingConfiguration::Hash
 * CascadingConfiguration::Array
@@ -180,10 +193,6 @@ Including or extending CascadingConfiguration includes or extends all of its con
 * CascadingConfiguration::Array::Sorted::Unique
 
 These modules can also be used individually in the same way (simply include or extend).
-
-# Check Out the Code #
-
-CascadingConfiguration is, in my opinion, a strong showing of what one can do with Ruby. Of particular interest is its demonstrated use of the parallel-ancestry gem. More very real world examples coming soon.
 
 # License #
 

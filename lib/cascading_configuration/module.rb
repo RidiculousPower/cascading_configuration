@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 # A Configuration Module abstracts and implements all of the primary functionality for
@@ -379,12 +380,12 @@ class ::CascadingConfiguration::Module < ::Module
   #
   # @return self.
   #
-  def define_configurations( instance, method_type, *configuration_names )
+  def define_configurations( instance, method_type, *configuration_names, & block )
 
     accessors = parse_names_for_accessors( configuration_names )
 
-    accessors.each do |this_configuration_name, this_write_configuration_name|
-      define_configuration( instance, method_type, this_configuration_name, this_write_configuration_name )
+    accessors.each do |this_name, this_write_name|
+      define_configuration( instance, method_type, this_name, this_write_name, & block )
     end
     
     return accessors
@@ -418,13 +419,14 @@ class ::CascadingConfiguration::Module < ::Module
   # 
   # @return self.
   #
-  def define_configuration( instance, method_type, accessor_name, write_accessor_name )
+  def define_configuration( instance, method_type, accessor_name, write_accessor_name, & block )
 
     configuration = self.class::Configuration.new( instance, 
                                                    method_type, 
                                                    self, 
                                                    accessor_name, 
-                                                   write_accessor_name )
+                                                   write_accessor_name,
+                                                   & block )
 
     ::CascadingConfiguration.define_configuration( instance, configuration )
 
@@ -724,7 +726,7 @@ class ::CascadingConfiguration::Module < ::Module
     
     define_method( ccm_method_name ) do |*args, & block|
 
-      ccm.define_configurations( self, method_type, *args )                  
+      ccm.define_configurations( self, method_type, *args, & block )
       
       return self
       

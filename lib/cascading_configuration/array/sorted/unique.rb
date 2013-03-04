@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 #  CascadingConfiguration::Array::Sorted::Unique allows definition of array attributes that will composite downward 
@@ -14,9 +15,9 @@ module ::CascadingConfiguration::Array::Sorted::Unique
   #
   # @method attr_sorted_unique_array
   #
-  # @overload attr_sorted_unique_array( *names )
+  # @overload attr_sorted_unique_array( name, ... )
   #   
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -41,9 +42,9 @@ module ::CascadingConfiguration::Array::Sorted::Unique
   #
   # @method attr_module_sorted_unique_array
   #
-  # @overload attr_module_sorted_unique_array( *names )
+  # @overload attr_module_sorted_unique_array( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -68,9 +69,9 @@ module ::CascadingConfiguration::Array::Sorted::Unique
   #
   # @method attr_instance_sorted_unique_array
   #
-  # @overload attr_instance_sorted_unique_array( *names )
+  # @overload attr_instance_sorted_unique_array( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -95,9 +96,9 @@ module ::CascadingConfiguration::Array::Sorted::Unique
   #
   # @method attr_local_sorted_unique_array
   #
-  # @overload attr_local_sorted_unique_array( *names )
+  # @overload attr_local_sorted_unique_array( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -121,9 +122,9 @@ module ::CascadingConfiguration::Array::Sorted::Unique
   #
   # @method attr_object_sorted_unique_array
   #
-  # @overload attr_object_sorted_unique_array( *names )
+  # @overload attr_object_sorted_unique_array( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #

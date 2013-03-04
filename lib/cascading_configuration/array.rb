@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 #  CascadingConfiguration::Array allows definition of array attributes that will composite downward through
@@ -14,9 +15,9 @@ module ::CascadingConfiguration::Array
   #
   # @method attr_array
   #
-  # @overload attr_array( *names )
+  # @overload attr_array( name, ... )
   #   
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -41,9 +42,9 @@ module ::CascadingConfiguration::Array
   #
   # @method attr_module_array
   #
-  # @overload attr_module_array( *names )
+  # @overload attr_module_array( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -68,9 +69,9 @@ module ::CascadingConfiguration::Array
   #
   # @method attr_instance_array
   #
-  # @overload attr_instance_array( *names )
+  # @overload attr_instance_array( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -95,9 +96,9 @@ module ::CascadingConfiguration::Array
   #
   # @method attr_local_array
   #
-  # @overload attr_local_array( *names )
+  # @overload attr_local_array( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #
@@ -121,9 +122,9 @@ module ::CascadingConfiguration::Array
   #
   # @method attr_object_array
   #
-  # @overload attr_object_array( *names )
+  # @overload attr_object_array( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] 
   #
   #          name 
   #

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 # Configurations created for Class will be extended with this module.

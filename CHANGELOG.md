@@ -58,3 +58,8 @@ Rewrite of internals to add configuration objects.
 Removed Core distinction. Internals are now considered public code, although they will still be marked private for documentation purposes, since they are only intended for developers.
 Tasty Sandwiches™ taste better!
 Also rewrote all specs except the public module specs. Those will have new specs soon.
+
+## 3/4/2013 ##
+
+Added CascadingConfiguration::Value (:attr_value) for inheriting values that transform as they cascade. 
+

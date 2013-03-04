@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 # Configurations that accept a block.
@@ -41,11 +42,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations < ::CascadingConfigu
   #
   def define_configurations( instance, method_type, *names_modules, & block )
     
-    if block_given?
-      @block = block
-    end
-    
-    super( instance, method_type, *names_modules )
+    super( instance, method_type, *names_modules, & block )
     
     return self
     

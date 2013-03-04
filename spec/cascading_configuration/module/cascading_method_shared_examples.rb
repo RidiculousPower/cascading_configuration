@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 shared_examples_for :singleton_and_instance_method do
   let( :configuration_type ) { :singleton_and_instance }

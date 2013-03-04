@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 # Configurations that can be extended with modules when defined.

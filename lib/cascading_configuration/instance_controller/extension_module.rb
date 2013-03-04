@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 # Extension modules are applied to objects held by configuration instance. 

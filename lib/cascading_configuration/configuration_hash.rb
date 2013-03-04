@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
 
@@ -22,6 +23,8 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     @include_extend_subclass_instance[ parent_hash ] = include_extend_subclass_instance
     
     super( parent_hash )
+    
+    load_parent_state
     
   end
   

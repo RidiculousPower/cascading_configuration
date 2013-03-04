@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 # Configurations for inheriting values.
@@ -16,19 +17,8 @@ class ::CascadingConfiguration::Module::InheritingValues::Configuration <
   #
   def initialize( instance, *args )
 
-    case args[ 0 ]
-      
-      when self.class
-        
-        super( instance, *args )
-        register_parent( @parent )
-        
-      else
-
-        super( instance, *args )
-
-    end
-
+    super( instance, *args )
+    register_parent( @parent ) if @parent
     @has_value = false
     
     initialize_for_instance

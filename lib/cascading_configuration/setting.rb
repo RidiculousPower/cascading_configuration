@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ###
 #  CascadingConfiguration::Setting allows definition of setting attributes that will retrieve
@@ -14,9 +15,9 @@ module ::CascadingConfiguration::Setting
   #
   # @method attr_setting
   #
-  # @overload attr_setting( *names )
+  # @overload attr_setting( name, ... )
   #   
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] name
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name
   #
   #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
   #          the setting name and accessor and each value will be used as the corresponding write accessor.
@@ -34,9 +35,9 @@ module ::CascadingConfiguration::Setting
   #
   # @method attr_module_setting
   #
-  # @overload attr_module_setting( *names )
+  # @overload attr_module_setting( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] name 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name 
   #
   #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
   #          the setting name and accessor and each value will be used as the corresponding write accessor.
@@ -54,9 +55,9 @@ module ::CascadingConfiguration::Setting
   #
   # @method attr_instance_setting
   #
-  # @overload attr_instance_setting( *names )
+  # @overload attr_instance_setting( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] name 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name 
   #
   #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
   #          the setting name and accessor and each value will be used as the corresponding write accessor.
@@ -74,9 +75,9 @@ module ::CascadingConfiguration::Setting
   #
   # @method attr_local_setting
   #
-  # @overload attr_local_setting( *names )
+  # @overload attr_local_setting( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] name
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name
   #
   #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
   #          the setting name and accessor and each value will be used as the corresponding write accessor.
@@ -93,9 +94,9 @@ module ::CascadingConfiguration::Setting
   #
   # @method attr_object_setting
   #
-  # @overload attr_object_setting( *names )
+  # @overload attr_object_setting( name, ... )
   #
-  #   @param [ Symbol, String, Hash{ Symbol,String => Symbol,String } ] name 
+  #   @param [Symbol,String,Hash{Symbol,String=>Symbol,String}] name 
   #
   #          The name to be used for the declared attribute. If a hash is passed, each key will be used as 
   #          the setting name and accessor and each value will be used as the corresponding write accessor.
