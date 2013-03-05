@@ -51,7 +51,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
 
     @instance = instance.extend( ::Module::Cluster )
     
-    if @instance.__is_a__?( ::Module )
+    if ::Module === @instance
       initialize_constant_in_instance
     else
       initialize_constant_in_self
