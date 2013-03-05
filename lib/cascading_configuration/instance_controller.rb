@@ -102,9 +102,8 @@ class ::CascadingConfiguration::InstanceController < ::Module
     
     should_enable = true
     
-    case instance
-      when ::Module::Cluster
-        should_enable = ! instance.has_cluster?( :cascading_configuration_inheritance )
+    if ::Module::Cluster === instance
+      should_enable = ! instance.has_cluster?( :cascading_configuration_inheritance )
     end
     
     if should_enable

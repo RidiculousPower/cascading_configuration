@@ -28,6 +28,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
         
     @parent.register_child( self ) if @parent
     @has_value = false
+    @value_requires_translation = @parent ? true : false
 
     initialize_for_instance
         
@@ -83,7 +84,6 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
     unless is_child?( child )
       child.register_parent( self ) if register_parent
       @children.push( child )
-      cascade_value_to_child( child ) if @value
     end
     
     return self
@@ -126,6 +126,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
     @parent.unregister_child( self ) if @parent
     @parent = parent
     @parent.register_child( self, false )
+    value_requires_translation!
     
     return self
     
@@ -284,7 +285,28 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
                     : false
     
   end
+  
+  # when value is set, mark that new value exists and tell children new value exists
+  # when value is requested, look upward until value has been marked as processed or until top of chain
+  # process downward at this time, lazily
+  
+  
+  
+  ############
+  #  value  #
+  ############
 
+  ###
+  # Get configuration value.
+  #
+  def value
+    
+    cascade_value if value_requires_translation?
+    
+    return @value
+    
+  end
+  
   ############
   #  value=  #
   ############
@@ -302,30 +324,46 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
     
     super
     
-    cascade_value
+    @value_requires_translation = false
+
+    @children.each { |this_child| this_child.value_requires_translation! } if @children
     
   end
+
+  #################################
+  #  value_requires_translation?  #
+  #################################
   
+  def value_requires_translation?
+    
+    return @value_requires_translation
+
+  end
+  
+  #################################
+  #  value_requires_translation!  #
+  #################################
+  
+  def value_requires_translation!
+    
+    @value_requires_translation = true
+    
+    @children.each { |this_child| this_child.value_requires_translation! } if @children
+    
+  end
+
   ###################
   #  cascade_value  #
   ###################
-
+  
   def cascade_value
-    
-    @children.each { |this_child| cascade_value_to_child( this_child ) } if @children
+
+    @parent.cascade_value if @parent.value_requires_translation?
+
+    @value = @instance.instance_exec( @parent.value, @parent.instance, & @cascade_block )
+    @value_requires_translation = false
     
   end
-
-  ############################
-  #  cascade_value_to_child  #
-  ############################
-
-  def cascade_value_to_child( child )
-    
-    child.value = child.instance_exec( @value, self, & child.cascade_block )
-    
-    return self
-    
-  end
+  
   
 end

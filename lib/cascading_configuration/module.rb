@@ -434,8 +434,8 @@ class ::CascadingConfiguration::Module < ::Module
     #  •configuration_name  #
     #=======================#
 
-    configuration_getter_proc = ::Proc.new { ::CascadingConfiguration.configuration( self, accessor_name ).value }
-    define_configuration_method_types( configuration, accessor_name, configuration_getter_proc, method_type )
+    configuration_getter_proc = ::Proc.new { ::CascadingConfiguration.configuration( self, accessor_name ) }
+    define_configuration_method_types( configuration, '•' << accessor_name.to_s, configuration_getter_proc, method_type )
 
     #======================#
     #  configuration_name  #
