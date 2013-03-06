@@ -174,6 +174,8 @@ class ::CascadingConfiguration::InstanceController < ::Module
 
   def initialize_inheriting_instance( parent_instance, instance, include_extend_subclass_instance )
     
+    instance.extend( ::CascadingConfiguration::ObjectWithConfigurations )
+    
     # Register newly inherited parent relation created by cascading hooks.
     ::CascadingConfiguration.register_parent( instance, parent_instance, include_extend_subclass_instance )
     

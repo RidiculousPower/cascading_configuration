@@ -50,24 +50,12 @@ class ::CascadingConfiguration::Module < ::Module
         
   end
   
-  #####################
-  #  append_features  #
-  #####################
-  
-  def append_features( instance )
-    
-    instance.module_eval { include ::CascadingConfiguration::ObjectWithConfigurations }
-
-    super
-    
-  end
-
   ###################
   #  extend_object  #
   ###################
   
   def extend_object( instance )
-    
+
     instance.extend( ::CascadingConfiguration::ObjectWithConfigurations )
 
     super
