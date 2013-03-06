@@ -49,6 +49,30 @@ class ::CascadingConfiguration::Module < ::Module
     define_cascading_definition_methods( @module_type_name, *@module_type_name_aliases )
         
   end
+  
+  #####################
+  #  append_features  #
+  #####################
+  
+  def append_features( instance )
+    
+    instance.module_eval { include ::CascadingConfiguration::ObjectWithConfigurations }
+
+    super
+    
+  end
+
+  ###################
+  #  extend_object  #
+  ###################
+  
+  def extend_object( instance )
+    
+    instance.extend( ::CascadingConfiguration::ObjectWithConfigurations )
+
+    super
+    
+  end
 
   ##############
   #  extended  #

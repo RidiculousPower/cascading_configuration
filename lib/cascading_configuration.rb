@@ -84,11 +84,50 @@ module ::CascadingConfiguration
     
     unless configurations_hash = @configurations[ instance_id = instance.__id__ ]
       @configurations[ instance_id ] = configurations_hash = self::ConfigurationHash.new( instance )
-      register_parent( instance, instance.class ) unless instance.equal?( ::Class )
+      unless instance.equal?( ::Class )
+        case instance
+          when ::Class
+            ensure_no_unregistered_superclass( instance )
+          else
+            register_parent( instance, instance.class )
+        end
+      end
     end
     
     return configurations_hash
 
+  end
+
+  ############################################
+  #  self.ensure_no_unregistered_superclass  #
+  ############################################
+  
+  def self.ensure_no_unregistered_superclass( class_instance )
+
+    # We want to know if we have a class above us that has configurations that we did not receive.
+    # This happens if we had already initialized the subclass before CC was added to the class above us.
+    # This could be multiple classes - so we could have D, ..., A where A has configs.
+    # It can't be modules because including them would call their hook, initializing the instance.
+    # So we need the next class and if it hasn't initialized, 
+    # find the next class - if it has initialized, register it as our parent
+    
+    next_class = nil
+
+    class_instance.ancestors.each do |this_ancestor|
+      next if this_ancestor.equal?( class_instance )
+      if ::Class === this_ancestor
+        next_class = this_ancestor
+        break
+      end
+    end
+    
+    if next_class and ::CascadingConfiguration::ObjectWithConfigurations === next_class
+      ensure_no_unregistered_superclass( next_class ) unless @configurations.has_key?( next_class.__id__ )
+      register_parent( class_instance, next_class, :subclass )
+    end
+    
+    return self
+    
   end
 
   ###############################

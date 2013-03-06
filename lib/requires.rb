@@ -11,7 +11,9 @@ require_relative 'cascading_configuration_modules'
 basepath = 'cascading_configuration'
 
 files = [
-      
+  
+  'object_with_configurations',
+  
   'include_creates_instance_support',
   
   'configuration_hash',
