@@ -10,7 +10,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #  initialize_inheriting_instance  #
   ####################################
   
-  def initialize_inheriting_instance( instance, 
+  def initialize_inheriting_instance( for_instance, 
                                       parent_configuration, 
                                       cascade_type = nil, 
                                       include_extend_subclass_instance = nil )
@@ -26,10 +26,10 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #  initialize_common  #
   #######################
   
-  def initialize_common( instance )
-
+  def initialize_common( for_instance )
+    
     @parents = ::Array::Unique.new( self )
-    @value = @module.compositing_object_class.new( nil, @instance )
+    @value = @module.compositing_object_class.new( nil, for_instance )
     
     super
     

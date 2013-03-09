@@ -209,10 +209,6 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     
     child_instance = nil
     
-    instance = configuration_instance
-    
-    cascade_type = nil
-        
     cascade_type = case cascade_model( parent_hash )
       when :singleton_to_singleton_and_instance_to_instance
         nil # inherit cascade type
@@ -224,7 +220,7 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     
     include_extend_subclass_instance = @include_extend_subclass_instance[ parent_hash ]
 
-    return parent_configuration.class.new_inheriting_instance( instance, 
+    return parent_configuration.class.new_inheriting_instance( configuration_instance, 
                                                                parent_configuration, 
                                                                cascade_type, 
                                                                include_extend_subclass_instance )

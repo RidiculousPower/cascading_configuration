@@ -6,25 +6,6 @@
 class ::CascadingConfiguration::Module::CascadingSettings::Configuration < 
       ::CascadingConfiguration::Module::Configuration
   
-  ################
-  #  initialize  #
-  ################
-  
-  ###
-  # @overload new( instance, configuration_module, configuration_name, write_accessor_name = configuration_name )
-  #
-  # @overload new( instance, parent_configuration )
-  #
-  def initialize( instance, *args )
-
-    super( instance, *args )
-    register_parent( @parent ) if @parent
-    @has_value = false
-    
-    initialize_for_instance
-        
-  end
-  
   ###############################
   #  permits_multiple_parents?  #
   ###############################

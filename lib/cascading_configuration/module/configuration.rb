@@ -12,7 +12,7 @@ class ::CascadingConfiguration::Module::Configuration
   #  initialize  #
   ################
   
-  def initialize( instance, 
+  def initialize( for_instance, 
                   cascade_type, 
                   configuration_module, 
                   configuration_name, 
@@ -24,7 +24,7 @@ class ::CascadingConfiguration::Module::Configuration
     @name = configuration_name.accessor_name
     @write_name = write_accessor.write_accessor_name
 
-    initialize_common( instance )
+    initialize_common( for_instance )
 
   end
   
@@ -32,14 +32,14 @@ class ::CascadingConfiguration::Module::Configuration
   #  self.new_inheriting_instance  #
   ##################################
   
-  def self.new_inheriting_instance( instance, 
+  def self.new_inheriting_instance( for_instance, 
                                     parent_configuration, 
                                     cascade_type = nil, 
                                     include_extend_subclass_instance = nil,
                                     & block )
     
     instance = allocate
-    instance.initialize_inheriting_instance( instance, 
+    instance.initialize_inheriting_instance( for_instance, 
                                              parent_configuration, 
                                              cascade_type, 
                                              include_extend_subclass_instance,
@@ -53,7 +53,7 @@ class ::CascadingConfiguration::Module::Configuration
   #  initialize_inheriting_instance  #
   ####################################
   
-  def initialize_inheriting_instance( instance, 
+  def initialize_inheriting_instance( for_instance, 
                                       parent_configuration, 
                                       cascade_type = nil, 
                                       include_extend_subclass_instance = nil )
@@ -65,7 +65,7 @@ class ::CascadingConfiguration::Module::Configuration
     @cascade_type = cascade_type || @parent.cascade_type
     @include_extend_subclass_instance = include_extend_subclass_instance
 
-    initialize_common( instance )
+    initialize_common( for_instance )
     
     include_extend_subclass_instance ? register_parent_for_ruby_hierarchy( @parent ) : register_parent( @parent )
     
@@ -75,9 +75,9 @@ class ::CascadingConfiguration::Module::Configuration
   #  initialize_common  #
   #######################
   
-  def initialize_common( instance )
+  def initialize_common( for_instance )
 
-    @instance = instance
+    @instance = for_instance
     @has_value = false
     initialize_for_instance
     

@@ -10,7 +10,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #  initialize_common  #
   #######################
   
-  def initialize_common( instance )
+  def initialize_common( for_instance )
 
     super
     

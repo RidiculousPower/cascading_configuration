@@ -10,7 +10,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
   #  initialize  #
   ################
   
-  def initialize( instance, 
+  def initialize( for_instance, 
                   cascade_type, 
                   configuration_module, 
                   configuration_name, 
@@ -32,7 +32,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
   #  initialize_inheriting_instance  #
   ####################################
   
-  def initialize_inheriting_instance( instance, 
+  def initialize_inheriting_instance( for_instance, 
                                       parent_configuration, 
                                       cascade_type = nil, 
                                       include_extend_subclass_instance = nil,
