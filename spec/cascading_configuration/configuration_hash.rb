@@ -63,7 +63,7 @@ shared_examples_for :configuration_hash do
         inheriting_hash[ :configuration_A ].should be_a configuration_A.class
       end
       it 'will register the parent configuration with the new child' do
-        inheriting_hash[ :configuration_A ].parent.should be configuration_A if configuration_class.method_defined?( :parent )
+        inheriting_hash[ :configuration_A ].is_parent?( hash_instance[ :configuration_A ] ).should be true
       end
     end
     context 'child already has configuration' do
@@ -77,7 +77,7 @@ shared_examples_for :configuration_hash do
         inheriting_hash[ :configuration_A ].should be child_configuration_A
       end
       it 'will register the new parent configuration' do
-        inheriting_hash[ :configuration_A ].parent.should be configuration_A if configuration_class.method_defined?( :parent )
+        inheriting_hash[ :configuration_A ].is_parent?( hash_instance[ :configuration_A ] ).should be true
       end
     end
   end
@@ -188,7 +188,7 @@ shared_examples_for :configuration_hash do
       child_hash_instance[ :configuration_A ].should be_a configuration_class
     end
     it 'child configurations will parent configuration as parent' do
-      child_hash_instance[ :configuration_A ].parent.should be configuration_A if configuration_class.method_defined?( :parent )
+      child_hash_instance[ :configuration_A ].is_parent?( hash_instance[ :configuration_A ] ).should be true
     end
   end
   
@@ -205,8 +205,8 @@ shared_examples_for :configuration_hash do
       child_hash_instance[ :configuration_B ].should be_a configuration_class
     end
     it 'child configurations will parent configuration as parent' do
-      child_hash_instance[ :configuration_A ].parent.should be configuration_A if configuration_class.method_defined?( :parent )
-      child_hash_instance[ :configuration_B ].parent.should be configuration_B if configuration_class.method_defined?( :parent )
+      child_hash_instance[ :configuration_A ].is_parent?( hash_instance[ :configuration_A ] ).should be true
+      child_hash_instance[ :configuration_B ].is_parent?( hash_instance[ :configuration_B ] ).should be true
     end
   end
 
@@ -243,8 +243,8 @@ shared_examples_for :configuration_hash do
       child_hash_instance[ :configuration_B ].should be_a configuration_class
     end
     it 'child configurations will parent configuration as parent' do
-      child_hash_instance[ :configuration_A ].parent.should be other_configuration_A if configuration_class.method_defined?( :parent )
-      child_hash_instance[ :configuration_B ].parent.should be other_configuration_B if configuration_class.method_defined?( :parent )
+      child_hash_instance[ :configuration_A ].parent.should be nil if configuration_class.method_defined?( :parent )
+      child_hash_instance[ :configuration_B ].parent.should be nil if configuration_class.method_defined?( :parent )
     end
   end
   

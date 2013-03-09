@@ -21,13 +21,13 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
   def register_parent( parent_hash, include_extend_subclass_instance = nil )
 
     @include_extend_subclass_instance[ parent_hash ] = include_extend_subclass_instance
-    
     super( parent_hash )
-    
     load_parent_state
+
+    return self
     
   end
-  
+
   #########################
   #  register_parent_key  #
   #########################
@@ -111,7 +111,7 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     instance = configuration_instance
     parent = parent_hash.configuration_instance
 
-    case @include_extend_subclass_instance[ parent_hash ]
+    cascade_model =  case @include_extend_subclass_instance[ parent_hash ]
 
       when :include, :subclass
         
@@ -127,7 +127,7 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
         # * class => class
         #   singleton => singleton
         #   instance => instance
-        cascade_model = :singleton_to_singleton_and_instance_to_instance
+        :singleton_to_singleton_and_instance_to_instance
         
       when :extend
         
@@ -137,19 +137,18 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
         #   instance => singleton
         # * module => instance (extend)
         #   instance => singleton
-        cascade_model = :instance_to_singleton
+        :instance_to_singleton
     
       when :instance
 
-        instance_class = instance.class
-        if instance_class < ::Module and not instance_class < ::Class
+        if ( instance_class = instance.class ) < ::Module and not instance_class < ::Class
           # * instance of class < module (a Module)
           #   instance => singleton
-          cascade_model = :instance_to_singleton
+          :instance_to_singleton
         else
           # * instance of class (an Object)
           #   instance => instance
-          cascade_model = :instance_to_instance
+          :instance_to_instance
         end
       
       when nil
@@ -164,11 +163,11 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
                 # * class => module
                 #   singleton => singleton
                 #   instance => instance
-                cascade_model = :singleton_to_singleton_and_instance_to_instance
+                :singleton_to_singleton_and_instance_to_instance
               else
                 # * class => instance
                 #   instance => instance
-                cascade_model = :instance_to_instance
+                :instance_to_instance
             end
           when ::Module
             case instance
@@ -179,22 +178,22 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
                 # * module => class
                 #   singleton => singleton
                 #   instance => instance
-                cascade_model = :singleton_to_singleton_and_instance_to_instance
+                :singleton_to_singleton_and_instance_to_instance
               else
                 # * module => instance
                 #   instance => instance
-                cascade_model = :instance_to_instance
+                :instance_to_instance
             end
           else
             # * instance => instance
             #   singleton => singleton
             #   instance => instance
-            cascade_model = :singleton_to_singleton_and_instance_to_instance
+            :singleton_to_singleton_and_instance_to_instance
         end
     
       when :singleton_to_singleton
 
-        cascade_model = :singleton_to_singleton
+        :singleton_to_singleton
       
     end
     
@@ -212,17 +211,23 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     
     instance = configuration_instance
     
-    case cascade_model( parent_hash )
+    cascade_type = nil
+        
+    cascade_type = case cascade_model( parent_hash )
       when :singleton_to_singleton_and_instance_to_instance
-        # we already handled :local_instance and :object in #register_parent_key
-        child_instance = parent_configuration.class.new( instance, parent_configuration )
+        nil # inherit cascade type
       when :instance_to_instance
-        child_instance = parent_configuration.class.new( instance, parent_configuration, :instance )
+        :instance
       when :instance_to_singleton, :singleton_to_singleton
-        child_instance = parent_configuration.class.new( instance, parent_configuration, :singleton )
+        :singleton
     end
     
-    return child_instance
+    include_extend_subclass_instance = @include_extend_subclass_instance[ parent_hash ]
+
+    return parent_configuration.class.new_inheriting_instance( instance, 
+                                                               parent_configuration, 
+                                                               cascade_type, 
+                                                               include_extend_subclass_instance )
     
   end
 

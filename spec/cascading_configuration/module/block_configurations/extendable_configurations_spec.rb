@@ -24,12 +24,13 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
   #############################
 
   context '#parse_extension_modules' do
+    let( :instance ) { ::Module.new.name( :Instance ) }
     let( :moduleA ) { ::Module.new.name( :ModuleA ) }
     let( :moduleB ) { ::Module.new.name( :ModuleB ) }
     let( :moduleC ) { ::Module.new.name( :ModuleC ) }
     let( :moduleD ) { ::Module.new.name( :ModuleD ) }
     let( :names_modules ) { [ :name1, :name2, moduleA, :name3, moduleB, :name4, :name5, moduleC, moduleD, :name6 ] }
-    let( :names_modules_hash ) { extendable_configurations_ccm.parse_extension_modules( names_modules ) }
+    let( :names_modules_hash ) { extendable_configurations_ccm.parse_extension_modules( instance, names_modules ) }
     let( :modules ) { [ moduleA, moduleB, moduleC, moduleD ] }
     it 'can parse extension modules from names' do
       names_modules_hash.should == { :name1 => modules,

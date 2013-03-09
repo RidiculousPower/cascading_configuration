@@ -24,7 +24,7 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
   let( :parent_configuration_two ) do
     configuration_class.new( parent_instance_two, :singleton_and_instance, configuration_module, :parent_two_name?, :parent_two= )
   end
-  let( :child_configuration ) { configuration_class.new( child_instance, parent_configuration ) }
+  let( :child_configuration ) { configuration_class.new_inheriting_instance( child_instance, parent_configuration, :singleton_to_singleton_and_instance_to_instance, :include ) }
   
   ###############################
   #  permits_multiple_parents?  #
@@ -178,57 +178,57 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
       parent_A
     end
     let( :parent_A_B1 ) do
-      parent_A_B1 = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( parent_A_B1_instance, parent_A )
+      parent_A_B1 = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new_inheriting_instance( parent_A_B1_instance, parent_A )
       parent_A_B1.compositing_object.push( :B )
       parent_A_B1
     end
     let( :parent_A_B1_C1 ) do
-      parent_A_B1_C1 = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( parent_A_B1_C1_instance, parent_A_B1 )
+      parent_A_B1_C1 = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new_inheriting_instance( parent_A_B1_C1_instance, parent_A_B1, :singleton_to_singleton_and_instance_to_instance, :include )
       parent_A_B1_C1.compositing_object.push( :C )
       parent_A_B1_C1
     end
     let( :parent_A_B1_C1_D ) do
-      parent_A_B1_C1_D = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( parent_A_B1_C1_D_instance, parent_A_B1_C1 )
+      parent_A_B1_C1_D = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new_inheriting_instance( parent_A_B1_C1_D_instance, parent_A_B1_C1, :singleton_to_singleton_and_instance_to_instance, :include )
       parent_A_B1_C1_D.compositing_object.push( :D )
       parent_A_B1_C1_D
     end
     let( :parent_A_B1_C1_D_E ) do
-      parent_A_B1_C1_D_E = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( parent_A_B1_C1_D_E_instance, parent_A_B1_C1_D )
+      parent_A_B1_C1_D_E = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new_inheriting_instance( parent_A_B1_C1_D_E_instance, parent_A_B1_C1_D, :singleton_to_singleton_and_instance_to_instance, :include )
       parent_A_B1_C1_D_E.compositing_object.push( :E )
       parent_A_B1_C1_D_E
     end
     let( :parent_A_B1_C2 ) do
-      parent_A_B1_C2 = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( parent_A_B1_C2_instance, parent_A_B1 )
+      parent_A_B1_C2 = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new_inheriting_instance( parent_A_B1_C2_instance, parent_A_B1, :singleton_to_singleton_and_instance_to_instance, :include )
       parent_A_B1_C2.compositing_object.push( :C )
       parent_A_B1_C2
     end
     let( :parent_A_B1_C2_D ) do
-      parent_A_B1_C2_D = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( parent_A_B1_C2_D_instance, parent_A_B1_C2 )
+      parent_A_B1_C2_D = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new_inheriting_instance( parent_A_B1_C2_D_instance, parent_A_B1_C2, :singleton_to_singleton_and_instance_to_instance, :include )
       parent_A_B1_C2_D.compositing_object.push( :D )
       parent_A_B1_C2_D
     end
     let( :parent_A_B2 ) do
-      parent_A_B2 = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( parent_A_B2_instance, parent_A )
+      parent_A_B2 = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new_inheriting_instance( parent_A_B2_instance, parent_A, :singleton_to_singleton_and_instance_to_instance, :include )
       parent_A_B2.compositing_object.push( :B )
       parent_A_B2
     end
     let( :parent_A_B2_C1 ) do
-      parent_A_B2_C1 = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( parent_A_B2_C1_instance, parent_A_B2 )
+      parent_A_B2_C1 = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new_inheriting_instance( parent_A_B2_C1_instance, parent_A_B2, :singleton_to_singleton_and_instance_to_instance, :include )
       parent_A_B2_C1.compositing_object.push( :C )
       parent_A_B2_C1
     end
     let( :parent_A_B2_C1_D ) do
-      parent_A_B2_C1_D = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( parent_A_B2_C1_D_instance, parent_A_B2_C1 )
+      parent_A_B2_C1_D = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new_inheriting_instance( parent_A_B2_C1_D_instance, parent_A_B2_C1, :singleton_to_singleton_and_instance_to_instance, :include )
       parent_A_B2_C1_D.compositing_object.push( :D )
       parent_A_B2_C1_D
     end
     let( :parent_A_B2_C1_D_E ) do
-      parent_A_B2_C1_D_E = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( parent_A_B2_C1_D_E_instance, parent_A_B2_C1_D )
+      parent_A_B2_C1_D_E = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new_inheriting_instance( parent_A_B2_C1_D_E_instance, parent_A_B2_C1_D, :singleton_to_singleton_and_instance_to_instance, :include )
       parent_A_B2_C1_D_E.compositing_object.push( :E )
       parent_A_B2_C1_D_E
     end
     let( :parent_A_B2_C1_D_E_F ) do
-      parent_A_B2_C1_D_E_F = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new( parent_A_B2_C1_D_E_F_instance, parent_A_B2_C1_D_E )
+      parent_A_B2_C1_D_E_F = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration.new_inheriting_instance( parent_A_B2_C1_D_E_F_instance, parent_A_B2_C1_D_E, :singleton_to_singleton_and_instance_to_instance, :include )
       parent_A_B2_C1_D_E_F.compositing_object.push( :F )
       parent_A_B2_C1_D_E_F
     end
@@ -237,19 +237,25 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
     let( :diamond_B_instance ) { ::Module.new.name( :Diamond_B_instance ) }
     let( :diamond_C_instance ) { ::Module.new.name( :Diamond_C_instance ) }
     let( :diamond_A ) do
-      ::CascadingConfiguration::Module::
-        BlockConfigurations::ExtendableConfigurations::
-        CompositingObjects::Configuration.new( diamond_A_instance, parent_A_B2_C1_D_E, parent_A_B1_C2_D )
+      configuration = ::CascadingConfiguration::Module::
+                        BlockConfigurations::ExtendableConfigurations::
+                        CompositingObjects::Configuration.new_inheriting_instance( diamond_A_instance, parent_A_B2_C1_D_E, :singleton_to_singleton_and_instance_to_instance, :instance )
+      configuration.register_parent( parent_A_B1_C2_D )
+      configuration
     end
     let( :diamond_B ) do
-      ::CascadingConfiguration::Module::
-        BlockConfigurations::ExtendableConfigurations::
-        CompositingObjects::Configuration.new( diamond_B_instance, parent_A_B2_C1, parent_A_B1 )
+      configuration = ::CascadingConfiguration::Module::
+                        BlockConfigurations::ExtendableConfigurations::
+                        CompositingObjects::Configuration.new_inheriting_instance( diamond_B_instance, parent_A_B2_C1, :singleton_to_singleton_and_instance_to_instance, :instance )
+      configuration.register_parent( parent_A_B1 )
+      configuration
     end
     let( :diamond_C ) do
-      ::CascadingConfiguration::Module::
-        BlockConfigurations::ExtendableConfigurations::
-        CompositingObjects::Configuration.new( diamond_C_instance, parent_A, parent_A_B1_C2 )
+      configuration = ::CascadingConfiguration::Module::
+                        BlockConfigurations::ExtendableConfigurations::
+                        CompositingObjects::Configuration.new_inheriting_instance( diamond_C_instance, parent_A, :singleton_to_singleton_and_instance_to_instance, :instance )
+      configuration.register_parent( parent_A_B1_C2 )
+      configuration
     end
 
     it 'match the lowest parents for a condition' do

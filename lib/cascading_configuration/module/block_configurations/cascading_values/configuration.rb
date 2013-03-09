@@ -10,30 +10,41 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
   #  initialize  #
   ################
   
-  ###
-  # @overload new( instance, configuration_module, configuration_name, write_accessor_name = configuration_name, 
-  #                & cascade_block )
-  #
-  # @overload new( instance, parent_configuration )
-  #
-  def initialize( instance, *args, & cascade_block )
+  def initialize( instance, 
+                  cascade_type, 
+                  configuration_module, 
+                  configuration_name, 
+                  write_accessor = configuration_name,
+                  & cascade_block )
 
-    super( instance, *args )
-    
-    unless @parent or block_given?
+    unless block_given?
       raise ::ArgumentError, 'Block required to produce cascade value.'
     end
 
-    @cascade_block = cascade_block || @parent.cascade_block
-        
-    @parent.register_child( self ) if @parent
-    @has_value = false
-    @value_requires_translation = @parent ? true : false
+    @cascade_block = cascade_block
+    @value_requires_translation = false
 
-    initialize_for_instance
+    super
         
   end
+
+  ####################################
+  #  initialize_inheriting_instance  #
+  ####################################
   
+  def initialize_inheriting_instance( instance, 
+                                      parent_configuration, 
+                                      cascade_type = nil, 
+                                      include_extend_subclass_instance = nil,
+                                      & cascade_block )
+
+    @cascade_block = cascade_block || parent_configuration.cascade_block
+    @value_requires_translation = true
+
+    super
+
+  end
+
   ###################
   #  cascade_block  #
   ###################
@@ -131,6 +142,12 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
     return self
     
   end
+  
+  ########################################
+  #  register_parent_for_ruby_hierarchy  #
+  ########################################
+  
+  alias_method :register_parent_for_ruby_hierarchy, :register_parent
   
   ####################
   #  replace_parent  #

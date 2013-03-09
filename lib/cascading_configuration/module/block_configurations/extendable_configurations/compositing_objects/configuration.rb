@@ -4,42 +4,37 @@
 # Configurations extended for Compositing Objects.
 #
 class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration < 
-      ::CascadingConfiguration::Module::Configuration
+      ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::Configuration
   
-  ################
-  #  initialize  #
-  ################
+  ####################################
+  #  initialize_inheriting_instance  #
+  ####################################
   
-  ###
-  # @overload new( instance, configuration_module, configuration_name, write_accessor_name = configuration_name )
-  #
-  # @overload new( instance, parent_configuration, ... )
-  #
-  def initialize( instance, *args )
+  def initialize_inheriting_instance( instance, 
+                                      parent_configuration, 
+                                      cascade_type = nil, 
+                                      include_extend_subclass_instance = nil )
+    
+    super
 
-    parents = nil
-    
-    case args[ 0 ]
-      when self.class
-        # we assume all parent configuration instances provided have matching module/name, so use the first to configure
-        super( instance, args[ 0 ] )
-        # but we can have more than one parent, so we need to register the rest
-        parents = args        
-      else
-        super( instance, *args )
-    end
-    
-    @value = @module.compositing_object_class.new( nil, instance )
-    
-    @parents = ::Array::Unique.new( self )
-    @extension_modules = ::Array::Compositing::Unique.new( nil, self )        
-    register_parent( *parents ) if parents
-    
     # registering parent might have filled in extension modules
     @value.extend( *@extension_modules ) unless @extension_modules.empty?
-    
+        
   end
 
+  #######################
+  #  initialize_common  #
+  #######################
+  
+  def initialize_common( instance )
+
+    @parents = ::Array::Unique.new( self )
+    @value = @module.compositing_object_class.new( nil, @instance )
+    
+    super
+    
+  end
+  
   ########################
   #  compositing_object  #
   ########################
@@ -90,41 +85,72 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #   
   #          Parent instance from which configurations are being inherited.
   #
+  #   @yield [ parent ]
+  #
+  #          Block to perorm additional actions related to the Ruby ancestor hierarchy,
+  #          which will not be performed for explicit calls to #register_parent.
+  #
+  #   @yieldparam parent
+  #
+  #               Parent being registered.
+  #
   # @return [self]
   #
   #         Self.
   #
-  def register_parent( *parents )
+  def register_parent( *parents, & block )
 
     parents.each do |this_parent|
-
-      case this_parent
-        when ::CascadingConfiguration::Module::Configuration
-          # parent is what we want already
-        else
-          if ::CascadingConfiguration.has_configuration?( this_parent, @name )
-            this_parent = ::CascadingConfiguration.configuration( this_parent, @name )
-          else
-            next
-          end
-      end
-
-      # is the new parent already part of the parent chain?
-      unless is_parent?( this_parent )
-        # avoid cyclic references
-        if this_parent.is_parent?( self )
-          raise ::ArgumentError, 'Registering instance ' << parent.instance.to_s + ' as parent of instance ' <<
-                                 @instance.to_s << ' would cause cyclic reference.'
-        end
-        # if not already a parent, register it
-        @parents.push( this_parent )
-        @extension_modules.register_parent( parent_extension_modules = this_parent.extension_modules )
-        @value.extend( *parent_extension_modules ) unless parent_extension_modules.empty?
-        register_composite_object_parent( this_parent.compositing_object )
-      end
-
+      super( this_parent, & block )
+      @parents.push( this_parent )
+      register_composite_object_parent( this_parent.compositing_object )
     end
+    
+    # we don't use @parent anymore, @parents instead
+    @parent = nil
 
+    return self
+
+  end
+
+  ########################################
+  #  register_parent_for_ruby_hierarchy  #
+  ########################################
+  
+  ###
+  # Register configuration for instance with parent instance as parent for configuration when registration
+  #   is performed in the context of Ruby inheritance.
+  #
+  # @overload register_parent( parent, ... )
+  #
+  #   @param parent
+  #   
+  #          Parent instance from which configurations are being inherited.
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
+  def register_parent_for_ruby_hierarchy( *parents )
+    
+    parents.each { |this_parent| super( this_parent ) }
+    
+    return self
+    
+  end
+
+  #######################################
+  #  register_parent_extension_modules  #
+  #######################################
+  
+  def register_parent_extension_modules( parent )
+
+    super
+    
+    unless ( parent_extension_modules = parent.extension_modules ).empty?
+      @value.extend( *parent_extension_modules )
+    end
+    
     return self
 
   end
@@ -147,32 +173,6 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
     @value.register_parent( parent_composite_object )
   
   end
-
-  ####################
-  #  replace_parent  #
-  ####################
-
-  ###
-  # Replace a current parent for configuration instance with a different parent.
-  #
-  # @param existing_parent
-  #
-  #        Current parent instance to replace.
-  #
-  # @param new_parent
-  #
-  #        New parent instance.
-  #
-  # @return [CascadingConfiguration::Module::Configuration] Self.
-  #
-  def replace_parent( existing_parent, new_parent )
-
-    unregister_parent( existing_parent )
-    register_parent( new_parent )
-
-    return self
-
-  end
   
   #######################
   #  unregister_parent  #
@@ -189,16 +189,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #
   def unregister_parent( existing_parent )
     
-    case existing_parent
-      when ::CascadingConfiguration::Module::Configuration
-        # parent is what we want already
-      else
-        if ::CascadingConfiguration.has_configuration?( existing_parent, @name )
-          existing_parent = ::CascadingConfiguration.configuration( existing_parent, @name )
-        else
-          existing_parent = nil
-        end
-    end
+    existing_parent = configuration_for_configuration_or_instance( existing_parent )
 
     if existing_parent
       @value.unregister_parent( existing_parent.compositing_object )
@@ -235,7 +226,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #
   def has_parents?
     
-    return @value.has_parents?
+    return @parents.empty? ? false : true
     
   end
   
@@ -256,16 +247,9 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #
   def is_parent?( potential_parent )
     
-    potential_parent_configuration = nil
-    
-    case potential_parent
-      when ::CascadingConfiguration::Module::Configuration
-        potential_parent_configuration = potential_parent
-      else
-        potential_parent_configuration = ::CascadingConfiguration.configuration( potential_parent, @name )
-    end
-    
-    return @parents.include?( potential_parent_configuration ) ||
+    potential_parent = configuration_for_configuration_or_instance( potential_parent )
+
+    return @parents.include?( potential_parent ) ||
            @parents.any? { |this_parent| this_parent.is_parent?( potential_parent ) }
     
   end

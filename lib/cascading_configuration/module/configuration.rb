@@ -12,36 +12,77 @@ class ::CascadingConfiguration::Module::Configuration
   #  initialize  #
   ################
   
-  ###
-  # @overload new( instance, cascade_type, configuration_module, configuration_name, write_accessor_name = configuration_name )
-  #
-  # @overload new( instance, parent_configuration, cascade_type = nil )
-  #
-  def initialize( instance, *args )
+  def initialize( instance, 
+                  cascade_type, 
+                  configuration_module, 
+                  configuration_name, 
+                  write_accessor = configuration_name,
+                  & block )
 
-    @instance = instance
+    @cascade_type = cascade_type
+    @module = configuration_module
+    @name = configuration_name.accessor_name
+    @write_name = write_accessor.write_accessor_name
 
-    case arg_zero = args[ 0 ]
-      when self.class
-        # we assume all parent instances provided have matching module/name
-        @parent = arg_zero
-        @module = @parent.module
-        @name = @parent.name
-        @write_name = @parent.write_name
-        @cascade_type = args[ 1 ] || @parent.cascade_type
-      else
-        @cascade_type = arg_zero
-        @module = args[ 1 ]
-        @name = args[ 2 ].accessor_name
-        @write_name = ( args[ 3 ] || @name ).write_accessor_name
-    end
+    initialize_common( instance )
 
-    @has_value = false
+  end
+  
+  ##################################
+  #  self.new_inheriting_instance  #
+  ##################################
+  
+  def self.new_inheriting_instance( instance, 
+                                    parent_configuration, 
+                                    cascade_type = nil, 
+                                    include_extend_subclass_instance = nil,
+                                    & block )
     
-    initialize_for_instance
+    instance = allocate
+    instance.initialize_inheriting_instance( instance, 
+                                             parent_configuration, 
+                                             cascade_type, 
+                                             include_extend_subclass_instance,
+                                             & block )
+    
+    return instance
     
   end
 
+  ####################################
+  #  initialize_inheriting_instance  #
+  ####################################
+  
+  def initialize_inheriting_instance( instance, 
+                                      parent_configuration, 
+                                      cascade_type = nil, 
+                                      include_extend_subclass_instance = nil )
+  
+    @parent = parent_configuration
+    @module = @parent.module
+    @name = @parent.name
+    @write_name = @parent.write_name
+    @cascade_type = cascade_type || @parent.cascade_type
+    @include_extend_subclass_instance = include_extend_subclass_instance
+
+    initialize_common( instance )
+    
+    include_extend_subclass_instance ? register_parent_for_ruby_hierarchy( @parent ) : register_parent( @parent )
+    
+  end
+  
+  #######################
+  #  initialize_common  #
+  #######################
+  
+  def initialize_common( instance )
+
+    @instance = instance
+    @has_value = false
+    initialize_for_instance
+    
+  end
+  
   #############################
   #  initialize_for_instance  #
   #############################
@@ -62,8 +103,7 @@ class ::CascadingConfiguration::Module::Configuration
 
         if @instance.equal?( ::Class )
           extend( self.class::ClassInstanceConfiguration )
-        elsif instance_class = @instance.class and
-              instance_class < ::Module and not instance_class < ::Class
+        elsif ( instance_class = @instance.class ) < ::Module and not instance_class < ::Class
           extend( self.class::ClassInheritingFromModuleConfiguration )
         end
 
@@ -79,12 +119,32 @@ class ::CascadingConfiguration::Module::Configuration
     
   end
 
+  #################################################
+  #  configuration_for_configuration_or_instance  #
+  #################################################
+  
+  def configuration_for_configuration_or_instance( configuration_or_instance )
+    
+    return case configuration_or_instance
+      when ::CascadingConfiguration::Module::Configuration
+        configuration_or_instance
+      else
+        if ::CascadingConfiguration.has_configuration?( configuration_or_instance, @name )
+          ::CascadingConfiguration.configuration( configuration_or_instance, @name )
+        else
+          nil
+        end
+    end
+    
+  end
+
   #####################
   #  register_parent  #
   #####################
   
   ###
   # Register configuration for instance with parent instance as parent for configuration.
+  #   Does nothing, serves as placeholder.
   #
   # @param parent
   #
@@ -99,6 +159,68 @@ class ::CascadingConfiguration::Module::Configuration
     return self
     
   end
+
+  #######################
+  #  unregister_parent  #
+  #######################
+
+  ###
+  # Remove a current parent for configuration instance.
+  #   Does nothing, serves as placeholder.
+  #
+  # @param existing_parent
+  #
+  #        Current parent instance to replace.
+  #
+  # @return [CascadingConfiguration::Module::Configuration] Self.
+  #
+  def unregister_parent( existing_parent )
+    
+    return self
+    
+  end
+  
+  ####################
+  #  replace_parent  #
+  ####################
+
+  ###
+  # Replace a current parent for configuration instance with a different parent.
+  #
+  # @param existing_parent
+  #
+  #        Current parent instance to replace.
+  #
+  # @param new_parent
+  #
+  #        New parent instance.
+  #
+  # @return [CascadingConfiguration::Module::Configuration] Self.
+  #
+  def replace_parent( existing_parent, new_parent )
+
+    unregister_parent( existing_parent )
+    register_parent( new_parent )
+
+    return self
+
+  end
+  
+  ################
+  #  is_parent?  #
+  ################
+  
+  def is_parent?( parent )
+    
+    return false
+    
+  end
+  
+  ########################################
+  #  register_parent_for_ruby_hierarchy  #
+  ########################################
+  
+  alias_method :register_parent_for_ruby_hierarchy, :register_parent
 
   ##################
   #  cascade_type  #

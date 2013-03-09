@@ -96,6 +96,12 @@ class ::CascadingConfiguration::Module::CascadingSettings::Configuration <
     
   end
 
+  ########################################
+  #  register_parent_for_ruby_hierarchy  #
+  ########################################
+  
+  alias_method :register_parent_for_ruby_hierarchy, :register_parent
+
   ############
   #  parent  #
   ############

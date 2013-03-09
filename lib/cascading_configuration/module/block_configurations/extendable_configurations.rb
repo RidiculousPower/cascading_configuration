@@ -14,7 +14,13 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   ###
   # Parse an array of configuration names and/or hash pairs for read/write names.
   #
-  # @param [ Array< Symbol, String, Hash{ Symbol, String => Symbol, String } > ]
+  #   @param [ Object ]
+  #   
+  #          instance
+  #   
+  #          Instance in which configuration method will be defined.
+  #   
+  # @param [Array<Symbol,String,Hash{Symbol,String=>Symbol,String}>]
   #
   #        names_modules
   #
@@ -24,39 +30,38 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #
   # @return [ Hash{ Symbol => Symbol  } ]
   #
-  def parse_extension_modules( names_modules )
+  def parse_extension_modules( instance, names_modules, & definer_block )
     
     # We can have configuration names or modules - we need to separate them.
     names = [ ]
     modules = [ ]
 
     names_modules.each do |this_name_or_module|
-
       case this_name_or_module
-        
         when ::Class
-
           raise ArgumentError, 'Module expected (received Class).'
-        
         when ::Module
-
           modules.push( this_name_or_module )
-
         else
-        
           names.push( this_name_or_module )
-        
       end
-      
+    end
+
+    # if we have a block to define extensions to the compositing object:
+    if block_given?
+      extension_module_name = names.join( '•' )
+      instance_controller = ::CascadingConfiguration::InstanceController.instance_controller( instance )
+      new_block_module = ::CascadingConfiguration::InstanceController::ExtensionModule.new( instance_controller, 
+                                                                                            extension_module_name, 
+                                                                                            & definer_block )
+      constant_name = 'ExtensionModule«' << extension_module_name << '»'
+      instance_controller.const_set( constant_name, new_block_module )
+      modules.unshift( new_block_module )
     end
     
     names_modules_hash = { }
-    
-    # if we have a block to define extensions to the compositing object:
-      
-    names.each do |this_name|
-      names_modules_hash[ this_name ] = modules
-    end
+          
+    names.each { |this_name| names_modules_hash[ this_name ] = modules }
     
     return names_modules_hash
     
@@ -102,33 +107,13 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
     module_defined_by_block = nil
         
     # Ask MethodModule to parse extension modules for these declarations on instance.
-    names_modules_hash = parse_extension_modules( names_modules )
-
-    names = names_modules_hash.keys
-
-    names = super( instance, method_type, *names )
-
-    instance_controller = ::CascadingConfiguration::InstanceController.instance_controller( instance )
+    names_modules_hash = parse_extension_modules( instance, names_modules, & definer_block )
+    names = super( instance, method_type, *names_modules_hash.keys )
 
     names_modules_hash.each do |this_configuration_name, these_modules|
-      if ::Hash === this_configuration_name
-        this_configuration_name = this_configuration_name.first[ 0 ]
-      end
+      this_configuration_name = this_configuration_name.first[ 0 ] if ::Hash === this_configuration_name
       this_configuration = ::CascadingConfiguration.configuration( instance, this_configuration_name )
-      if block_given?
-        this_module_defined_by_block = instance_controller.class::ExtensionModule.new( self, 
-                                                                                       this_configuration_name, 
-                                                                                       & definer_block )
-        constant_name = 'ExtMod_' << this_configuration_name.to_s.to_camel_case
-        if ::Module === instance
-          instance.const_set( constant_name, this_module_defined_by_block )
-        end
-        these_modules.push( this_module_defined_by_block )
-      end
-      unless these_modules.empty?
-        this_configuration.extension_modules.unshift( *these_modules.reverse )
-        this_configuration.value.extend( *this_configuration.extension_modules )
-      end
+      this_configuration.declare_extension_modules( *these_modules )
     end
         
   end

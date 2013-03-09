@@ -31,6 +31,7 @@ files = [
   'module/block_configurations/cascading_values',
   'module/block_configurations/cascading_values/configuration',
   'module/block_configurations/extendable_configurations',
+  'module/block_configurations/extendable_configurations/configuration',
   'module/block_configurations/extendable_configurations/compositing_objects',
   'module/block_configurations/extendable_configurations/compositing_objects/configuration',
   'module/block_configurations/extendable_configurations/compositing_objects/array',

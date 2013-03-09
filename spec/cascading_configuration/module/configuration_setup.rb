@@ -19,12 +19,16 @@ def setup_configuration_tests
                              configuration_write_name,
                              & parent_configuration_block )
   end
-  let( :parent_configuration_two ) { configuration_class.new( parent_instance_two, 
-                                                              parent_configuration, 
-                                                              & parent_two_configuration_block ) }
-  let( :child_configuration ) { configuration_class.new( child_instance, 
-                                                         parent_configuration_two, 
-                                                         & child_configuration_block ) }
+  let( :parent_configuration_two ) { configuration_class.new_inheriting_instance( parent_instance_two, 
+                                                                                  parent_configuration,
+                                                                                  :singleton_to_singleton_and_instance_to_instance,
+                                                                                  :include,
+                                                                                  & parent_two_configuration_block ) }
+  let( :child_configuration ) { configuration_class.new_inheriting_instance( child_instance, 
+                                                                             parent_configuration_two,
+                                                                             :singleton_to_singleton_and_instance_to_instance,
+                                                                             :include, 
+                                                                             & child_configuration_block ) }
   
   let( :parent_configuration_block ) { nil }
   let( :parent_two_configuration_block ) { nil }
