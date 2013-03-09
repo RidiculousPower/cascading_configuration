@@ -91,16 +91,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #
   def register_parent( parent, & block )
     
-    case parent
-      when ::CascadingConfiguration::Module::Configuration
-        # parent is what we want already
-      else
-        if ::CascadingConfiguration.has_configuration?( parent, @name )
-          parent = ::CascadingConfiguration.configuration( parent, @name )
-        else
-          return false
-        end
-    end
+    parent = configuration_for_configuration_or_instance( parent )
 
     # is the new parent already part of the parent chain?
     unless is_parent?( parent )
