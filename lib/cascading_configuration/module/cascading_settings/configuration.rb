@@ -51,12 +51,13 @@ class ::CascadingConfiguration::Module::CascadingSettings::Configuration <
     
     # if we have a configuration we use it as parent
     # otherwise we look up configuration for parent
+    controller = @module.controller
     case parent
       when ::CascadingConfiguration::Module::Configuration
         # parent is what we want already
       else
-        if ::CascadingConfiguration.has_configuration?( parent, @name )
-          parent = ::CascadingConfiguration.configuration( parent, @name )
+        if controller.has_configuration?( parent, @name )
+          parent = controller.configuration( parent, @name )
         else
           parent = nil
         end
@@ -173,7 +174,7 @@ class ::CascadingConfiguration::Module::CascadingSettings::Configuration <
   # Query whether one or more parents exist.
   #   Used in context where only one parent is permitted.
   #
-  # @param [ Object ]
+  # @param [Object]
   #
   #        instance
   #
@@ -250,11 +251,12 @@ class ::CascadingConfiguration::Module::CascadingSettings::Configuration <
     
     potential_parent_configuration = nil
     
+    controller = @module.controller
     case potential_parent
       when ::CascadingConfiguration::Module::Configuration
         potential_parent_configuration = potential_parent
       else
-        potential_parent_configuration = ::CascadingConfiguration.configuration( potential_parent, @name )
+        potential_parent_configuration = controller.configuration( potential_parent, @name )
     end
 
     return match_parent_configuration do |this_parent_configuration|

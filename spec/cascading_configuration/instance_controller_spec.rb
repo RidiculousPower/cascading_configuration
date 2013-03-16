@@ -478,7 +478,7 @@ describe ::CascadingConfiguration::InstanceController do
 
     context 'module_inheritance_model: local instance' do
 
-      let( :module_inheritance_model ) { :local_instance }
+      let( :module_inheritance_model ) { :object }
 
       context 'module instance' do
         let( :including_module ) do
@@ -666,11 +666,11 @@ describe ::CascadingConfiguration::InstanceController do
         let( :subclass ) { ::Class.new( instance ) }
         let( :nth_subclass ) { ::Class.new( subclass ) }
         it 'the support module will cascade to a subclass of an extended class' do
-          subclass.should have_been_extended_by( support_module )
+          subclass.should_not have_been_extended_by( support_module )
           subclass.should_not have_included( support_module )
         end
         it 'the support module will cascade to an nth subclass of an extended class' do
-          nth_subclass.should have_been_extended_by( support_module )
+          nth_subclass.should_not have_been_extended_by( support_module )
           nth_subclass.should_not have_included( support_module )
         end
       end

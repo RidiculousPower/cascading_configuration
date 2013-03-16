@@ -18,11 +18,48 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
   let( :parent_instance_two ) { ::Module.new.name( :ParentInstanceTwo ) }
   let( :child_instance ) { ::Module.new.name( :ChildInstance ) }
 
-  let( :parent_configuration ) { configuration_class.new( parent_instance, :singleton_and_instance, configuration_module, :parent_name ) }
-  let( :parent_configuration_two ) do
-    configuration_class.new( parent_instance_two, :singleton_and_instance, configuration_module, :parent_two_name?, :parent_two= )
+  let( :parent_configuration ) do
+    configuration_class.new( parent_instance, 
+                             configuration_module, 
+                             :parent_name, 
+                             :parent_name=, 
+                             *parent_extension_modules,
+                             & parent_extension_block )
   end
-  let( :child_configuration ) { configuration_class.new_inheriting_instance( child_instance, parent_configuration, :singleton_to_singleton_and_instance_to_instance, :include ) }
+  let( :parent_configuration_two ) do
+    configuration_class.new( parent_instance_two, 
+                             configuration_module, 
+                             :parent_two_name?, 
+                             :parent_two=, 
+                             *parent_two_extension_modules,
+                             & parent_two_extension_block )
+  end
+  let( :child_configuration ) do
+    configuration_class.new_inheriting_instance( child_instance, 
+                                                 parent_configuration, 
+                                                 :include, 
+                                                 *child_extension_modules,
+                                                 & child_extension_block )
+  end
+  
+  let( :extension_A ) { ::Module.new.name( :ExtensionModuleA ) }
+  let( :parent_extension_modules ) { [ extension_A ] }
+  let( :parent_two_extension_modules ) { [ ] }
+  let( :child_extension_modules ) { [ ] }
+
+  let( :parent_extension_block ) do
+    ::Proc.new do
+      def some_method
+        puts 'whoo!'
+      end
+    end
+  end
+  let( :parent_instance_controller ) do
+    ::CascadingConfiguration::InstanceController.instance_controller( parent_instance )
+  end
+  let( :parent_block_extension_module ) { parent_instance_controller.const_get( 'ExtensionModule«parent_name»' ) }
+  let( :parent_two_extension_block ) { nil }
+  let( :child_extension_block ) { nil }
   
   ###############################
   #  permits_multiple_parents?  #
@@ -42,14 +79,13 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
     it 'can track extension modules' do
       parent_configuration.extension_modules.is_a?( ::Array::Compositing::Unique ).should == true
     end
-    it 'can inherit extension modules' do
+    it 'will include modules passed with configuration names (youngest => oldest), creating an extension module for block if passed' do
+      parent_configuration.extension_modules.should == [ parent_block_extension_module, extension_A ]
+    end
+    it 'will inherit extension modules' do
       child_configuration.extension_modules.is_parent?( parent_configuration.extension_modules ).should == true
     end
   end
-
-  ###############################
-  #  declare_extension_modules  #
-  ###############################
 
   #####################
   #  register_parent  #

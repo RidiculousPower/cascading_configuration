@@ -34,8 +34,23 @@ class ::CascadingConfiguration::InstanceController::SupportModule < ::Module
 
     cascade_new_support_for_child_modules
     
+    @controller = ::CascadingConfiguration
+    
   end
 
+  ################
+  #  controller  #
+  ################
+  
+  ###
+  # Refers to Controller singleton used to hold configurations.
+  #
+  # @!attribute [r] controller
+  #
+  # @return [CascadingConfiguration::Controller,nil]
+  #
+  attr_accessor :controller
+  
   ######################
   #  module_type_name  #
   ######################

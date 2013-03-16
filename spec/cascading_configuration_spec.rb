@@ -78,13 +78,19 @@ describe ::CascadingConfiguration do
     it 'will register parents properly after the fact (I believe this only applies to subclasses created before the class includes a CascadingConfiguration module)' do
       ::CascadingConfiguration.ensure_no_unregistered_superclass( class_D )
       ::CascadingConfiguration.has_configuration?( class_B, :configuration_A ).should be true
+      ::CascadingConfiguration.configuration( class_B, :configuration_A ).parent.should be ::CascadingConfiguration.configuration( class_A, :configuration_A )
       ::CascadingConfiguration.has_configuration?( class_B, :configuration_B ).should be true
+      ::CascadingConfiguration.configuration( class_B, :configuration_B ).parent.should be ::CascadingConfiguration.configuration( class_A, :configuration_B )
       
       ::CascadingConfiguration.has_configuration?( class_C, :configuration_A ).should be true
+      ::CascadingConfiguration.configuration( class_C, :configuration_A ).parent.should be ::CascadingConfiguration.configuration( class_B, :configuration_A )
       ::CascadingConfiguration.has_configuration?( class_C, :configuration_B ).should be true
+      ::CascadingConfiguration.configuration( class_C, :configuration_B ).parent.should be ::CascadingConfiguration.configuration( class_B, :configuration_B )
 
       ::CascadingConfiguration.has_configuration?( class_D, :configuration_A ).should be true
+      ::CascadingConfiguration.configuration( class_D, :configuration_A ).parent.should be ::CascadingConfiguration.configuration( class_C, :configuration_A )
       ::CascadingConfiguration.has_configuration?( class_D, :configuration_B ).should be true
+      ::CascadingConfiguration.configuration( class_D, :configuration_B ).parent.should be ::CascadingConfiguration.configuration( class_C, :configuration_B )
     end
   end
   

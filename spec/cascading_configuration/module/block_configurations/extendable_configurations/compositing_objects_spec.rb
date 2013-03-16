@@ -11,11 +11,12 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
 
   setup_module_tests
   
+  let( :ccm_name ) { :array }
+  
   let( :compositing_object_class ) { ::Array::Compositing }
   
   let( :compositing_object_ccm ) do
-    ::CascadingConfiguration::Module::
-      BlockConfigurations::ExtendableConfigurations::
+    ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::
       CompositingObjects.new( ccm_name, compositing_object_class, *ccm_aliases )
   end
   

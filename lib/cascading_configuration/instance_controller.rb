@@ -6,6 +6,7 @@
 class ::CascadingConfiguration::InstanceController < ::Module
   
   @instance_controllers = { }
+  @controller = ::CascadingConfiguration
 
   #####################################
   #  self.create_instance_controller  #
@@ -22,6 +23,12 @@ class ::CascadingConfiguration::InstanceController < ::Module
     return instance_controller
     
   end
+  
+  #####################
+  #  self.controller  #
+  #####################
+  
+  singleton_attr_accessor :controller
   
   ##############################
   #  self.instance_controller  #
@@ -59,14 +66,14 @@ class ::CascadingConfiguration::InstanceController < ::Module
 
     # We manage reference to self in singleton from here to avoid duplicative efforts.
     instance_controller = self
-    self.class.class_eval do
-      @instance_controllers[ instance ] = instance_controller
-    end
+    self.class.class_eval { @instance_controllers[ instance ] = instance_controller }
 
     @support_modules = { }
     
     # create a cascading block to register configurations for parent at include/extend
     initialize_inheritance_for_instance( @instance, extending )
+    
+    @controller = self.class.controller
         
   end
   
@@ -115,8 +122,11 @@ class ::CascadingConfiguration::InstanceController < ::Module
       
         when ::Class
                   
-          instance_class = instance.class
-          
+          # Subclasses need to be told to cascade separately, as their cascade behavior is distinct
+          instance.cluster( :cascading_configuration_inheritance ).subclass.cascade do |inheriting_instance|
+            instance_controller.initialize_inheriting_instance( self, inheriting_instance, :subclass )
+          end
+
           # if our class is a subclass of ::Module we want instances to have include/extend hooks
           if instance < ::Module and not instance < ::Class
 
@@ -127,9 +137,8 @@ class ::CascadingConfiguration::InstanceController < ::Module
             
           else
 
-            # Subclasses need to be told to cascade separately, as their cascade behavior is distinct
-            instance.cluster( :cascading_configuration_inheritance ).subclass.cascade do |inheriting_instance|
-              instance_controller.initialize_inheriting_instance( self, inheriting_instance, :subclass )
+            instance.cluster( :cascading_configuration_inheritance ).before_instance do |inheriting_instance|
+              instance_controller.initialize_inheriting_instance( self, inheriting_instance, :instance )
             end
 
           end
@@ -172,12 +181,12 @@ class ::CascadingConfiguration::InstanceController < ::Module
   #  initialize_inheriting_instance  #
   ####################################
 
-  def initialize_inheriting_instance( parent_instance, instance, include_extend_subclass_instance )
+  def initialize_inheriting_instance( parent_instance, instance, event )
     
     instance.extend( ::CascadingConfiguration::ObjectWithConfigurations )
     
     # Register newly inherited parent relation created by cascading hooks.
-    ::CascadingConfiguration.register_parent( instance, parent_instance, include_extend_subclass_instance )
+    @controller.register_parent( instance, parent_instance, event )
     
   end
 
@@ -392,10 +401,10 @@ class ::CascadingConfiguration::InstanceController < ::Module
     return aliased_method
 
   end
-
-  ##################################
+  
+  ###################################
   #  define_local_instance_method  #
-  ##################################
+  ###################################
 
   def define_local_instance_method( configuration_name, & method_proc )
 
@@ -403,9 +412,9 @@ class ::CascadingConfiguration::InstanceController < ::Module
 
   end
 
-  #################################
+  ##################################
   #  alias_local_instance_method  #
-  #################################
+  ##################################
   
   def alias_local_instance_method( alias_name, configuration_name )
 
@@ -419,9 +428,9 @@ class ::CascadingConfiguration::InstanceController < ::Module
 
   end
   
-  ##################################
+  ###################################
   #  remove_local_instance_method  #
-  ##################################
+  ###################################
 
   def remove_local_instance_method( configuration_name )
 
@@ -435,9 +444,9 @@ class ::CascadingConfiguration::InstanceController < ::Module
     
   end
   
-  #################################
+  ##################################
   #  undef_local_instance_method  #
-  #################################
+  ##################################
 
   def undef_local_instance_method( configuration_name )
 
@@ -484,6 +493,20 @@ class ::CascadingConfiguration::InstanceController < ::Module
     
   end
 
+  #############################
+  #  create_extension_module  #
+  #############################
+
+  def create_extension_module( name, & block )
+    
+    extension_module = self.class::ExtensionModule.new( self, name, & block )
+    constant_name = 'ExtensionModule«' << name.to_s << '»'
+    const_set( constant_name, extension_module )
+    
+    return extension_module
+    
+  end
+  
   ##################################################################################################
       private ######################################################################################
   ##################################################################################################
@@ -504,6 +527,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
     unless support_module_instance = @support_modules[ module_type_name = module_type_name.to_sym ]
 
       support_module_instance = support_module_class.new( self, module_type_name, module_inheritance_model )
+      support_module_instance.controller = @controller
       const_set( module_constant_name, support_module_instance )
       @support_modules[ module_type_name ] = support_module_instance
     
@@ -524,7 +548,6 @@ class ::CascadingConfiguration::InstanceController < ::Module
               @instance.class_eval { include( support_module_instance ) }
             when ::Module
               @instance.module_eval { include( support_module_instance ) }
-              @instance.cluster( :cascading_configuration ).before_include.cascade.include( support_module_instance )
             else
               # we might be told to create instance support on instances, in which case we need to extend
               @instance.extend( support_module_instance )

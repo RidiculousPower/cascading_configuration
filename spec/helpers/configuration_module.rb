@@ -55,12 +55,12 @@ RSpec::Matchers.define :have_defined_configuration do |base_name, alias_names, c
             should_cascade_singleton = false
             should_cascade_instance = false
         end
-      when :local_instance
+      when :object
         should_respond = true
         should_be_defined = true
         should_cascade_singleton = false
-        should_cascade_instance = false
-      when :object
+        should_cascade_instance = true
+      when :local_instance
         should_respond = true
         should_be_defined = false
         should_cascade_singleton = false

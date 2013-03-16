@@ -6,32 +6,19 @@
 class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration < 
       ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::Configuration
   
-  ####################################
-  #  initialize_inheriting_instance  #
-  ####################################
-  
-  def initialize_inheriting_instance( for_instance, 
-                                      parent_configuration, 
-                                      cascade_type = nil, 
-                                      include_extend_subclass_instance = nil )
-    
-    super
-
-    # registering parent might have filled in extension modules
-    @value.extend( *@extension_modules ) unless @extension_modules.empty?
-        
-  end
-
   #######################
   #  initialize_common  #
   #######################
   
-  def initialize_common( for_instance )
+  def initialize_common( for_instance, *parsed_args, & block )
     
     @parents = ::Array::Unique.new( self )
     @value = @module.compositing_object_class.new( nil, for_instance )
     
     super
+
+    # registering parent might have filled in extension modules
+    @value.extend( *@extension_modules ) unless @extension_modules.empty?
     
   end
   
@@ -208,7 +195,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   # Query whether one or more parents exist.
   #   Used in context where only one parent is permitted.
   #
-  # @param [ Object ]
+  # @param [Object]
   #
   #        instance
   #

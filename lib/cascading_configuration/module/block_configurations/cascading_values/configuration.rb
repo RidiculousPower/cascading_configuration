@@ -11,7 +11,6 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
   ################
   
   def initialize( for_instance, 
-                  cascade_type, 
                   configuration_module, 
                   configuration_name, 
                   write_accessor = configuration_name,
@@ -32,11 +31,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
   #  initialize_inheriting_instance  #
   ####################################
   
-  def initialize_inheriting_instance( for_instance, 
-                                      parent_configuration, 
-                                      cascade_type = nil, 
-                                      include_extend_subclass_instance = nil,
-                                      & cascade_block )
+  def initialize_inheriting_instance( for_instance, parent_configuration, event = nil, & cascade_block )
 
     @cascade_block = cascade_block || parent_configuration.cascade_block
     @value_requires_translation = true
@@ -248,7 +243,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
   # Query whether one or more parents exist.
   #   Used in context where only one parent is permitted.
   #
-  # @param [ Object ]
+  # @param [Object]
   #
   #        instance
   #
@@ -331,7 +326,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
   ###
   # Set configuration value.
   #
-  # @param [ Object ]
+  # @param [Object]
   #
   #        object
   #

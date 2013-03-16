@@ -10,27 +10,34 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #  initialize_common  #
   #######################
   
-  def initialize_common( for_instance )
+  def initialize_common( for_instance, *extension_modules, & block )
 
     super
     
     @extension_modules = ::Array::Compositing::Unique.new( nil, self )        
     
+    create_extension_module( & block ) if block_given?
+    @extension_modules.concat( *extension_modules )
+
   end
-  
-  ###############################
-  #  declare_extension_modules  #
-  ###############################
-  
-  def declare_extension_modules( *extension_modules )
-    
-    unless extension_modules.empty?
-      @extension_modules.unshift( *extension_modules )
-      @value.extend( *extension_modules )
+
+  #############################
+  #  create_extension_module  #
+  #############################
+
+  def create_extension_module( & block )
+
+    if @extension_module
+      @extension_module.module_eval( & block )
+    else
+      instance_controller = ::CascadingConfiguration::InstanceController.create_instance_controller( instance )
+      @extension_module = instance_controller.create_extension_module( @name, & block )
     end
     
-    return self
+    @extension_modules.unshift( @extension_module )
     
+    return @extension_module
+
   end
   
   ###############################
@@ -40,7 +47,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   ###
   # Query whether configuration permits multiple parents.
   #
-  # @return [true]
+  # @return [false]
   #
   #         Whether multiple parents are permitted.
   #
@@ -176,7 +183,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   # Query whether one or more parents exist.
   #   Used in context where only one parent is permitted.
   #
-  # @param [ Object ]
+  # @param [Object]
   #
   #        instance
   #

@@ -13,18 +13,17 @@ class ::CascadingConfiguration::Module::Configuration
   ################
   
   def initialize( for_instance, 
-                  cascade_type, 
                   configuration_module, 
                   configuration_name, 
                   write_accessor = configuration_name,
+                  *parsed_args,
                   & block )
 
-    @cascade_type = cascade_type
     @module = configuration_module
     @name = configuration_name.accessor_name
     @write_name = write_accessor.write_accessor_name
 
-    initialize_common( for_instance )
+    initialize_common( for_instance, *parsed_args, & block )
 
   end
   
@@ -32,18 +31,10 @@ class ::CascadingConfiguration::Module::Configuration
   #  self.new_inheriting_instance  #
   ##################################
   
-  def self.new_inheriting_instance( for_instance, 
-                                    parent_configuration, 
-                                    cascade_type = nil, 
-                                    include_extend_subclass_instance = nil,
-                                    & block )
+  def self.new_inheriting_instance( for_instance, parent_configuration, event = nil, & block )
     
     instance = allocate
-    instance.initialize_inheriting_instance( for_instance, 
-                                             parent_configuration, 
-                                             cascade_type, 
-                                             include_extend_subclass_instance,
-                                             & block )
+    instance.initialize_inheriting_instance( for_instance, parent_configuration, event, & block )
     
     return instance
     
@@ -53,21 +44,16 @@ class ::CascadingConfiguration::Module::Configuration
   #  initialize_inheriting_instance  #
   ####################################
   
-  def initialize_inheriting_instance( for_instance, 
-                                      parent_configuration, 
-                                      cascade_type = nil, 
-                                      include_extend_subclass_instance = nil )
+  def initialize_inheriting_instance( for_instance, parent_configuration, event = nil, *parsed_args, & block )
   
     @parent = parent_configuration
     @module = @parent.module
     @name = @parent.name
     @write_name = @parent.write_name
-    @cascade_type = cascade_type || @parent.cascade_type
-    @include_extend_subclass_instance = include_extend_subclass_instance
 
-    initialize_common( for_instance )
+    initialize_common( for_instance, *parsed_args, & block )
     
-    include_extend_subclass_instance ? register_parent_for_ruby_hierarchy( @parent ) : register_parent( @parent )
+    event ? register_parent_for_ruby_hierarchy( @parent ) : register_parent( @parent )
     
   end
   
@@ -75,7 +61,7 @@ class ::CascadingConfiguration::Module::Configuration
   #  initialize_common  #
   #######################
   
-  def initialize_common( for_instance )
+  def initialize_common( for_instance, *parsed_args, & block )
 
     @instance = for_instance
     @has_value = false
@@ -96,25 +82,17 @@ class ::CascadingConfiguration::Module::Configuration
 
     # If we are defining configurations on ::Class we can only have explicit parents.
     case @instance
-      
-      when ::Class
-
-        extend( self.class::ClassConfiguration )
-
+       when ::Class
+         extend( self.class::ClassConfiguration )
         if @instance.equal?( ::Class )
           extend( self.class::ClassInstanceConfiguration )
         elsif ( instance_class = @instance.class ) < ::Module and not instance_class < ::Class
           extend( self.class::ClassInheritingFromModuleConfiguration )
         end
-
       when ::Module
-
         extend( self.class::ModuleConfiguration )
-
       else
-
         extend( self.class::InstanceConfiguration )
-      
     end
     
   end
@@ -124,13 +102,14 @@ class ::CascadingConfiguration::Module::Configuration
   #################################################
   
   def configuration_for_configuration_or_instance( configuration_or_instance )
-    
+        
     return case configuration_or_instance
       when ::CascadingConfiguration::Module::Configuration
         configuration_or_instance
       else
-        if ::CascadingConfiguration.has_configuration?( configuration_or_instance, @name )
-          ::CascadingConfiguration.configuration( configuration_or_instance, @name )
+        controller = @module.controller
+        if controller.has_configuration?( configuration_or_instance, @name )
+          controller.configuration( configuration_or_instance, @name )
         else
           nil
         end
@@ -221,19 +200,6 @@ class ::CascadingConfiguration::Module::Configuration
   ########################################
   
   alias_method :register_parent_for_ruby_hierarchy, :register_parent
-
-  ##################
-  #  cascade_type  #
-  ##################
-  
-  ###
-  # Cascade type for which configuration was created.
-  #
-  # @!attribute [rw] instance
-  #
-  # @return [:singleton_and_instance,:singleton,:instance,:local_instance,:object] instance.
-  #
-  attr_accessor :cascade_type
 
   ##############
   #  instance  #
@@ -341,7 +307,7 @@ class ::CascadingConfiguration::Module::Configuration
   ###
   # Set configuration value.
   #
-  # @param [ Object ]
+  # @param [Object]
   #
   #        object
   #

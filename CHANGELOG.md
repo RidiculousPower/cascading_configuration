@@ -1,11 +1,11 @@
 
 ## 6/18/2012 ##
 
-Moved cascading_configuration-ancestors to a new independent gem: parallel-ancestry.
+Moved cascading\_configuration-ancestors to a new independent gem: parallel-ancestry.
 
 Now with Less Magic™ and more Tasty Sandwiches™!
 
-Condensed cascading_configuration-variable, cascading_configuration-methods, cascading_configuration-definition, cascading_configuration-inheritance, cascading_configuration-module, cascading_configuration-setting, cascading_configuration-array, cascading_configuration-array-unique, cascading_configuration-array-sorted, cascading_configuration-sorted-unique, cascading_configuration-hash into a single gem with core support.
+Condensed cascading\_configuration-variable, cascading\_configuration-methods, cascading\_configuration-definition, cascading\_configuration-inheritance, cascading\_configuration-module, cascading\_configuration-setting, cascading\_configuration-array, cascading\_configuration-array-unique, cascading\_configuration-array-sorted, cascading\_configuration-sorted-unique, cascading\_configuration-hash into a single gem with core support.
 
 Adding new modules is now incredibly easy, and all the old spaghetti internal code is gone.
 
@@ -31,11 +31,11 @@ Fixed for Object.
 
 Added Instance and Singleton support module subclasses - fixes case where singleton support is created after extending with an instance with singleton support, causing the extending instance's singleton support to be both improperly included and below the instance, stomping any of its methods.
 
-Added :initialize_configuration to CascadingConfiguration::Module; subclasses override to perform object initialization post-creation. This is so that objects are initialized only after all objects have been instantiated.
+Added :initialize\_configuration to CascadingConfiguration::Module; subclasses override to perform object initialization post-creation. This is so that objects are initialized only after all objects have been instantiated.
 
 ## 6/27/2012 ##
 
-Renamed project from cascading-configuration to cascading_configuration to match Rubygems guidelines for gem naming.
+Renamed project from cascading-configuration to cascading\_configuration to match Rubygems guidelines for gem naming.
 Ensured configurations don't re-register parents that are higher in the ancestor chain than the ones already registered.
 
 ## 7/15/2012 ##
@@ -61,5 +61,9 @@ Also rewrote all specs except the public module specs. Those will have new specs
 
 ## 3/4/2013 ##
 
-Added CascadingConfiguration::Value (:attr_value) for inheriting values that transform as they cascade. 
-Added definition of :•configuration_name to retrieve configuration instance in addition to :configuration_name and :configuration_name= to get/set value.
+Added CascadingConfiguration::Value (:attr\_value) for inheriting values that transform as they cascade. 
+Added definition of :•configuration\_name to retrieve configuration instance in addition to :configuration\_name and :configuration\_name= to get/set value.
+
+## 3/15/2013 ##
+
+Changed behavior of :object methods and :local\_instance methods so that :local\_instance means current object only and :object means current object and instances descended from current object.

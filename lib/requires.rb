@@ -1,22 +1,20 @@
 # -*- encoding : utf-8 -*-
 
-require 'to_camel_case'
-require 'accessor_utilities'
-require 'parallel_ancestry'
-require 'hash'
-require 'array'
-
-require_relative 'cascading_configuration_modules'
-
 basepath = 'cascading_configuration'
 
 files = [
   
+  'controller',
+
+  'inactive_configuration',
+
   'object_with_configurations',
   
   'include_creates_instance_support',
   
   'configuration_hash',
+  'configuration_hash/active_configurations',
+  'configuration_hash/inactive_configurations',
   
   'module',
   'module/configuration',
@@ -42,6 +40,7 @@ files = [
   'instance_controller/support_module',
   'instance_controller/support_module/instance_support_module',
   'instance_controller/support_module/singleton_support_module',
+  'instance_controller/support_module/object_support_module',
   'instance_controller/support_module/local_instance_support_module',
   'instance_controller/extension_module',
   'instance_controller',
