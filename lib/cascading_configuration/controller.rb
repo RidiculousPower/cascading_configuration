@@ -132,7 +132,7 @@ module ::CascadingConfiguration::Controller
           when ::Module
             ::CascadingConfiguration::ConfigurationHash::InactiveConfigurations.new( self, instance )
           else
-            ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations.new( self, instance )
+            ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations.new( self, instance )
         end
         @instance_configurations[ instance_id ] = configurations
         ensure_no_unregistered_superclass( instance )

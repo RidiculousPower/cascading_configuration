@@ -23,14 +23,6 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
     
     super
     
-    if @name.to_s == '«bindings»'
-      puts
-      puts 'instance new: ' + @instance.to_s + ' for :' << @name.to_s
-      puts 'modules new: ' + @extension_modules.to_s
-      $blah ||= { }
-      $blah[ for_instance.__id__ ] ||= 0
-      $blah[ for_instance.__id__ ] += 1
-    end
   end
   
   ####################################
@@ -45,19 +37,6 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
     
     super
     
-    if @name.to_s == '«bindings»'
-      puts
-      puts 'instance inheriting: ' + @instance.to_s + ' for :' << @name.to_s << ' from ' << parent_configuration.instance.to_s
-      puts 'inheritance event: ' + event.to_s
-      puts 'modules inheriting: ' + @extension_modules.to_s
-      puts 'value: ' + @value.singleton_class.ancestors.to_s unless !@extension_modules or @extension_modules.empty?
-      $blah ||= { }
-      $blah[ for_instance.__id__ ] ||= 0
-      $blah[ for_instance.__id__ ] += 1
-      if defined?( Perspective::BindingTypes::ContainerBindings::Text::ClassBinding ) and Perspective::BindingTypes::ContainerBindings::Text::ClassBinding === for_instance and $blah[ for_instance.__id__ ] >= 2
-        raise 'fuck'
-      end
-    end
   end
   
   ##################################

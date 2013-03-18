@@ -40,6 +40,19 @@ class ::CascadingConfiguration::Module::Configuration
     
   end
 
+  ##################################
+  #  self.new_instance_from_  #
+  ##################################
+  
+  def self.new_inheriting_instance( for_instance, parent_configuration, event = nil, & block )
+    
+    instance = allocate
+    instance.initialize_inheriting_instance( for_instance, parent_configuration, event, & block )
+    
+    return instance
+    
+  end
+
   ####################################
   #  initialize_inheriting_instance  #
   ####################################

@@ -18,16 +18,17 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
   #  register_parent  #
   #####################
   
-  def register_parent( parent_hash, event = nil )
+  def register_parent( parent_configurations, event = nil )
     
+    super( parent_configurations )
+
     # we call load_parent_state in super, so we can use a simple flag
-    # instead of storing data for lazy loading later
+    # otherwise we have to store keyed data for lazy loading later
     @event = event
-
-    super( parent_hash )
     load_parent_state
-
     @event = nil
+    
+    return self
     
   end
   
@@ -35,10 +36,10 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
   #  register_parent_key  #
   #########################
   
-  def register_parent_key( parent_hash, configuration_name )
+  def register_parent_key( parent_configurations, configuration_name )
     
     if existing_configuration = self[ configuration_name ]
-      parent_configuration = parent_hash[ configuration_name ]
+      parent_configuration = parent_configurations[ configuration_name ]
       @event ? existing_configuration.register_parent_for_ruby_hierarchy( parent_configuration ) 
              : existing_configuration.register_parent( parent_configuration )
     else
@@ -53,11 +54,11 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
   #  unregister_parent  #
   #######################
   
-  def unregister_parent( parent_hash )
+  def unregister_parent( parent_configurations )
 
     super
     
-    parent_hash.each do |this_configuration_name, this_parent_configuration|
+    parent_configurations.each do |this_configuration_name, this_parent_configuration|
       if this_child_configuration = self[ this_configuration_name ]
         this_child_configuration.unregister_parent( this_parent_configuration )
       end
@@ -75,7 +76,7 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
 
     super
     
-    parent_hash.each do |this_configuration_name, this_parent_configuration|
+    parent_configurations.each do |this_configuration_name, this_parent_configuration|
       if this_child_configuration = self[ this_configuration_name ] and
          this_new_parent = new_parent[ this_configuration_name ]
         this_child_configuration.replace_parent( this_parent_configuration, this_new_parent )

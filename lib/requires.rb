@@ -15,6 +15,7 @@ files = [
   'configuration_hash',
   'configuration_hash/active_configurations',
   'configuration_hash/inactive_configurations',
+  'configuration_hash/instance_configurations',
   
   'module',
   'module/configuration',
