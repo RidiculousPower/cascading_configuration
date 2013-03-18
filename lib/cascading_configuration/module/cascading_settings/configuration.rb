@@ -5,23 +5,6 @@
 #
 class ::CascadingConfiguration::Module::CascadingSettings::Configuration < 
       ::CascadingConfiguration::Module::Configuration
-  
-  ###############################
-  #  permits_multiple_parents?  #
-  ###############################
-  
-  ###
-  # Query whether configuration permits multiple parents.
-  #
-  # @return [false]
-  #
-  #         Whether multiple parents are permitted.
-  #
-  def permits_multiple_parents?
-    
-    return false
-    
-  end
 
   #####################
   #  register_parent  #

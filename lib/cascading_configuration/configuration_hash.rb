@@ -31,6 +31,24 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     
   end
   
+  #########################
+  #  register_parent_key  #
+  #########################
+  
+  def register_parent_key( parent_hash, configuration_name )
+    
+    if existing_configuration = self[ configuration_name ]
+      parent_configuration = parent_hash[ configuration_name ]
+      @event ? existing_configuration.register_parent_for_ruby_hierarchy( parent_configuration ) 
+             : existing_configuration.register_parent( parent_configuration )
+    else
+      super
+    end
+
+    return configuration_name
+    
+  end
+
   #######################
   #  unregister_parent  #
   #######################
@@ -67,6 +85,6 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     return self
 
   end
-  
+    
 end
 

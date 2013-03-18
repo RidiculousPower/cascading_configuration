@@ -58,7 +58,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
 
     @instance = instance.extend( ::Module::Cluster )
     
-    if ::Module === @instance
+    if ::Module === instance
       initialize_constant_in_instance
     else
       initialize_constant_in_self
@@ -94,8 +94,8 @@ class ::CascadingConfiguration::InstanceController < ::Module
   def initialize_constant_in_self
     
     hex_id_string = '0x%x' % ( @instance.__id__ << 1 )
-    constant = 'ID_' << hex_id_string
-    self.class.const_set( :Controller, self )
+    constant_name = 'ControllerID_' << hex_id_string
+    self.class.const_set( constant_name, self )
     
     return self
     

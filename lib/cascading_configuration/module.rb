@@ -526,9 +526,7 @@ class ::CascadingConfiguration::Module < ::Module
     ccm_method_name = object_method_name( module_type_name )
     
     define_object_configuration_definition_method( ccm_method_name )
-    module_type_name_aliases.each do |this_alias| 
-      alias_method( object_method_name( this_alias ), ccm_method_name )
-    end
+    module_type_name_aliases.each { |this_alias| alias_method( object_method_name( this_alias ), ccm_method_name ) }
 
     return self
     
@@ -597,21 +595,21 @@ class ::CascadingConfiguration::Module < ::Module
   
   def define_instance_configuration( instance, accessor, write_accessor, *parsed_args, & block )
     
-    configuration = case instance
-      when ::Module
-        parent_configuration = nil
-        unless parent_configuration = @controller.local_instance_configuration( instance, accessor, false )
-          parent_configuration = @controller.singleton_configuration( instance, accessor, false )
-        end
-        ::CascadingConfiguration::InactiveConfiguration.new( parent_configuration, 
-                                                             self, 
-                                                             accessor, 
-                                                             write_accessor, 
-                                                             *parsed_args,
-                                                             & block )
-      else
-        self.class::Configuration.new( instance, self, accessor, write_accessor, *parsed_args, & block )
+    parent_configuration = nil
+
+    if ::Module === instance
+      unless parent_configuration = @controller.local_instance_configuration( instance, accessor, false )
+        parent_configuration = @controller.singleton_configuration( instance, accessor, false )
+      end
     end
+
+    configuration = parent_configuration ? parent_configuration
+                                         : self.class::Configuration.new( instance, 
+                                                                          self, 
+                                                                          accessor, 
+                                                                          write_accessor, 
+                                                                          *parsed_args, 
+                                                                          & block )
     
     @controller.instance_configurations( instance )[ accessor ] = configuration
     

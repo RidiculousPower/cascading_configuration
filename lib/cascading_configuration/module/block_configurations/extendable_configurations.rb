@@ -6,5 +6,5 @@
 #
 class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations < 
       ::CascadingConfiguration::Module::BlockConfigurations
-
+  
 end

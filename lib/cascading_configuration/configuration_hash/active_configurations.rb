@@ -1,26 +1,6 @@
 
 class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::CascadingConfiguration::ConfigurationHash
   
-  #########################
-  #  register_parent_key  #
-  #########################
-  
-  def register_parent_key( parent_hash, parent_configuration_name )
-    
-    if has_key?( parent_configuration_name )
-      # if we already have a configuration then we want to register the parent as its parent
-      # then we are done with lookup
-      parent_configuration = parent_hash[ parent_configuration_name ]
-      child_configuration = self[ parent_configuration_name ]
-      child_configuration.register_parent( parent_configuration )
-    else
-      super
-    end
-
-    return self
-    
-  end
-
   ###################
   #  post_set_hook  #
   ###################
@@ -29,7 +9,7 @@ class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::Casc
 
     @controller.active_configurations( configuration_instance )[ key ] = configuration
     
-    return configuration_instance
+    return configuration
     
   end
 
@@ -50,13 +30,9 @@ class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::Casc
   ########################
 
   def child_pre_set_hook( configuration_name, parent_configuration, parent_hash )
-
-    return ::CascadingConfiguration::InactiveConfiguration === parent_configuration ?
-               parent_configuration.new_active_instance( configuration_instance, @event )
-             : parent_configuration.class.new_inheriting_instance( configuration_instance, 
-                                                                   parent_configuration,
-                                                                   @event )
+    
+    return parent_configuration.class.new_inheriting_instance( configuration_instance, parent_configuration, @event )
 
   end
-
+  
 end

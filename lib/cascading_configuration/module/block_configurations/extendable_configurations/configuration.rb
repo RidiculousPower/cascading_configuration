@@ -6,38 +6,81 @@
 class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::Configuration < 
       ::CascadingConfiguration::Module::Configuration
   
-  #######################
-  #  initialize_common  #
-  #######################
+  ################
+  #  initialize  #
+  ################
   
-  def initialize_common( for_instance, *extension_modules, & block )
-
+  def initialize( for_instance, 
+                  configuration_module, 
+                  configuration_name, 
+                  write_accessor = configuration_name,
+                  *extension_modules,
+                  & block )
+    
+    @name = configuration_name
+    @instance = for_instance
+    initialize_extension_modules( *extension_modules, & block )
+    
     super
     
-    @extension_modules = ::Array::Compositing::Unique.new( nil, self )        
-    
-    create_extension_module( & block ) if block_given?
-    @extension_modules.concat( *extension_modules )
-
-  end
-
-  #############################
-  #  create_extension_module  #
-  #############################
-
-  def create_extension_module( & block )
-
-    if @extension_module
-      @extension_module.module_eval( & block )
-    else
-      instance_controller = ::CascadingConfiguration::InstanceController.create_instance_controller( instance )
-      @extension_module = instance_controller.create_extension_module( @name, & block )
+    if @name.to_s == '«bindings»'
+      puts
+      puts 'instance new: ' + @instance.to_s + ' for :' << @name.to_s
+      puts 'modules new: ' + @extension_modules.to_s
+      $blah ||= { }
+      $blah[ for_instance.__id__ ] ||= 0
+      $blah[ for_instance.__id__ ] += 1
     end
+  end
+  
+  ####################################
+  #  initialize_inheriting_instance  #
+  ####################################
+  
+  def initialize_inheriting_instance( for_instance, parent_configuration, event = nil, *extension_modules, & block )
     
-    @extension_modules.unshift( @extension_module )
+    @name = parent_configuration.name
+    @instance = for_instance
+    initialize_extension_modules( *extension_modules, & block )
     
-    return @extension_module
+    super
+    
+    if @name.to_s == '«bindings»'
+      puts
+      puts 'instance inheriting: ' + @instance.to_s + ' for :' << @name.to_s << ' from ' << parent_configuration.instance.to_s
+      puts 'inheritance event: ' + event.to_s
+      puts 'modules inheriting: ' + @extension_modules.to_s
+      puts 'value: ' + @value.singleton_class.ancestors.to_s unless !@extension_modules or @extension_modules.empty?
+      $blah ||= { }
+      $blah[ for_instance.__id__ ] ||= 0
+      $blah[ for_instance.__id__ ] += 1
+      if defined?( Perspective::BindingTypes::ContainerBindings::Text::ClassBinding ) and Perspective::BindingTypes::ContainerBindings::Text::ClassBinding === for_instance and $blah[ for_instance.__id__ ] >= 2
+        raise 'fuck'
+      end
+    end
+  end
+  
+  ##################################
+  #  initialize_extension_modules  #
+  ##################################
+  
+  def initialize_extension_modules( *extension_modules, & block )
 
+    @extension_modules = ::Array::Compositing::Unique.new( nil, self )
+    if block_given?
+      if @extension_module
+        @extension_module.module_eval( & block )
+      else
+        instance_controller = ::CascadingConfiguration::InstanceController.create_instance_controller( @instance )
+        @extension_module = instance_controller.create_extension_module( @name, & block )
+      end
+
+      @extension_modules.unshift( @extension_module )
+    end
+    @extension_modules.concat( *extension_modules )
+    
+    return self
+    
   end
   
   ###############################
@@ -83,20 +126,11 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #   
   #          Parent instance from which configurations are being inherited.
   #
-  #   @yield [ parent ]
-  #
-  #          Block to perorm additional actions related to the Ruby ancestor hierarchy,
-  #          which will not be performed for explicit calls to #register_parent.
-  #
-  #   @yieldparam parent
-  #
-  #               Parent being registered.
-  #
   # @return [self]
   #
   #         Self.
   #
-  def register_parent( parent, & block )
+  def register_parent( parent )
     
     parent = configuration_for_configuration_or_instance( parent )
 
@@ -111,8 +145,6 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
     
     @parent = parent
 
-    yield( parent ) if block_given?
-    
     return self
     
   end
@@ -136,21 +168,12 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #         Self.
   #
   def register_parent_for_ruby_hierarchy( parent )
-
-    return register_parent( parent ) { |this_parent| register_parent_extension_modules( this_parent ) }
     
-  end
-
-  #######################################
-  #  register_parent_extension_modules  #
-  #######################################
-  
-  def register_parent_extension_modules( parent )
-
+    register_parent( parent )
     @extension_modules.register_parent( parent.extension_modules )
-
+    
     return self
-
+    
   end
   
   #######################

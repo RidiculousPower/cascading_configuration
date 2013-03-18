@@ -72,23 +72,14 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #   
   #          Parent instance from which configurations are being inherited.
   #
-  #   @yield [ parent ]
-  #
-  #          Block to perorm additional actions related to the Ruby ancestor hierarchy,
-  #          which will not be performed for explicit calls to #register_parent.
-  #
-  #   @yieldparam parent
-  #
-  #               Parent being registered.
-  #
   # @return [self]
   #
   #         Self.
   #
-  def register_parent( *parents, & block )
+  def register_parent( *parents )
 
     parents.each do |this_parent|
-      super( this_parent, & block )
+      super( this_parent )
       @parents.push( this_parent )
       register_composite_object_parent( this_parent.compositing_object )
     end
@@ -119,8 +110,9 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #         Self.
   #
   def register_parent_for_ruby_hierarchy( *parents )
-    
+
     parents.each { |this_parent| super( this_parent ) }
+    @value.extend( *@extension_modules ) unless @extension_modules.empty?
     
     return self
     

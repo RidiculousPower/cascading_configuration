@@ -51,8 +51,8 @@ class ::CascadingConfiguration::Module::Configuration
     @name = @parent.name
     @write_name = @parent.write_name
 
-    initialize_common( for_instance, *parsed_args, & block )
-    
+    initialize_common( for_instance, *parsed_args, & block )    
+
     event ? register_parent_for_ruby_hierarchy( @parent ) : register_parent( @parent )
     
   end
@@ -96,6 +96,23 @@ class ::CascadingConfiguration::Module::Configuration
     end
     
   end
+  
+  ###############################
+  #  permits_multiple_parents?  #
+  ###############################
+  
+  ###
+  # Query whether configuration permits multiple parents.
+  #
+  # @return [false]
+  #
+  #         Whether multiple parents are permitted.
+  #
+  def permits_multiple_parents?
+    
+    return false
+    
+  end
 
   #################################################
   #  configuration_for_configuration_or_instance  #
@@ -104,7 +121,8 @@ class ::CascadingConfiguration::Module::Configuration
   def configuration_for_configuration_or_instance( configuration_or_instance )
         
     return case configuration_or_instance
-      when ::CascadingConfiguration::Module::Configuration
+      when ::CascadingConfiguration::Module::Configuration,
+           ::CascadingConfiguration::InactiveConfiguration
         configuration_or_instance
       else
         controller = @module.controller

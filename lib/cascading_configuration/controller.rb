@@ -578,16 +578,12 @@ module ::CascadingConfiguration::Controller
             # we make both singleton and instance configurations inherit from instance
             
             if parent_instance_configurations = instance_configurations( parent, false )
-              case instance.class
-                when ::Module
-                  # instance => instance and singleton
-                  instance_configurations( instance ).register_parent( parent_instance_configurations )
-                  singleton_configurations( instance ).register_parent( parent_instance_configurations )
-                else
-                  # instance => instance
-                  instance_configurations( instance ).register_parent( parent_instance_configurations )
+              # instance => instance
+              instance_configurations( instance ).register_parent( parent_instance_configurations )
+              if ::Module === instance.class
+                # instance => singleton
+                singleton_configurations( instance ).register_parent( parent_instance_configurations )
               end
-
             end
 
         end

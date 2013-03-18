@@ -54,10 +54,12 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
       end
     end
   end
+  let( :parent_extension_block_module ) do
+    parent_instance_controller.const_get( 'ExtensionModule«parent_name»' )
+  end
   let( :parent_instance_controller ) do
     ::CascadingConfiguration::InstanceController.instance_controller( parent_instance )
   end
-  let( :parent_block_extension_module ) { parent_instance_controller.const_get( 'ExtensionModule«parent_name»' ) }
   let( :parent_two_extension_block ) { nil }
   let( :child_extension_block ) { nil }
   
@@ -80,7 +82,7 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
       parent_configuration.extension_modules.is_a?( ::Array::Compositing::Unique ).should == true
     end
     it 'will include modules passed with configuration names (youngest => oldest), creating an extension module for block if passed' do
-      parent_configuration.extension_modules.should == [ parent_block_extension_module, extension_A ]
+      parent_configuration.extension_modules.should == [ parent_extension_block_module, extension_A ]
     end
     it 'will inherit extension modules' do
       child_configuration.extension_modules.is_parent?( parent_configuration.extension_modules ).should == true
