@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 module ::CascadingConfiguration::Controller
 
@@ -94,7 +95,11 @@ module ::CascadingConfiguration::Controller
       when ::Module
         unless configurations = @singleton_configurations[ instance_id = instance.__id__ ]
           if should_create
-            configurations = ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations.new( self, instance )
+            if ( instance_class = instance.class ) < ::Module and not instance_class < ::Class
+              configurations = ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations.new( self, instance )
+            else
+              configurations = ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations.new( self, instance )
+            end
             @singleton_configurations[ instance_id ] = configurations
             ensure_no_unregistered_superclass( instance )
           end
@@ -128,44 +133,13 @@ module ::CascadingConfiguration::Controller
     
     unless configurations = @instance_configurations[ instance_id = instance.__id__ ]
       if should_create
-        configurations = case instance
+        @instance_configurations[ instance_id ] = configurations = case instance
           when ::Module
             ::CascadingConfiguration::ConfigurationHash::InactiveConfigurations.new( self, instance )
           else
             ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations.new( self, instance )
         end
-        @instance_configurations[ instance_id ] = configurations
         ensure_no_unregistered_superclass( instance )
-      end
-    end
-    
-    return configurations
-
-  end
-
-  ###########################
-  #  object_configurations  #
-  ###########################
-  
-  ###
-  # Get hash of configurations names and their corresponding configuration instances.
-  #
-  # @param [Object] instance
-  #
-  #        Instance for which configurations are being queried.
-  #
-  # @return [CascadingConfiguration::ConfigurationHash{Symbol,String => CascadingConfiguration::Module}]
-  #
-  #         Hash of configuration names pointing to corresponding configuration instances.
-  # 
-  def object_configurations( instance, should_create = true )
-    
-    configurations = nil
-    
-    unless configurations = @object_configurations[ instance_id = instance.__id__ ]
-      if should_create
-        configurations = ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations.new( self, instance )
-        @object_configurations[ instance_id ] = configurations
       end
     end
     
@@ -196,6 +170,36 @@ module ::CascadingConfiguration::Controller
       if should_create
         configurations = ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations.new( self, instance )
         @local_instance_configurations[ instance_id ] = configurations
+      end
+    end
+    
+    return configurations
+
+  end
+
+  ###########################
+  #  object_configurations  #
+  ###########################
+  
+  ###
+  # Get hash of configurations names and their corresponding configuration instances.
+  #
+  # @param [Object] instance
+  #
+  #        Instance for which configurations are being queried.
+  #
+  # @return [CascadingConfiguration::ConfigurationHash{Symbol,String => CascadingConfiguration::Module}]
+  #
+  #         Hash of configuration names pointing to corresponding configuration instances.
+  # 
+  def object_configurations( instance, should_create = true )
+    
+    configurations = nil
+    
+    unless configurations = @object_configurations[ instance_id = instance.__id__ ]
+      if should_create
+        configurations = ::CascadingConfiguration::ConfigurationHash::ObjectConfigurations.new( self, instance )
+        @object_configurations[ instance_id ] = configurations
       end
     end
     
@@ -522,33 +526,70 @@ module ::CascadingConfiguration::Controller
         if parent_instance_configurations = instance_configurations( parent, false )
           instance_configurations( instance ).register_parent( parent_instance_configurations, event )
         end
+        # object => object
+        if parent_object_configurations = object_configurations( parent, false )
+          object_configurations( instance ).register_parent( parent_object_configurations, event )
+        end
 
       when :extend
         
-        # instance => singleton
-        if parent_instance_configurations = instance_configurations( parent, false )
-          case instance
-            when ::Module
-              singleton_configurations( instance ).register_parent( parent_instance_configurations, event )
-            else
-              instance_configurations( instance ).register_parent( parent_instance_configurations, event )
-          end
+        case instance
+          when ::Module
+            singleton_configurations = nil
+            # instance => singleton
+            if parent_instance_configurations = instance_configurations( parent, false )
+              singleton_configurations = singleton_configurations( instance )
+              singleton_configurations.register_parent( parent_instance_configurations, event )
+            end
+            # object => singleton
+            if parent_object_configurations = object_configurations( parent, false )
+              singleton_configurations ||= singleton_configurations( instance )
+              singleton_configurations.register_parent( parent_object_configurations, event )
+            end
+          else
+            instance_configurations = nil
+            # instance => instance
+            if parent_instance_configurations = instance_configurations( parent, false )
+              instance_configurations = instance_configurations( instance )
+              instance_configurations.register_parent( parent_instance_configurations, event )
+            end
+            # object => instance
+            if parent_object_configurations = object_configurations( parent, false )
+              instance_configurations ||= instance_configurations( instance )
+              instance_configurations.register_parent( parent_object_configurations, event )
+            end
         end
 
       when :instance
 
         if ( instance_class = instance.class ) < ::Module and not instance_class < ::Class
 
+          singleton_configurations = nil
+
           # instance => singleton
           if parent_instance_configurations = instance_configurations( parent, false )
-            singleton_configurations( instance ).register_parent( parent_instance_configurations, event )
+            singleton_configurations = singleton_configurations( instance )
+            singleton_configurations.register_parent( parent_instance_configurations, event )
+          end
+          # object => singleton
+          if parent_object_configurations = object_configurations( parent, false )
+            singleton_configurations ||= singleton_configurations( instance )
+            singleton_configurations.register_parent( parent_object_configurations, event )
           end
 
         else
 
+          instance_configurations = nil
+
           # instance => instance
           if parent_instance_configurations = instance_configurations( parent, false )
-            instance_configurations( instance ).register_parent( parent_instance_configurations, event )
+            instance_configurations = instance_configurations( instance )
+            instance_configurations.register_parent( parent_instance_configurations, event )
+          end
+          # object => instance
+          if parent_object_configurations = object_configurations( parent, false )
+            instance_configurations ||= instance_configurations( instance )
+            instance_configurations.register_parent( parent_object_configurations, event )
           end
 
         end
@@ -558,17 +599,34 @@ module ::CascadingConfiguration::Controller
         case parent.class
           
           when ::Module
+
+            instance_configurations = nil
             
             if ::Module === instance.class
+
               # singleton => singleton
               if parent_singleton_configurations = singleton_configurations( parent, false )
                 singleton_configurations( instance ).register_parent( parent_singleton_configurations )
               end
+              # object => object
+              if parent_object_configurations = object_configurations( parent, false )
+                object_configurations( instance ).register_parent( parent_object_configurations, event )
+              end
+
+            else
+
+              # object => instance
+              if parent_object_configurations = object_configurations( parent, false )
+                instance_configurations = instance_configurations( instance )
+                instance_configurations.register_parent( parent_object_configurations, event )
+              end
+              
             end
 
             # instance => instance
             if parent_instance_configurations = instance_configurations( parent, false )
-              instance_configurations( instance ).register_parent( parent_instance_configurations )
+              instance_configurations ||= instance_configurations( instance )
+              instance_configurations.register_parent( parent_instance_configurations )
             end
             
           else
@@ -577,12 +635,28 @@ module ::CascadingConfiguration::Controller
             # we have only instance configurations, so we have to decide what that means for module or class
             # we make both singleton and instance configurations inherit from instance
             
+            singleton_configurations = nil
+            instance_configurations = nil
+            
             if parent_instance_configurations = instance_configurations( parent, false )
               # instance => instance
-              instance_configurations( instance ).register_parent( parent_instance_configurations )
+              instance_configurations = instance_configurations( instance )
+              instance_configurations.register_parent( parent_instance_configurations )
               if ::Module === instance.class
                 # instance => singleton
-                singleton_configurations( instance ).register_parent( parent_instance_configurations )
+                singleton_configurations = singleton_configurations( instance )
+                singleton_configurations.register_parent( parent_instance_configurations )
+              end
+            end
+
+            # object => instance
+            if parent_object_configurations = object_configurations( parent, false )
+              instance_configurations ||= instance_configurations( instance )
+              instance_configurations( instance ).register_parent( parent_object_configurations, event )
+              if ::Module === instance.class
+                # object => singleton
+                singleton_configurations ||= singleton_configurations( instance )
+                singleton_configurations( instance ).register_parent( parent_object_configurations, event )
               end
             end
 

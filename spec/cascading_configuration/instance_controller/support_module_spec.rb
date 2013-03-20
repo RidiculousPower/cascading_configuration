@@ -62,7 +62,7 @@ describe ::CascadingConfiguration::InstanceController::SupportModule do
   context '#super_modules' do
     
     context 'when no super modules' do
-      before :all do
+      before :each do
         create_module_A
       end
       it 'will not have super modules' do
@@ -70,7 +70,7 @@ describe ::CascadingConfiguration::InstanceController::SupportModule do
       end
     end
     context 'when one immediate super module' do
-      before :all do
+      before :each do
         create_module_A
         create_module_B2
       end
@@ -79,7 +79,7 @@ describe ::CascadingConfiguration::InstanceController::SupportModule do
       end
     end
     context 'when one non-immediate super module' do
-      before :all do
+      before :each do
         create_module_A
         create_module_B2
         create_module_C1
@@ -92,7 +92,7 @@ describe ::CascadingConfiguration::InstanceController::SupportModule do
       end
     end
     context 'when a tree with multiple super modules' do
-      before :all do
+      before :each do
         # order of creation should not matter
         create_module_A
         create_module_C1
@@ -117,7 +117,7 @@ describe ::CascadingConfiguration::InstanceController::SupportModule do
   
   context '#child_modules' do
 
-    before :all do
+    before :each do
       # order of creation should not matter
       create_module_A
       create_module_C1

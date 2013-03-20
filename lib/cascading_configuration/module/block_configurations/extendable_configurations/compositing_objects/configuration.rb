@@ -6,22 +6,47 @@
 class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::CompositingObjects::Configuration < 
       ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::Configuration
   
-  #######################
-  #  initialize_common  #
-  #######################
+  ##############################################
+  #  self.new_inheriting_object_configuration  #
+  ##############################################
   
-  def initialize_common( for_instance, *parsed_args, & block )
+  def self.new_inheriting_object_configuration( for_instance, parent_configuration, event = nil, & block )
     
-    @parents = ::Array::Unique.new( self )
-    @value = @module.compositing_object_class.new( nil, for_instance )
+    instance = new( for_instance, 
+                    parent_configuration.module, 
+                    parent_configuration.name, 
+                    parent_configuration.write_name, 
+                    & block )
+    parent_configuration.parents.each { |this_parent| instance.register_parent( this_parent ) }
+    
+    return instance
+
+  end
+  
+  ###############################
+  #  initialize«common_values»  #
+  ###############################
+  
+  def initialize«common_values»( for_instance, *parsed_args, & block )
     
     super
+
+    @parents = ::Array::Unique.new( self )
+    @value = @module.compositing_object_class.new( nil, for_instance )
+        
+  end
+
+  #################################
+  #  initialize«common_finalize»  #
+  #################################
+  
+  def initialize«common_finalize»( for_instance, *parsed_args, & block )
 
     # registering parent might have filled in extension modules
     @value.extend( *@extension_modules ) unless @extension_modules.empty?
     
   end
-  
+    
   ########################
   #  compositing_object  #
   ########################

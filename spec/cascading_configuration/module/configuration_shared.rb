@@ -88,7 +88,7 @@ shared_examples_for ::CascadingConfiguration::Module::Configuration do
       end
     end
     context 'when it has a value' do
-      before :all do
+      before :each do
         parent_configuration.value = :some_value
       end
       it 'will return value' do

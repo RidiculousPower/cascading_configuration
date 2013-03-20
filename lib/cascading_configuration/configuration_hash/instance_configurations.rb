@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 class ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations < 
       ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations
@@ -9,14 +10,26 @@ class ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations <
   def child_pre_set_hook( configuration_name, parent_configuration, parent_configurations )
     
     # we want instance configuration details such as extension modules
-    child_configuration = super
 
     # but inheritance relations need to map to the singleton configuration if it exists
-    if ::CascadingConfiguration::ConfigurationHash::InactiveConfigurations === parent_configurations and
-       singleton_configuration = @controller.singleton_configuration( parent_configurations.configuration_instance, configuration_name, false )
-      child_configuration.register_parent( singleton_configuration )
+    case parent_configurations
+      when ::CascadingConfiguration::ConfigurationHash::ObjectConfigurations
+        child_configuration = parent_configuration.new_inheriting_object_configuration( configuration_instance, @event )
+        singleton_configuration = @controller.singleton_configuration( parent_configuration.parent.instance, 
+                                                                       configuration_name, 
+                                                                       false )
+        child_configuration.register_parent( singleton_configuration )
+      when ::CascadingConfiguration::ConfigurationHash::InactiveConfigurations
+        child_configuration = super
+        if singleton_configuration = @controller.singleton_configuration( parent_configurations.configuration_instance, 
+                                                                          configuration_name, 
+                                                                          false )
+          child_configuration.register_parent( singleton_configuration )
+        end
+      else
+        child_configuration = super
     end
-
+    
     return child_configuration
 
   end

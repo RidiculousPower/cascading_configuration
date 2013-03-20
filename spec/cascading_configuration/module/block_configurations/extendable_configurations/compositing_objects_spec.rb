@@ -24,14 +24,4 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
     let( :instance ) { compositing_object_ccm }
   end
 
-  ##############################
-  #  compositing_object_class  #
-  ##############################
-  
-  context '#compositing_object_class' do
-    it 'has a class it uses to initialize configurations for cascading configurations downward' do
-      compositing_object_ccm.compositing_object_class.should == ::Array::Compositing
-    end
-  end
-    
 end

@@ -605,11 +605,11 @@ class ::CascadingConfiguration::Module < ::Module
 
     configuration = parent_configuration ? parent_configuration
                                          : self.class::Configuration.new( instance, 
-                                                                          self, 
-                                                                          accessor, 
-                                                                          write_accessor, 
-                                                                          *parsed_args, 
-                                                                          & block )
+                                                                                  self, 
+                                                                                  accessor, 
+                                                                                  write_accessor, 
+                                                                                  *parsed_args, 
+                                                                                  & block )
     
     @controller.instance_configurations( instance )[ accessor ] = configuration
     
@@ -630,7 +630,8 @@ class ::CascadingConfiguration::Module < ::Module
                                                                         & block )
     
     if ::Module === instance
-      define_instance_configuration( instance, accessor, write_accessor, *parsed_args, & block )
+      object_configuration = local_instance_configuration.new_inheriting_configuration( instance )
+      @controller.object_configurations( instance )[ accessor ] = object_configuration
     end
 
     return local_instance_configuration

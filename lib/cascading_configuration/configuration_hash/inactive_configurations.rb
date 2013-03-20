@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 class ::CascadingConfiguration::ConfigurationHash::InactiveConfigurations < ::CascadingConfiguration::ConfigurationHash
   
@@ -7,7 +8,7 @@ class ::CascadingConfiguration::ConfigurationHash::InactiveConfigurations < ::Ca
 
   def child_pre_set_hook( configuration_name, parent_configuration, parent_configurations )
     
-    return parent_configuration.class.new_inheriting_instance( configuration_instance, parent_configuration, @event )
+    return parent_configuration.new_inheriting_configuration( configuration_instance, @event )
 
   end
   

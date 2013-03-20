@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::CascadingConfiguration::ConfigurationHash
   
@@ -31,7 +32,18 @@ class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::Casc
 
   def child_pre_set_hook( configuration_name, parent_configuration, parent_configurations )
     
-    return parent_configuration.class.new_inheriting_instance( configuration_instance, parent_configuration, @event )
+    child_configuration = nil
+    
+    if ::CascadingConfiguration::ConfigurationHash::ObjectConfigurations === parent_configurations and
+       singleton_configuration = @controller.local_instance_configuration( parent_configuration.parent.instance, 
+                                                                           configuration_name, 
+                                                                           false )
+      child_configuration = singleton_configuration.new_inheriting_configuration( configuration_instance, @event )
+    else
+      child_configuration = parent_configuration.new_inheriting_configuration( configuration_instance, @event )
+    end
+    
+    return child_configuration
 
   end
   

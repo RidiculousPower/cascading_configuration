@@ -8,90 +8,133 @@
 #
 class ::CascadingConfiguration::Module::Configuration
   
+  #######################################
+  #  self.new_inheriting_configuration  #
+  #######################################
+  
+  def self.new_inheriting_configuration( for_instance, parent_configuration, event = nil, & block )
+    
+    instance = allocate
+    instance.initialize«inheriting_configuration»( for_instance, parent_configuration, event, & block )
+    
+    return instance
+    
+  end
+
+  ##############################################
+  #  self.new_inheriting_object_configuration  #
+  ##############################################
+  
+  def self.new_inheriting_object_configuration( for_instance, parent_configuration, event = nil, & block )
+    
+    return new_inheriting_configuration( for_instance, parent_configuration.parent, event, & block )
+
+  end
+
+  ##################################
+  #  new_inheriting_configuration  #
+  ##################################
+  
+  def new_inheriting_configuration( for_instance, event = nil, & block )
+    
+    return self.class.new_inheriting_configuration( for_instance, self, event, & block )
+    
+  end
+
+  #########################################
+  #  new_inheriting_object_configuration  #
+  #########################################
+  
+  def new_inheriting_object_configuration( for_instance, event = nil, & block )
+    
+    return self.class.new_inheriting_object_configuration( for_instance, self, event, & block )
+    
+  end
+
+  #########################
+  #  new_active_instance  #
+  #########################
+  
+  def new_active_instance( for_instance, parent_configuration, event = nil, & block )
+    
+    return self.class.new_active_instance( for_instance, self, event, & block )
+    
+  end
+
   ################
   #  initialize  #
   ################
   
-  def initialize( for_instance, 
-                  configuration_module, 
-                  configuration_name, 
-                  write_accessor = configuration_name,
-                  *parsed_args,
-                  & block )
+  def initialize( for_instance, configuration_module, name, write_name = name.write_accessor, *parsed_args, & block )
 
     @module = configuration_module
-    @name = configuration_name.accessor_name
-    @write_name = write_accessor.write_accessor_name
+    @name = name
+    @write_name = write_name
 
-    initialize_common( for_instance, *parsed_args, & block )
+    initialize«common_values»( for_instance, *parsed_args, & block )
+    initialize«common_finalize»( for_instance, *parsed_args, & block )    
 
   end
   
-  ##################################
-  #  self.new_inheriting_instance  #
-  ##################################
+  ##########################################
+  #  initialize«inheriting_configuration»  #
+  ##########################################
   
-  def self.new_inheriting_instance( for_instance, parent_configuration, event = nil, & block )
-    
-    instance = allocate
-    instance.initialize_inheriting_instance( for_instance, parent_configuration, event, & block )
-    
-    return instance
-    
-  end
-
-  ##################################
-  #  self.new_instance_from_  #
-  ##################################
+  def initialize«inheriting_configuration»( for_instance, parent_configuration, event = nil, *parsed_args, & block )
   
-  def self.new_inheriting_instance( for_instance, parent_configuration, event = nil, & block )
-    
-    instance = allocate
-    instance.initialize_inheriting_instance( for_instance, parent_configuration, event, & block )
-    
-    return instance
-    
-  end
+    @module = parent_configuration.module
+    @name = parent_configuration.name
+    @write_name = parent_configuration.write_name
 
-  ####################################
-  #  initialize_inheriting_instance  #
-  ####################################
-  
-  def initialize_inheriting_instance( for_instance, parent_configuration, event = nil, *parsed_args, & block )
-  
-    @parent = parent_configuration
-    @module = @parent.module
-    @name = @parent.name
-    @write_name = @parent.write_name
-
-    initialize_common( for_instance, *parsed_args, & block )    
-
-    event ? register_parent_for_ruby_hierarchy( @parent ) : register_parent( @parent )
+    initialize«common_values»( for_instance, *parsed_args, & block )    
+    initialize«parent_registration»( parent_configuration, event )
+    initialize«common_finalize»( for_instance, *parsed_args, & block )    
     
   end
   
-  #######################
-  #  initialize_common  #
-  #######################
+  ###############################
+  #  initialize«common_values»  #
+  ###############################
   
-  def initialize_common( for_instance, *parsed_args, & block )
+  def initialize«common_values»( for_instance, *parsed_args, & block )
 
     @instance = for_instance
     @has_value = false
-    initialize_for_instance
+    initialize«for_instance»
+    
+  end
+
+  #################################
+  #  initialize«common_finalize»  #
+  #################################
+  
+  def initialize«common_finalize»( for_instance, *parsed_args, & block )
+
+    # nothing here - reserved for definition by subclasses
     
   end
   
-  #############################
-  #  initialize_for_instance  #
-  #############################
+  #####################################
+  #  initialize«parent_registration»  #
+  #####################################
+  
+  def initialize«parent_registration»( parent_configuration, event = nil )
+
+    event ? register_parent_for_ruby_hierarchy( parent_configuration ) 
+          : register_parent( parent_configuration )
+
+  end
+  
+  ##############################
+  #  initialize«for_instance»  #
+  ##############################
   
   ###
   # @private
   #
   # Extends self with appropriate module(s) given instance for which initilization is occuring.
   #
-  def initialize_for_instance
+  def initialize«for_instance»
 
     # If we are defining configurations on ::Class we can only have explicit parents.
     case @instance
@@ -148,6 +191,19 @@ class ::CascadingConfiguration::Module::Configuration
     
   end
 
+  ############
+  #  parent  #
+  ############
+
+  ###
+  # Get parent for configuration name on instance.
+  #
+  # @return [Object]
+  #
+  #         Parent instance registered for configuration.
+  #
+  attr_reader :parent
+
   #####################
   #  register_parent  #
   #####################
@@ -165,7 +221,9 @@ class ::CascadingConfiguration::Module::Configuration
   #         Self.
   #
   def register_parent( parent )
-            
+    
+    @parent = parent
+    
     return self
     
   end
@@ -185,6 +243,8 @@ class ::CascadingConfiguration::Module::Configuration
   # @return [CascadingConfiguration::Module::Configuration] Self.
   #
   def unregister_parent( existing_parent )
+    
+    @parent = nil
     
     return self
     
@@ -222,7 +282,7 @@ class ::CascadingConfiguration::Module::Configuration
   
   def is_parent?( parent )
     
-    return false
+    return @parent.equal?( parent )
     
   end
   

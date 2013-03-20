@@ -6,44 +6,23 @@
 class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::Configuration < 
       ::CascadingConfiguration::Module::Configuration
   
-  ################
-  #  initialize  #
-  ################
+  ###############################
+  #  initialize«common_values»  #
+  ###############################
   
-  def initialize( for_instance, 
-                  configuration_module, 
-                  configuration_name, 
-                  write_accessor = configuration_name,
-                  *extension_modules,
-                  & block )
-    
-    @name = configuration_name
-    @instance = for_instance
-    initialize_extension_modules( *extension_modules, & block )
+  def initialize«common_values»( for_instance, *extension_modules, & block )
     
     super
-    
+
+    initialize«extension_modules»( *extension_modules, & block )
+        
   end
   
-  ####################################
-  #  initialize_inheriting_instance  #
-  ####################################
+  ###################################
+  #  initialize«extension_modules»  #
+  ###################################
   
-  def initialize_inheriting_instance( for_instance, parent_configuration, event = nil, *extension_modules, & block )
-    
-    @name = parent_configuration.name
-    @instance = for_instance
-    initialize_extension_modules( *extension_modules, & block )
-    
-    super
-    
-  end
-  
-  ##################################
-  #  initialize_extension_modules  #
-  ##################################
-  
-  def initialize_extension_modules( *extension_modules, & block )
+  def initialize«extension_modules»( *extension_modules, & block )
 
     @extension_modules = ::Array::Compositing::Unique.new( nil, self )
     if block_given?
@@ -53,7 +32,6 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
         instance_controller = ::CascadingConfiguration::InstanceController.create_instance_controller( @instance )
         @extension_module = instance_controller.create_extension_module( @name, & block )
       end
-
       @extension_modules.unshift( @extension_module )
     end
     @extension_modules.concat( *extension_modules )
@@ -78,19 +56,6 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
     return false
     
   end
-
-  ############
-  #  parent  #
-  ############
-
-  ###
-  # Get parent for configuration name on instance.
-  #
-  # @return [Object]
-  #
-  #         Parent instance registered for configuration.
-  #
-  attr_reader :parent
 
   #####################
   #  register_parent  #

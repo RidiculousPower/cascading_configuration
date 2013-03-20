@@ -23,7 +23,7 @@
                                                        & block )
       
       else
-        parent.class.new_inheriting_instance( for_instance, parent, event, & block )
+        parent.class.new_inheriting_configuration( for_instance, parent, event, & block )
     end
     
   end

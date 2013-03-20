@@ -16,6 +16,7 @@ files = [
   'configuration_hash/active_configurations',
   'configuration_hash/inactive_configurations',
   'configuration_hash/instance_configurations',
+  'configuration_hash/object_configurations',
   
   'module',
   'module/configuration',

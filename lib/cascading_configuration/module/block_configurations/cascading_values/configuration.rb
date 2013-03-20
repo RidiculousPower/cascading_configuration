@@ -27,11 +27,11 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
         
   end
 
-  ####################################
-  #  initialize_inheriting_instance  #
-  ####################################
+  ##########################################
+  #  initialize«inheriting_configuration»  #
+  ##########################################
   
-  def initialize_inheriting_instance( for_instance, parent_configuration, event = nil, & cascade_block )
+  def initialize«inheriting_configuration»( for_instance, parent_configuration, event = nil, & cascade_block )
 
     @cascade_block = cascade_block || parent_configuration.cascade_block
     @value_requires_translation = true

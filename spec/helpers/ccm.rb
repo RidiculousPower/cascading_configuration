@@ -1,21 +1,9 @@
 # -*- encoding : utf-8 -*-
 
-RSpec::Matchers.define :have_cascaded do |event, parent_instance, name, write_name, has_methods, has_instance_methods, should_cascade_hook|
+RSpec::Matchers.define :have_cascaded do |event, parent_instance, name, write_name, active_parent_configuration, has_methods, has_instance_methods, should_cascade_hook, inheritance_parent_is_class|
 
   fail_string = nil
   unexpected_success_string = nil
-
-  def test_parent_configuration( has_methods, hooked_instance, parent_instance, configuration, parent_configuration )
-    
-    unless fail_string or 
-           parent_configuration
-      fail_string = ( has_methods ? 'active' : 'inactive' ) << ' configuration did not exist for ' << 
-                    parent_instance.name.to_s << ' (parent of ' << hooked_instance.name.to_s << ')'
-    end
-    
-    return fail_string
-    
-  end
 
   match do |hooked_instance| 
 
@@ -26,7 +14,9 @@ RSpec::Matchers.define :have_cascaded do |event, parent_instance, name, write_na
     if should_cascade_hook
       unless ::Module::Cluster === hooked_instance and
              hooked_instance.has_cluster?( :cascading_configuration_inheritance ) ||
-             ::Class === parent_instance
+             ::Class === parent_instance ||
+             inheritance_parent_is_class # class methods are inherited, so class B has the hook even though it
+                                         # was not specifically enabled
         fail_string = 'inheritance hook did not cascade to ' << hooked_instance.name.to_s
       end
     end
@@ -47,21 +37,20 @@ RSpec::Matchers.define :have_cascaded do |event, parent_instance, name, write_na
                         ' (had nil)'
         end
         unless fail_string
-          case event
-            when :extend, :instance
-              unless singleton_parent = ::CascadingConfiguration.instance_configuration( parent_instance, name, false )
-                fail_string = 'inactive configuration did not exist for ' << parent_instance.name.to_s << 
-                              ' (parent of active configuration for ' << hooked_instance.name.to_s << ')'
-              end
-            else
-              unless singleton_parent = ::CascadingConfiguration.configuration( parent_instance, name, false )
-                fail_string = 'active configuration did not exist for ' << parent_instance.name.to_s << 
-                              ' (parent of active configuration for ' << hooked_instance.name.to_s << ')'
-              end
+          if active_parent_configuration
+            unless singleton_parent = ::CascadingConfiguration.configuration( parent_instance, name, false )
+              fail_string = 'active configuration did not exist for ' << parent_instance.name.to_s << 
+                            ' (parent of active configuration for ' << hooked_instance.name.to_s << ')'
+            end
+          else
+            unless singleton_parent = ::CascadingConfiguration.instance_configuration( parent_instance, name, false )
+              fail_string = 'inactive configuration did not exist for ' << parent_instance.name.to_s << 
+                            ' (parent of active configuration for ' << hooked_instance.name.to_s << ')'
+            end
           end
           unless fail_string or
                  singleton_configuration.parent.equal?( singleton_parent )
-            fail_string = ( has_methods ? 'active' : 'inactive' ) << ' parent configuration for ' << 
+            fail_string = ( active_parent_configuration ? 'active' : 'inactive' ) << ' parent configuration for ' << 
                           hooked_instance.name.to_s << ' did not belong to ' << parent_instance.name.to_s << 
                           ' (belongs to ' << singleton_configuration.parent.instance.name.to_s << ')'
           end
@@ -70,7 +59,8 @@ RSpec::Matchers.define :have_cascaded do |event, parent_instance, name, write_na
     end
     if has_instance_methods
       unless fail_string or
-             instance_configuration = ::CascadingConfiguration.instance_configuration( hooked_instance, name, false )
+             instance_configuration = ::CascadingConfiguration.instance_configuration( hooked_instance, name, false ) ||
+                                      ::CascadingConfiguration.object_configuration( hooked_instance, name, false )
         fail_string = 'instance configuration was not created for ' << hooked_instance.name.to_s
       end
       unless fail_string or ! parent_instance
@@ -87,7 +77,8 @@ RSpec::Matchers.define :have_cascaded do |event, parent_instance, name, write_na
             end
           end
         else
-          unless instance_parent = ::CascadingConfiguration.instance_configuration( parent_instance, name, false )
+          unless instance_parent = ::CascadingConfiguration.instance_configuration( parent_instance, name, false ) ||
+                                   ::CascadingConfiguration.object_configuration( parent_instance, name, false )
             fail_string = 'inactive configuration did not exist for ' << parent_instance.name.to_s << 
                           ' (parent of inactive configuration for ' << hooked_instance.name.to_s << ')'
           end
