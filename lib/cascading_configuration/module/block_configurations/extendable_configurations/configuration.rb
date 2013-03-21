@@ -39,6 +39,31 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
     return self
     
   end
+
+  ######################################
+  #  new_configuration_without_parent  #
+  ######################################
+
+  def new_configuration_without_parent( for_instance, event = nil, & block )
+
+    new_configuration = self.class.new( for_instance, @module, @name, @write_name, & block )
+    new_configuration.register_parent_extension_modules( self )
+
+    return new_configuration
+
+  end
+
+  #######################################
+  #  register_parent_extension_modules  #
+  #######################################
+  
+  def register_parent_extension_modules( parent )
+    
+    @extension_modules.register_parent( parent.extension_modules )
+    
+    return self
+
+  end
   
   ###############################
   #  permits_multiple_parents?  #
@@ -114,7 +139,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   def register_parent_for_ruby_hierarchy( parent )
     
     register_parent( parent )
-    @extension_modules.register_parent( parent.extension_modules )
+    register_parent_extension_modules( parent )
     
     return self
     

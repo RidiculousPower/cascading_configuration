@@ -63,7 +63,7 @@ RSpec::Matchers.define :have_cascaded do |event, parent_instance, name, write_na
                                       ::CascadingConfiguration.object_configuration( hooked_instance, name, false )
         fail_string = 'instance configuration was not created for ' << hooked_instance.name.to_s
       end
-      unless fail_string or ! parent_instance
+      unless fail_string or ! parent_instance or ::Module === hooked_instance # inactive configurations have no parent
         if has_methods
           unless instance_parent = ::CascadingConfiguration.configuration( hooked_instance, name, false )
             fail_string = 'active configuration did not exist for ' << hooked_instance.name.to_s << 

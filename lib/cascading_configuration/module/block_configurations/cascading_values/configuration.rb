@@ -40,6 +40,16 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
 
   end
 
+  ######################################
+  #  new_configuration_without_parent  #
+  ######################################
+  
+  def new_configuration_without_parent( for_instance, event = nil, & block )
+    
+    return self.class.new( for_instance, @module, @name, @write_name, & block || @cascade_block )
+    
+  end
+
   ###################
   #  cascade_block  #
   ###################

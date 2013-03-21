@@ -50,14 +50,14 @@ class ::CascadingConfiguration::Module::Configuration
     return self.class.new_inheriting_object_configuration( for_instance, self, event, & block )
     
   end
-
-  #########################
-  #  new_active_instance  #
-  #########################
   
-  def new_active_instance( for_instance, parent_configuration, event = nil, & block )
+  ######################################
+  #  new_configuration_without_parent  #
+  ######################################
+  
+  def new_configuration_without_parent( for_instance, event = nil, & block )
     
-    return self.class.new_active_instance( for_instance, self, event, & block )
+    return self.class.new( for_instance, @module, @name, @write_name, & block )
     
   end
 

@@ -12,11 +12,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   
   def self.new_inheriting_object_configuration( for_instance, parent_configuration, event = nil, & block )
     
-    instance = new( for_instance, 
-                    parent_configuration.module, 
-                    parent_configuration.name, 
-                    parent_configuration.write_name, 
-                    & block )
+    instance = parent_configuration.new_configuration_without_parent( for_instance, event, & block )
     parent_configuration.parents.each { |this_parent| instance.register_parent( this_parent ) }
     
     return instance
@@ -46,7 +42,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
     @value.extend( *@extension_modules ) unless @extension_modules.empty?
     
   end
-    
+  
   ########################
   #  compositing_object  #
   ########################
@@ -151,9 +147,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
 
     super
     
-    unless ( parent_extension_modules = parent.extension_modules ).empty?
-      @value.extend( *parent_extension_modules )
-    end
+    @value.extend( *@extension_modules ) unless @extension_modules.empty?
     
     return self
 
