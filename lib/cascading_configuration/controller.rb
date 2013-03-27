@@ -596,13 +596,13 @@ module ::CascadingConfiguration::Controller
         
       when nil
         
-        case parent.class
+        case parent
           
           when ::Module
 
             instance_configurations = nil
             
-            if ::Module === instance.class
+            if ::Module === instance
 
               # singleton => singleton
               if parent_singleton_configurations = singleton_configurations( parent, false )
@@ -642,7 +642,7 @@ module ::CascadingConfiguration::Controller
               # instance => instance
               instance_configurations = instance_configurations( instance )
               instance_configurations.register_parent( parent_instance_configurations )
-              if ::Module === instance.class
+              if ::Module === instance
                 # instance => singleton
                 singleton_configurations = singleton_configurations( instance )
                 singleton_configurations.register_parent( parent_instance_configurations )
@@ -653,7 +653,7 @@ module ::CascadingConfiguration::Controller
             if parent_object_configurations = object_configurations( parent, false )
               instance_configurations ||= instance_configurations( instance )
               instance_configurations( instance ).register_parent( parent_object_configurations, event )
-              if ::Module === instance.class
+              if ::Module === instance
                 # object => singleton
                 singleton_configurations ||= singleton_configurations( instance )
                 singleton_configurations( instance ).register_parent( parent_object_configurations, event )

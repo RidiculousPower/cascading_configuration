@@ -597,19 +597,18 @@ class ::CascadingConfiguration::Module < ::Module
     
     parent_configuration = nil
 
-    if ::Module === instance
-      unless parent_configuration = @controller.local_instance_configuration( instance, accessor, false )
-        parent_configuration = @controller.singleton_configuration( instance, accessor, false )
-      end
-    end
+    
+    unless parent_configuration = @controller.local_instance_configuration( instance, accessor, false )
+      parent_configuration = @controller.singleton_configuration( instance, accessor, false )
+    end if ::Module === instance
 
     configuration = parent_configuration ? parent_configuration
                                          : self.class::Configuration.new( instance, 
-                                                                                  self, 
-                                                                                  accessor, 
-                                                                                  write_accessor, 
-                                                                                  *parsed_args, 
-                                                                                  & block )
+                                                                          self, 
+                                                                          accessor, 
+                                                                          write_accessor, 
+                                                                          *parsed_args, 
+                                                                          & block )
     
     @controller.instance_configurations( instance )[ accessor ] = configuration
     
