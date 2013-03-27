@@ -177,9 +177,9 @@ class ::CascadingConfiguration::InstanceController < ::Module
     
   end
   
-  #####################################
+  ##########################################
   #  initialize«inheriting_configuration»  #
-  #####################################
+  ##########################################
 
   def initialize«inheriting_configuration»( parent_instance, instance, event )
     

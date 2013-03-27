@@ -610,7 +610,7 @@ module ::CascadingConfiguration::Controller
               end
               # object => object
               if parent_object_configurations = object_configurations( parent, false )
-                object_configurations( instance ).register_parent( parent_object_configurations, event )
+                object_configurations( instance ).register_parent( parent_object_configurations )
               end
 
             else
@@ -618,7 +618,7 @@ module ::CascadingConfiguration::Controller
               # object => instance
               if parent_object_configurations = object_configurations( parent, false )
                 instance_configurations = instance_configurations( instance )
-                instance_configurations.register_parent( parent_object_configurations, event )
+                instance_configurations.register_parent( parent_object_configurations )
               end
               
             end
@@ -652,11 +652,11 @@ module ::CascadingConfiguration::Controller
             # object => instance
             if parent_object_configurations = object_configurations( parent, false )
               instance_configurations ||= instance_configurations( instance )
-              instance_configurations( instance ).register_parent( parent_object_configurations, event )
+              instance_configurations( instance ).register_parent( parent_object_configurations )
               if ::Module === instance
                 # object => singleton
                 singleton_configurations ||= singleton_configurations( instance )
-                singleton_configurations( instance ).register_parent( parent_object_configurations, event )
+                singleton_configurations( instance ).register_parent( parent_object_configurations )
               end
             end
 
