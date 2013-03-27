@@ -31,6 +31,20 @@ class ::CascadingConfiguration::Module::Configuration
 
   end
 
+  ################################################
+  #  self.new_inheriting_inactive_configuration  #
+  ################################################
+  
+  def self.new_inheriting_inactive_configuration( for_instance, parent_configuration, event = nil, & block )
+
+    instance = parent_configuration.new_configuration_without_parent( for_instance, event, & block )
+    
+    instance.initialize«inheriting_inactive_configuration»( parent_configuration, event )
+    
+    return instance
+
+  end
+  
   ##################################
   #  new_inheriting_configuration  #
   ##################################
@@ -58,6 +72,16 @@ class ::CascadingConfiguration::Module::Configuration
   def new_configuration_without_parent( for_instance, event = nil, & block )
     
     return self.class.new( for_instance, @module, @name, @write_name, & block )
+    
+  end
+
+  ###########################################
+  #  new_inheriting_inactive_configuration  #
+  ###########################################
+  
+  def new_inheriting_inactive_configuration( for_instance, event = nil, & block )
+    
+    return self.class.new_inheriting_inactive_configuration( for_instance, self, event, & block )
     
   end
 
@@ -90,6 +114,17 @@ class ::CascadingConfiguration::Module::Configuration
     initialize«parent_registration»( parent_configuration, event )
     initialize«common_finalize»( for_instance, *parsed_args, & block )    
     
+  end
+  
+  ###################################################
+  #  initialize«inheriting_inactive_configuration»  #
+  ###################################################
+  
+  def initialize«inheriting_inactive_configuration»( parent_configuration, event = nil, & block )
+
+    event ? register_inactive_parent( parent_configuration ) 
+          : register_inactive_parent_for_ruby_hierarchy( parent_configuration )
+
   end
   
   ###############################
@@ -223,6 +258,56 @@ class ::CascadingConfiguration::Module::Configuration
   def register_parent( parent )
     
     @parent = parent
+    
+    return self
+    
+  end
+
+  ##############################
+  #  register_inactive_parent  #
+  ##############################
+  
+  ###
+  # Register configuration for inactive parent instance, which means that singleton parent does not exist.
+  #   Does nothing, serves as placeholder.
+  #
+  # @param parent
+  #
+  #        Parent instance from which configurations are being inherited.
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
+  def register_inactive_parent( parent )
+    
+    # nothing here - subclasses override
+    
+    return self
+    
+  end
+
+  #################################################
+  #  register_inactive_parent_for_ruby_hierarchy  #
+  #################################################
+  
+  ###
+  # Register configuration for inactive parent instance, which means that singleton parent does not exist.
+  #   Does nothing, serves as placeholder.
+  #
+  # @overload register_parent( parent, ... )
+  #
+  #   @param parent
+  #   
+  #          Parent instance from which configurations are being inherited.
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
+  def register_inactive_parent_for_ruby_hierarchy( parent )
+    
+    # nothing here - subclasses override
     
     return self
     

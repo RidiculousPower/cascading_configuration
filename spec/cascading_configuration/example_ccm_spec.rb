@@ -315,7 +315,7 @@ describe ::CascadingConfiguration::ExampleCCM do
         end
         context 'extend' do
           it 'will not cascade singleton, instance or inheritance' do
-            module_extended_by_module.should have_cascaded( :extend, module_instance, *cascade_args, false, true, false, false )
+            module_extended_by_module.should have_cascaded( :extend, nil, *cascade_args, false, true, false, false )
           end
         end
       end
@@ -330,19 +330,19 @@ describe ::CascadingConfiguration::ExampleCCM do
             end
             context 'module => class => class => instance (instance)' do
               it 'will cascade instance but not singleton or inheritance' do
-                instance_of_subclass_of_class_including_module.should have_cascaded( :instance, subclass_of_class_including_module, *cascade_args, false, true, false, false )
+                instance_of_subclass_of_class_including_module.should have_cascaded( :instance, nil, *cascade_args, false, true, false, false )
               end
             end
           end
           context 'module => class => instance' do
             it 'will cascade instance but not singleton or inheritance' do
-              instance_of_class_including_module.should have_cascaded( :instance, class_including_module, *cascade_args, false, true, false, false )
+              instance_of_class_including_module.should have_cascaded( :instance, nil, *cascade_args, false, true, false, false )
             end
           end
         end
         context 'extend' do
           it 'will not cascade singleton, instance or inheritance' do
-            class_extended_by_module.should have_cascaded( :extend, module_instance, *cascade_args, false, true, false, false )
+            class_extended_by_module.should have_cascaded( :extend, nil, *cascade_args, false, true, false, false )
           end
           context 'module => class => class (subclass)' do
             it 'will not cascade singleton, instance or inheritance' do
@@ -372,13 +372,13 @@ describe ::CascadingConfiguration::ExampleCCM do
         end
         context 'class => class => instance (instance)' do
           it 'will cascade instance but not singleton or inheritance' do
-            instance_of_subclass.should have_cascaded( :instance, subclass, *cascade_args, false, true, false, false )
+            instance_of_subclass.should have_cascaded( :instance, nil, *cascade_args, false, true, false, false )
           end
         end
       end
       context 'class => instance' do
         it 'will cascade instance but not singleton or inheritance' do
-          instance_of_class.should have_cascaded( :instance, class_instance, *cascade_args, false, true, false, false )
+          instance_of_class.should have_cascaded( :instance, nil, *cascade_args, false, true, false, false )
         end
       end
     end
@@ -392,13 +392,13 @@ describe ::CascadingConfiguration::ExampleCCM do
         end
         context 'class < module => class < module => instance (instance)' do
           it 'will cascade singleton but not instance or inheritance' do
-            instance_of_subclass_of_subclass_of_module.should have_cascaded( :instance, subclass_of_subclass_of_module, *cascade_args, false, true, false, true )
+            instance_of_subclass_of_subclass_of_module.should have_cascaded( :instance, nil, *cascade_args, false, true, false, true )
           end
         end
       end
       context 'class < module => module (instance)' do
         it 'will cascade singleton but not instance or inheritance' do
-          instance_of_subclass_of_module.should have_cascaded( :instance, subclass_of_module, *cascade_args, false, true, false, true )
+          instance_of_subclass_of_module.should have_cascaded( :instance, nil, *cascade_args, false, true, false, true )
         end
       end
     end

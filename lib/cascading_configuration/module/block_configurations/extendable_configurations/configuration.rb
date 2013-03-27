@@ -4,7 +4,7 @@
 # Configurations extended for Compositing Objects.
 #
 class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::Configuration < 
-      ::CascadingConfiguration::Module::Configuration
+      ::CascadingConfiguration::Module::BlockConfigurations::Configuration
   
   ###############################
   #  initialize«common_values»  #
@@ -47,7 +47,9 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   def new_configuration_without_parent( for_instance, event = nil, & block )
 
     new_configuration = self.class.new( for_instance, @module, @name, @write_name, & block )
-    new_configuration.register_parent_extension_modules( self )
+    
+    # concat b/c we don't want parent relation but we do want a copy with same functionality
+    new_configuration.extension_modules.concat( @extension_modules ) if @extension_modules
 
     return new_configuration
 
@@ -79,6 +81,32 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   def permits_multiple_parents?
     
     return false
+    
+  end
+
+  ##############################
+  #  register_inactive_parent  #
+  ##############################
+  
+  ###
+  # Register configuration for inactive parent instance, which means that singleton parent does not exist.
+  #   Registers extension modules from inactive parent.
+  #
+  # @param parent
+  #
+  #        Parent instance from which configurations are being inherited.
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
+  def register_inactive_parent( parent )
+
+    parent = configuration_for_configuration_or_instance( parent )
+    
+    register_parent_extension_modules( parent )
+    
+    return self
     
   end
 
@@ -117,6 +145,34 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
     return self
     
   end
+
+  #################################################
+  #  register_inactive_parent_for_ruby_hierarchy  #
+  #################################################
+  
+  ###
+  # Register configuration for inactive parent instance, which means that singleton parent does not exist.
+  #   Registers extension modules from inactive parent.
+  #
+  # @overload register_parent( parent, ... )
+  #
+  #   @param parent
+  #   
+  #          Parent instance from which configurations are being inherited.
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
+  def register_inactive_parent_for_ruby_hierarchy( parent )
+    
+    parent = configuration_for_configuration_or_instance( parent )
+    
+    register_parent_extension_modules( parent )
+    
+    return self
+    
+  end
   
   ########################################
   #  register_parent_for_ruby_hierarchy  #
@@ -137,6 +193,8 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #         Self.
   #
   def register_parent_for_ruby_hierarchy( parent )
+    
+    parent = configuration_for_configuration_or_instance( parent )
     
     register_parent( parent )
     register_parent_extension_modules( parent )

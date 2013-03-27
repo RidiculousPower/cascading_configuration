@@ -4,7 +4,7 @@
 # Configurations for cascading variables.
 #
 class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Configuration < 
-      ::CascadingConfiguration::Module::Configuration
+      ::CascadingConfiguration::Module::BlockConfigurations::Configuration
   
   ################
   #  initialize  #
@@ -381,9 +381,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
   def cascade_value
 
     @parent.cascade_value if @parent.value_requires_translation?
-puts 'parent instance: ' + @parent.instance.to_s + ' (' << @parent.instance.name.to_s << ')'
-puts 'parent config instance: ' + @parent.to_s
-puts 'parent config value before block (should be binding): ' << @parent.value.to_s
+
     @value = @instance.instance_exec( @parent.value, @parent.instance, & @cascade_block )
     @value_requires_translation = false
     

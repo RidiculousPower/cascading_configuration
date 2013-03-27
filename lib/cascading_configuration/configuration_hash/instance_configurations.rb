@@ -8,7 +8,7 @@ class ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations <
   ########################
 
   def child_pre_set_hook( configuration_name, parent_configuration, parent_configurations )
-    
+
     # we want instance configuration details such as extension modules
 
     # but inheritance relations need to map to the singleton configuration if it exists
@@ -19,13 +19,6 @@ class ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations <
                                                                        configuration_name, 
                                                                        false )
         child_configuration.register_parent( singleton_configuration )
-      when ::CascadingConfiguration::ConfigurationHash::InactiveConfigurations
-        child_configuration = super
-        if singleton_configuration = @controller.singleton_configuration( parent_configurations.configuration_instance, 
-                                                                          configuration_name, 
-                                                                          false )
-          child_configuration.register_parent( singleton_configuration )
-        end
       else
         child_configuration = super
     end

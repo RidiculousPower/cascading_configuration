@@ -130,7 +130,7 @@ module ::CascadingConfiguration::Controller
   def instance_configurations( instance, should_create = true )
     
     configurations = nil
-    
+
     unless configurations = @instance_configurations[ instance_id = instance.__id__ ]
       if should_create
         @instance_configurations[ instance_id ] = configurations = case instance
@@ -592,6 +592,14 @@ module ::CascadingConfiguration::Controller
             instance_configurations.register_parent( parent_object_configurations, event )
           end
 
+        end
+        
+      when :singleton_to_instance
+        
+        # singleton => instance
+        if parent_singleton_configurations = singleton_configurations( parent, false )
+          instance_configurations = instance_configurations( instance )
+          instance_configurations.register_parent( parent_singleton_configurations )
         end
         
       when nil

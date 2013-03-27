@@ -28,6 +28,7 @@ files = [
   'module/cascading_settings',
   'module/cascading_settings/configuration',
   'module/block_configurations',
+  'module/block_configurations/configuration',
   'module/block_configurations/cascading_values',
   'module/block_configurations/cascading_values/configuration',
   'module/block_configurations/extendable_configurations',
