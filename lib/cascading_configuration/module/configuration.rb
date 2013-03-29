@@ -497,7 +497,7 @@ class ::CascadingConfiguration::Module::Configuration
   end
 
   ##################
-  #  remove_value  #
+  #  clear  #
   ##################
   
   ###
@@ -505,7 +505,7 @@ class ::CascadingConfiguration::Module::Configuration
   #
   # @return Self.
   #
-  def remove_value
+  def clear
     
     @has_value = false
     @value = nil

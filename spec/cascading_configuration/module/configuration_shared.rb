@@ -75,10 +75,10 @@ shared_examples_for ::CascadingConfiguration::Module::Configuration do
   #  has_value?    #
   #  value         #
   #  value=        #
-  #  remove_value  #
+  #  clear  #
   ##################
 
-  context '#value, #value=, #has_value?, #remove_value' do
+  context '#value, #value=, #has_value?, #clear' do
     context 'when it has no value' do
       it 'will return value' do
         parent_configuration.value.should be nil
@@ -98,7 +98,7 @@ shared_examples_for ::CascadingConfiguration::Module::Configuration do
         parent_configuration.has_value?.should be true
       end
       it 'can remove the value' do
-        parent_configuration.remove_value
+        parent_configuration.clear
         parent_configuration.has_value?.should be false
       end
     end

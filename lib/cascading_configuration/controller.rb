@@ -46,6 +46,53 @@ module ::CascadingConfiguration::Controller
     
   end
 
+  ###################
+  #  configuration  #
+  ###################
+  
+  ###
+  # Get configuration for instance. Creates configuration for instance if does not already exist for instance
+  #   but does exist for instance's class.
+  #
+  # @param [Object]
+  #
+  #        instance
+  #
+  #        Instance for which configurations are being queried.
+  #
+  # @param [Symbol,String]
+  #
+  #        configuration_name
+  #
+  #        Configuration name to retrieve.
+  #
+  # @return [ CascadingConfiguration::Module::Configuration ]
+  #
+  #         Configuration instance for name on instance.
+  #
+  def configuration( instance, configuration_name, ensure_exists = true )
+    
+    configuration_instance = nil
+
+    unless active_configurations = active_configurations( instance, false ) and
+           configuration_instance = active_configurations[ configuration_name.to_sym ]
+      # we don't want to ensure unless we failed to find what we expected
+      if ensure_no_unregistered_superclass( instance )
+        # if we had an unregistered superclass, ask again for the configuration
+        return configuration( instance, configuration_name, ensure_exists )
+      end
+      if ensure_exists
+        exception_string = 'No configuration ' << configuration_name.to_s
+        exception_string << ' for ' << instance.to_s 
+        exception_string << '.'
+        raise ::ArgumentError, exception_string
+      end
+    end
+    
+    return configuration_instance
+    
+  end
+
   ################################
   #  create_instance_controller  #
   ################################
@@ -215,25 +262,48 @@ module ::CascadingConfiguration::Controller
     
     had_unregistered_superclass = false
     
-    if ::Class === instance and ! instance.equal?( ::Class )
-      # We want to know if we have a class above us that has configurations that we did not receive.
-      # This happens if we had already initialized the subclass before CC was added to the class above us.
-      # This could be multiple classes - so we could have D, ..., A where A has configs.
-      # It can't be modules because including them would call their hook, initializing the instance.
-      # So we need the next class and if it hasn't initialized, 
-      # find the next class - if it has initialized, register it as our parent
-      instance.ancestors.each do |this_ancestor|
-        next if this_ancestor.equal?( instance )
-        if ::Class === this_ancestor
+    if ::Class === instance
+
+      # if we try to register Class or above we get stuck in a loop
+      unless instance.equal?( ::Class )
+        # We want to know if we have a class above us that has configurations that we did not receive.
+        # This happens if we had already initialized the subclass before CC was added to the class above us.
+        # This could be multiple classes - so we could have D, ..., A where A has configs.
+        # It can't be modules because including them would call their hook, initializing the instance.
+        # So we need the next class and if it hasn't initialized, 
+        # find the next class - if it has initialized, register it as our parent
+        instance.ancestors.each do |this_ancestor|
+
+          next if this_ancestor.equal?( instance ) or ! ( ::Class === this_ancestor )
           break if this_ancestor >= ::Class
-          ensure_no_unregistered_superclass( this_ancestor )
-          if has_singleton_configurations?( this_ancestor ) or 
+
+          if ensure_no_unregistered_superclass( this_ancestor ) or
+             has_singleton_configurations?( this_ancestor )     or 
              has_instance_configurations?( this_ancestor )
+
+            had_unregistered_superclass = true
             register_parent( instance, this_ancestor, :subclass )
+
           end
+          
+          # we only want the first ancestor class, after which we are done
+          # any further lookup already occurred recursively
           break
+
         end
       end
+      
+    elsif ! ( ::Module === instance )
+      
+      if ensure_no_unregistered_superclass( instance_class = instance.class ) or
+         has_singleton_configurations?( instance_class )                      or 
+         has_instance_configurations?( instance_class )
+
+        had_unregistered_superclass = true
+        register_parent( instance, instance_class, :instance )
+
+      end
+      
     end
     
     return had_unregistered_superclass
@@ -357,48 +427,6 @@ module ::CascadingConfiguration::Controller
 
     return local_instance_configuration( instance, configuration_name, ensure_exists ) ? true : false
 
-  end
-
-  ###################
-  #  configuration  #
-  ###################
-  
-  ###
-  # Get configuration for instance. Creates configuration for instance if does not already exist for instance
-  #   but does exist for instance's class.
-  #
-  # @param [Object]
-  #
-  #        instance
-  #
-  #        Instance for which configurations are being queried.
-  #
-  # @param [Symbol,String]
-  #
-  #        configuration_name
-  #
-  #        Configuration name to retrieve.
-  #
-  # @return [ CascadingConfiguration::Module::Configuration ]
-  #
-  #         Configuration instance for name on instance.
-  #
-  def configuration( instance, configuration_name, ensure_exists = true )
-    
-    configuration_instance = nil
-
-    unless active_configurations = active_configurations( instance, false ) and
-           configuration_instance = active_configurations[ configuration_name.to_sym ]
-      if ensure_exists
-        exception_string = 'No configuration ' << configuration_name.to_s
-        exception_string << ' for ' << instance.to_s 
-        exception_string << '.'
-        raise ::ArgumentError, exception_string
-      end
-    end
-    
-    return configuration_instance
-    
   end
 
   #############################
