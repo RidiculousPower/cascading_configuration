@@ -3,6 +3,7 @@
 module ::CascadingConfiguration::Controller
 
   extend ::Forwardable
+  include ::ParallelAncestry
 
   extend ::Module::Cluster  
   cluster( :cascading_configuration_controller ).before_extend do |controller_instance|
@@ -79,9 +80,8 @@ module ::CascadingConfiguration::Controller
       # we don't want to ensure unless we failed to find what we expected
       if ensure_no_unregistered_superclass( instance )
         # if we had an unregistered superclass, ask again for the configuration
-        return configuration( instance, configuration_name, ensure_exists )
-      end
-      if ensure_exists
+        configuration_instance = configuration( instance, configuration_name, ensure_exists )
+      elsif ensure_exists
         exception_string = 'No configuration ' << configuration_name.to_s
         exception_string << ' for ' << instance.to_s 
         exception_string << '.'
@@ -295,13 +295,15 @@ module ::CascadingConfiguration::Controller
       
     elsif ! ( ::Module === instance )
       
-      if ensure_no_unregistered_superclass( instance_class = instance.class ) or
-         has_singleton_configurations?( instance_class )                      or 
-         has_instance_configurations?( instance_class )
+      unless is_parent?( instance, instance_class = instance.class )
+        if has_singleton_configurations?( instance_class )     or 
+           has_instance_configurations?( instance_class ) or
+           ensure_no_unregistered_superclass( instance_class )
 
-        had_unregistered_superclass = true
-        register_parent( instance, instance_class, :instance )
+          had_unregistered_superclass = true
+          register_parent( instance, instance_class, :instance )
 
+        end
       end
       
     end

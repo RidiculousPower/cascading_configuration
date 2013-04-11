@@ -21,6 +21,5 @@ end
 require_relative './requires.rb'
 
 module ::CascadingConfiguration
-  extend ::ParallelAncestry
   extend ::CascadingConfiguration::Controller
 end
