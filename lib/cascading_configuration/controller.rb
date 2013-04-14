@@ -194,9 +194,9 @@ module ::CascadingConfiguration::Controller
 
   end
 
-  ####################################
+  ###################################
   #  local_instance_configurations  #
-  ####################################
+  ###################################
   
   ###
   # Get hash of configurations names and their corresponding configuration instances.
@@ -297,7 +297,7 @@ module ::CascadingConfiguration::Controller
       
       unless is_parent?( instance, instance_class = instance.class )
         if has_singleton_configurations?( instance_class )     or 
-           has_instance_configurations?( instance_class ) or
+           has_instance_configurations?( instance_class )      or
            ensure_no_unregistered_superclass( instance_class )
 
           had_unregistered_superclass = true

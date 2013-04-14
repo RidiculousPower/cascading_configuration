@@ -56,13 +56,13 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
   
   def unregister_parent( parent_configurations )
 
-    super
-    
     parent_configurations.each do |this_configuration_name, this_parent_configuration|
       if this_child_configuration = self[ this_configuration_name ]
         this_child_configuration.unregister_parent( this_parent_configuration )
       end
     end
+    
+    super
     
     return self
 
@@ -74,14 +74,14 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
   
   def replace_parent( existing_parent, new_parent )
 
-    super
-    
     parent_configurations.each do |this_configuration_name, this_parent_configuration|
       if this_child_configuration = self[ this_configuration_name ] and
          this_new_parent = new_parent[ this_configuration_name ]
         this_child_configuration.replace_parent( this_parent_configuration, this_new_parent )
       end
     end
+    
+    super
     
     return self
 

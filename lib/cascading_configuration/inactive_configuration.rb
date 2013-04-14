@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 ::CascadingConfiguration::InactiveConfiguration = ::Struct.new( :parent,
                                                                 :configuration_module,

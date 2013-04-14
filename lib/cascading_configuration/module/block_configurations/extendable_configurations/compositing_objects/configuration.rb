@@ -253,6 +253,29 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   end
 
   ##########################
+  #  is_immediate_parent?  #
+  ##########################
+  
+  ###
+  # Query whether potential parent instance is an immediate parent for configuration in instance.
+  #
+  # @param potential_parent
+  #
+  #        Potential parent instance being queried.
+  #
+  # @return [ true, false ]
+  #
+  #         Whether potential parent instance is parent for configuration name.
+  #
+  def is_immediate_parent?( potential_parent )
+    
+    potential_parent = configuration_for_configuration_or_instance( potential_parent )
+
+    return @parents.include?( potential_parent )
+    
+  end
+
+  ##########################
   #  match_lowest_parents  #
   ##########################
   
