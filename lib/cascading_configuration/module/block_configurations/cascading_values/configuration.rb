@@ -20,9 +20,6 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
       raise ::ArgumentError, 'Block required to produce cascade value.'
     end
 
-    @cascade_block = cascade_block
-    @value_requires_translation = false
-
     super
         
   end
@@ -33,9 +30,25 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
   
   def initialize«inheriting_configuration»( for_instance, parent_configuration, event = nil, & cascade_block )
 
-    @cascade_block = cascade_block || parent_configuration.cascade_block
-    @value_requires_translation = true
+    super
+    
+    @cascade_block = parent_configuration.cascade_block || cascade_block unless @cascade_block
 
+    unless @cascade_block
+      raise ::ArgumentError, 'Block required to produce cascade value.'
+    end
+
+  end
+
+  ###############################
+  #  initialize«common_values»  #
+  ###############################
+  
+  def initialize«common_values»( for_instance, *parsed_args, & cascade_block )
+
+    @cascade_block = cascade_block
+    @value_requires_translation = false
+    
     super
 
   end
@@ -152,7 +165,28 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
   #  register_parent_for_ruby_hierarchy  #
   ########################################
   
-  alias_method :register_parent_for_ruby_hierarchy, :register_parent
+  ###
+  # Register configuration for instance with parent instance as parent for configuration when registration
+  #   is performed in the context of Ruby inheritance.
+  #
+  # @overload register_parent( parent, ... )
+  #
+  #   @param parent
+  #   
+  #          Parent instance from which configurations are being inherited.
+  #
+  # @return [self]
+  #
+  #         Self.
+  #
+  def register_parent_for_ruby_hierarchy( parent )
+    
+    register_parent( parent )
+    @cascade_block ||= @parent.cascade_block
+    
+    return self
+    
+  end
   
   ####################
   #  replace_parent  #
@@ -186,12 +220,12 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
     new_parent = nil
     existing_parent = nil
     
-    case args.size
+    new_parent = case args.size
       when 1
-        new_parent = args[ 0 ]
+        args[ 0 ]
       when 2
         # existing_parent = args[ 0 ]
-        new_parent = args[ 1 ]
+        args[ 1 ]
     end
     
     @parent.unregister_child( self ) if @parent
