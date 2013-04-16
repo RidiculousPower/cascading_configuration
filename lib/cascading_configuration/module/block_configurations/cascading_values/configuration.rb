@@ -32,10 +32,11 @@ class ::CascadingConfiguration::Module::BlockConfigurations::CascadingValues::Co
 
     super
     
-    @cascade_block = parent_configuration.cascade_block || cascade_block unless @cascade_block
-
-    unless @cascade_block
-      raise ::ArgumentError, 'Block required to produce cascade value.'
+    unless event
+      @cascade_block = parent_configuration.cascade_block || cascade_block unless @cascade_block
+      unless @cascade_block
+        raise ::ArgumentError, 'Block required to produce cascade value.'
+      end
     end
 
   end
