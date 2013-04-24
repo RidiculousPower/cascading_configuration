@@ -629,7 +629,7 @@ class ::CascadingConfiguration::Module < ::Module
                                                                         & block )
     
     if ::Module === instance
-      object_configuration = local_instance_configuration.new_inheriting_configuration( instance )
+      object_configuration = local_instance_configuration.new«inheriting_configuration»( instance )
       @controller.object_configurations( instance )[ accessor ] = object_configuration
     end
 

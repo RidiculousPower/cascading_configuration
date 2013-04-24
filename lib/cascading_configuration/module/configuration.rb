@@ -8,11 +8,11 @@
 #
 class ::CascadingConfiguration::Module::Configuration
   
-  #######################################
-  #  self.new_inheriting_configuration  #
-  #######################################
+  ########################################
+  #  self.new«inheriting_configuration»  #
+  ########################################
   
-  def self.new_inheriting_configuration( for_instance, parent_configuration, event = nil, & block )
+  def self.new«inheriting_configuration»( for_instance, parent_configuration, event = nil, & block )
     
     instance = allocate
     instance.initialize«inheriting_configuration»( for_instance, parent_configuration, event, & block )
@@ -21,67 +21,66 @@ class ::CascadingConfiguration::Module::Configuration
     
   end
 
-  ##############################################
-  #  self.new_inheriting_object_configuration  #
-  ##############################################
+  ###############################################
+  #  self.new«inheriting_object_configuration»  #
+  ###############################################
   
-  def self.new_inheriting_object_configuration( for_instance, parent_configuration, event = nil, & block )
+  def self.new«inheriting_object_configuration»( for_instance, parent_configuration, event = nil, & block )
     
-    return new_inheriting_configuration( for_instance, parent_configuration.parent, event, & block )
+    return new«inheriting_configuration»( for_instance, parent_configuration.parent, event, & block )
 
   end
 
-  ################################################
-  #  self.new_inheriting_inactive_configuration  #
-  ################################################
+  #################################################
+  #  self.new«inheriting_inactive_configuration»  #
+  #################################################
   
-  def self.new_inheriting_inactive_configuration( for_instance, parent_configuration, event = nil, & block )
+  def self.new«inheriting_inactive_configuration»( for_instance, parent_configuration, event = nil, & block )
 
-    instance = parent_configuration.new_configuration_without_parent( for_instance, event, & block )
-    
+    instance = parent_configuration.new«configuration_without_parent»( for_instance, event, & block )
     instance.initialize«inheriting_inactive_configuration»( parent_configuration, event )
     
     return instance
 
   end
   
-  ##################################
-  #  new_inheriting_configuration  #
-  ##################################
+  ###################################
+  #  new«inheriting_configuration»  #
+  ###################################
   
-  def new_inheriting_configuration( for_instance, event = nil, & block )
+  def new«inheriting_configuration»( for_instance, event = nil, & block )
     
-    return self.class.new_inheriting_configuration( for_instance, self, event, & block )
+    return self.class.new«inheriting_configuration»( for_instance, self, event, & block )
     
   end
 
-  #########################################
-  #  new_inheriting_object_configuration  #
-  #########################################
+  ##########################################
+  #  new«inheriting_object_configuration»  #
+  ##########################################
   
-  def new_inheriting_object_configuration( for_instance, event = nil, & block )
+  def new«inheriting_object_configuration»( for_instance, event = nil, & block )
     
-    return self.class.new_inheriting_object_configuration( for_instance, self, event, & block )
+    return self.class.new«inheriting_object_configuration»( for_instance, self, event, & block )
     
   end
   
   ######################################
-  #  new_configuration_without_parent  #
+  #  new«configuration_without_parent»  #
   ######################################
   
-  def new_configuration_without_parent( for_instance, event = nil, & block )
+  def new«configuration_without_parent»( for_instance, event = nil, & block )
     
     return self.class.new( for_instance, @module, @name, @write_name, & block )
     
   end
 
-  ###########################################
-  #  new_inheriting_inactive_configuration  #
-  ###########################################
+  ############################################
+  #  new«inheriting_inactive_configuration»  #
+  ############################################
   
-  def new_inheriting_inactive_configuration( for_instance, event = nil, & block )
+  def new«inheriting_inactive_configuration»( for_instance, event = nil, & block )
     
-    return self.class.new_inheriting_inactive_configuration( for_instance, self, event, & block )
+    return self.class.new«inheriting_inactive_configuration»( for_instance, self, event, & block )
     
   end
 
@@ -173,8 +172,8 @@ class ::CascadingConfiguration::Module::Configuration
 
     # If we are defining configurations on ::Class we can only have explicit parents.
     case @instance
-       when ::Class
-         extend( self.class::ClassConfiguration )
+      when ::Class
+        extend( self.class::ClassConfiguration )
         if @instance.equal?( ::Class )
           extend( self.class::ClassInstanceConfiguration )
         elsif ( instance_class = @instance.class ) < ::Module and not instance_class < ::Class
@@ -212,8 +211,7 @@ class ::CascadingConfiguration::Module::Configuration
   def configuration_for_configuration_or_instance( configuration_or_instance )
         
     return case configuration_or_instance
-      when ::CascadingConfiguration::Module::Configuration,
-           ::CascadingConfiguration::InactiveConfiguration
+      when ::CascadingConfiguration::Module::Configuration
         configuration_or_instance
       else
         controller = @module.controller

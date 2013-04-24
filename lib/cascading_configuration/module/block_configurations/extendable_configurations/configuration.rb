@@ -41,10 +41,10 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   end
 
   ######################################
-  #  new_configuration_without_parent  #
+  #  new«configuration_without_parent»  #
   ######################################
 
-  def new_configuration_without_parent( for_instance, event = nil, & block )
+  def new«configuration_without_parent»( for_instance, event = nil, & block )
 
     new_configuration = self.class.new( for_instance, @module, @name, @write_name, & block )
     

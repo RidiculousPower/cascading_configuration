@@ -6,56 +6,78 @@ require_relative 'support/named_class_and_module.rb'
 
 describe ::CascadingConfiguration do
   
-  it 'acts as a cluster' do
-
-    module ::CascadingConfiguration::ClusterIncludeMock
-
+  let( :mock_class_one ) do
+    ::Class.new do
       include ::CascadingConfiguration
+      attr_configuration :configuration_one, :configuration_two
+      attr_object_array :array_one, :array_two, :array_three
+    end.name( :MockClassOne )
+  end
 
-      ancestors.include?( ::CascadingConfiguration::Setting ).should == true
-      is_a?( ::CascadingConfiguration::Setting::ClassInstance ).should == true
-
-      ancestors.include?( ::CascadingConfiguration::Hash ).should == true
-      is_a?( ::CascadingConfiguration::Hash::ClassInstance ).should == true
-
-      ancestors.include?( ::CascadingConfiguration::Array ).should == true
-      is_a?( ::CascadingConfiguration::Array::ClassInstance ).should == true
-
-      ancestors.include?( ::CascadingConfiguration::Array::Unique ).should == true
-      is_a?( ::CascadingConfiguration::Array::Unique::ClassInstance ).should == true
-
-      ancestors.include?( ::CascadingConfiguration::Array::Sorted ).should == true
-      is_a?( ::CascadingConfiguration::Array::Sorted::ClassInstance ).should == true
-
-      ancestors.include?( ::CascadingConfiguration::Array::Sorted::Unique ).should == true
-      is_a?( ::CascadingConfiguration::Array::Sorted::Unique::ClassInstance ).should == true
-
+  let( :mock_class_two ) do
+    ::Class.new do
+      include ::CascadingConfiguration
+      attr_configuration :configuration_one, :configuration_two
+      attr_object_array :array_one, :array_two, :array_three
     end
+  end.name( :MockClassTwo )
 
-    module ::CascadingConfiguration::ClusterExtendMock
+  let( :instance_one  ) { mock_class_one.new }
+  let( :instance_two  ) { mock_class_one.new }
+  let( :instance_three  ) { mock_class_one.new }
+  
+  ###################
+  #  self.included  #
+  ###################
+  
+  context '::included' do
+    let( :including_class  ) { ::Class.new { include ::CascadingConfiguration } }
+    it 'enables including class with all cascading_configuration modules' do
+      including_class.ancestors.include?( ::CascadingConfiguration::Setting ).should == true
+      including_class.is_a?( ::CascadingConfiguration::Setting::ClassInstance ).should == true
 
-      extend ::CascadingConfiguration
+      including_class.ancestors.include?( ::CascadingConfiguration::Hash ).should == true
+      including_class.is_a?( ::CascadingConfiguration::Hash::ClassInstance ).should == true
 
-      is_a?( ::CascadingConfiguration::Setting ).should == true
-      is_a?( ::CascadingConfiguration::Setting::ClassInstance ).should == true
+      including_class.ancestors.include?( ::CascadingConfiguration::Array ).should == true
+      including_class.is_a?( ::CascadingConfiguration::Array::ClassInstance ).should == true
 
-      is_a?( ::CascadingConfiguration::Hash ).should == true
-      is_a?( ::CascadingConfiguration::Hash::ClassInstance ).should == true
+      including_class.ancestors.include?( ::CascadingConfiguration::Array::Unique ).should == true
+      including_class.is_a?( ::CascadingConfiguration::Array::Unique::ClassInstance ).should == true
 
-      is_a?( ::CascadingConfiguration::Array ).should == true
-      is_a?( ::CascadingConfiguration::Array::ClassInstance ).should == true
+      including_class.ancestors.include?( ::CascadingConfiguration::Array::Sorted ).should == true
+      including_class.is_a?( ::CascadingConfiguration::Array::Sorted::ClassInstance ).should == true
 
-      is_a?( ::CascadingConfiguration::Array::Unique ).should == true
-      is_a?( ::CascadingConfiguration::Array::Unique::ClassInstance ).should == true
-
-      is_a?( ::CascadingConfiguration::Array::Sorted ).should == true
-      is_a?( ::CascadingConfiguration::Array::Sorted::ClassInstance ).should == true
-
-      is_a?( ::CascadingConfiguration::Array::Sorted::Unique ).should == true
-      is_a?( ::CascadingConfiguration::Array::Sorted::Unique::ClassInstance ).should == true
-
+      including_class.ancestors.include?( ::CascadingConfiguration::Array::Sorted::Unique ).should == true
+      including_class.is_a?( ::CascadingConfiguration::Array::Sorted::Unique::ClassInstance ).should == true
     end
+  end
+  
+  ###################
+  #  self.extended  #
+  ###################
+  
+  context '::extended' do
+    let( :extending_class  ) { ::Class.new.extend( ::CascadingConfiguration ) }
+    it 'enables extending class singleton (only) with all cascading_configuration modules' do
+      extending_class.is_a?( ::CascadingConfiguration::Setting ).should == true
+      extending_class.is_a?( ::CascadingConfiguration::Setting::ClassInstance ).should == true
 
+      extending_class.is_a?( ::CascadingConfiguration::Hash ).should == true
+      extending_class.is_a?( ::CascadingConfiguration::Hash::ClassInstance ).should == true
+
+      extending_class.is_a?( ::CascadingConfiguration::Array ).should == true
+      extending_class.is_a?( ::CascadingConfiguration::Array::ClassInstance ).should == true
+
+      extending_class.is_a?( ::CascadingConfiguration::Array::Unique ).should == true
+      extending_class.is_a?( ::CascadingConfiguration::Array::Unique::ClassInstance ).should == true
+
+      extending_class.is_a?( ::CascadingConfiguration::Array::Sorted ).should == true
+      extending_class.is_a?( ::CascadingConfiguration::Array::Sorted::ClassInstance ).should == true
+
+      extending_class.is_a?( ::CascadingConfiguration::Array::Sorted::Unique ).should == true
+      extending_class.is_a?( ::CascadingConfiguration::Array::Sorted::Unique::ClassInstance ).should == true
+    end
   end
 
   ############################################
@@ -74,24 +96,173 @@ describe ::CascadingConfiguration do
         include ::CascadingConfiguration::Setting
         attr_setting :configuration_A, :configuration_B
       end
+      ::CascadingConfiguration.ensure_no_unregistered_superclass( class_D )
     end
     it 'will register parents properly after the fact (I believe this only applies to subclasses created before the class includes a CascadingConfiguration module)' do
-      ::CascadingConfiguration.ensure_no_unregistered_superclass( class_D )
-      ::CascadingConfiguration.has_configuration?( class_B, :configuration_A ).should be true
-      ::CascadingConfiguration.configuration( class_B, :configuration_A ).parent.should be ::CascadingConfiguration.configuration( class_A, :configuration_A )
-      ::CascadingConfiguration.has_configuration?( class_B, :configuration_B ).should be true
-      ::CascadingConfiguration.configuration( class_B, :configuration_B ).parent.should be ::CascadingConfiguration.configuration( class_A, :configuration_B )
-      
-      ::CascadingConfiguration.has_configuration?( class_C, :configuration_A ).should be true
-      ::CascadingConfiguration.configuration( class_C, :configuration_A ).parent.should be ::CascadingConfiguration.configuration( class_B, :configuration_A )
-      ::CascadingConfiguration.has_configuration?( class_C, :configuration_B ).should be true
-      ::CascadingConfiguration.configuration( class_C, :configuration_B ).parent.should be ::CascadingConfiguration.configuration( class_B, :configuration_B )
+      class_B.•configuration_A.parent.should be class_A.•configuration_A
+      class_B.•configuration_B.parent.should be class_A.•configuration_B
 
-      ::CascadingConfiguration.has_configuration?( class_D, :configuration_A ).should be true
-      ::CascadingConfiguration.configuration( class_D, :configuration_A ).parent.should be ::CascadingConfiguration.configuration( class_C, :configuration_A )
-      ::CascadingConfiguration.has_configuration?( class_D, :configuration_B ).should be true
-      ::CascadingConfiguration.configuration( class_D, :configuration_B ).parent.should be ::CascadingConfiguration.configuration( class_C, :configuration_B )
+      class_C.•configuration_A.parent.should be class_B.•configuration_A
+      class_C.•configuration_B.parent.should be class_B.•configuration_B
+
+      class_D.•configuration_A.parent.should be class_C.•configuration_A
+      class_D.•configuration_B.parent.should be class_C.•configuration_B
     end
   end
   
+  #############################################
+  #  self.share_all_singleton_configurations  #
+  #############################################
+
+  context '::share_all_singleton_configurations' do
+    before :each do
+      ::CascadingConfiguration.share_all_singleton_configurations( instance_one, instance_two )
+    end
+    it 'will share singleton configurations for an instance so that they are the same configuration instances as another instance' do
+      ::CascadingConfiguration.singleton_configurations( instance_two ).should be ::CascadingConfiguration.singleton_configurations( instance_one )
+    end
+  end
+
+  ############################################
+  #  self.share_all_instance_configurations  #
+  ############################################
+
+  context '::share_all_instance_configurations' do
+    before :each do
+      ::CascadingConfiguration.share_all_instance_configurations( instance_one, instance_two )
+    end
+    it 'will share instance configurations for an instance so that they are the same configuration instances as another instance' do
+      ::CascadingConfiguration.instance_configurations( instance_two ).should be ::CascadingConfiguration.instance_configurations( instance_one )
+    end
+  end
+
+  ##########################################
+  #  self.share_all_object_configurations  #
+  ##########################################
+
+  context '::share_all_object_configurations' do
+    before :each do
+      ::CascadingConfiguration.share_all_object_configurations( instance_one, instance_two )
+    end
+    it 'will share object configurations for an instance so that they are the same configuration instances as another instance' do
+      ::CascadingConfiguration.object_configurations( instance_two ).should be ::CascadingConfiguration.object_configurations( instance_one )
+    end
+  end
+  
+  ###################################
+  #  self.share_all_configurations  #
+  ###################################
+  
+  context '::share_all_configurations' do
+    before :each do
+      ::CascadingConfiguration.share_all_configurations( instance_one, instance_two )
+    end
+    it 'will share all configurations for an instance so that they are the same configuration instances as another instance' do
+      ::CascadingConfiguration.singleton_configurations( instance_two ).should be ::CascadingConfiguration.singleton_configurations( instance_one )
+      ::CascadingConfiguration.instance_configurations( instance_two ).should be ::CascadingConfiguration.instance_configurations( instance_one )
+      ::CascadingConfiguration.object_configurations( instance_two ).should be ::CascadingConfiguration.object_configurations( instance_one )
+    end
+  end
+  
+  ###################################################
+  #  self.objects_sharing_singleton_configurations  #
+  ###################################################
+  
+  context '::objects_sharing_singleton_configurations' do
+    it 'will create or return a unique array for object ID' do
+      sharing_objects = ::CascadingConfiguration.objects_sharing_singleton_configurations( instance_one, true )
+      sharing_objects.should be_a ::Array::Unique
+      ::CascadingConfiguration.objects_sharing_singleton_configurations( instance_one, true ).should be sharing_objects
+    end
+  end
+
+  ##################################################
+  #  self.objects_sharing_instance_configurations  #
+  ##################################################
+  
+  context '::objects_sharing_instance_configurations' do
+    it 'will create or return a unique array for object ID' do
+      sharing_objects = ::CascadingConfiguration.objects_sharing_instance_configurations( instance_one, true )
+      sharing_objects.should be_a ::Array::Unique
+      ::CascadingConfiguration.objects_sharing_instance_configurations( instance_one, true ).should be sharing_objects
+    end
+  end
+
+  ################################################
+  #  self.objects_sharing_object_configurations  #
+  ################################################
+
+  context '::objects_sharing_object_configurations' do
+    it 'will create or return a unique array for object ID' do
+      sharing_objects = ::CascadingConfiguration.objects_sharing_object_configurations( instance_one, true )
+      sharing_objects.should be_a ::Array::Unique
+      ::CascadingConfiguration.objects_sharing_object_configurations( instance_one, true ).should be sharing_objects
+    end
+  end
+
+  #########################################
+  #  self.share_singleton_configurations  #
+  #########################################
+
+  context '::share_singleton_configurations' do
+    before :each do
+      ::CascadingConfiguration.share_singleton_configurations( mock_class_one, mock_class_two )
+    end
+    it 'will share singleton configurations for an instance so that they are the same configuration instances as another instance when configuration has been defined for both instances' do
+      mock_class_one.•configuration_one.should be mock_class_two.•configuration_one
+      mock_class_one.•configuration_two.should be mock_class_two.•configuration_two
+      instance_one.•configuration_one.should_not be instance_two.•configuration_one
+      instance_one.•configuration_two.should_not be instance_two.•configuration_two
+    end
+  end
+
+  ########################################
+  #  self.share_instance_configurations  #
+  ########################################
+
+  context '::share_instance_configurations' do
+    before :each do
+      ::CascadingConfiguration.share_instance_configurations( instance_one, instance_two )
+    end
+    it 'will share instance configurations for an instance so that they are the same configuration instances as another instance when configuration has been defined for both instances' do
+      mock_class_one.•configuration_one.should_not be mock_class_two.•configuration_one
+      mock_class_one.•configuration_two.should_not be mock_class_two.•configuration_two
+      instance_one.•configuration_one.should be instance_two.•configuration_one
+      instance_one.•configuration_two.should be instance_two.•configuration_two
+    end
+  end
+
+  ######################################
+  #  self.share_object_configurations  #
+  ######################################
+
+  context '::share_object_configurations' do
+    before :each do
+      ::CascadingConfiguration.share_object_configurations( mock_class_one, mock_class_two )
+    end
+    it 'will share object configurations for an instance so that they are the same configuration instances as another instance when configuration has been defined for both instances' do
+      ::CascadingConfiguration.object_configuration( mock_class_one, :array_one ).should be ::CascadingConfiguration.object_configuration( mock_class_two, :array_one )
+      ::CascadingConfiguration.object_configuration( mock_class_one, :array_two ).should be ::CascadingConfiguration.object_configuration( mock_class_two, :array_two )
+    end
+  end
+  
+  ###############################
+  #  self.share_configurations  #
+  ###############################
+  
+  context '::share_configurations' do
+    before :each do
+      ::CascadingConfiguration.share_configurations( mock_class_one, mock_class_two )
+      ::CascadingConfiguration.share_configurations( instance_one, instance_two )
+    end
+    it 'will share configurations for an instance so that they are the same configuration instances as another instance when configuration has been defined for both instances' do
+      mock_class_one.•configuration_one.should be mock_class_two.•configuration_one
+      mock_class_one.•configuration_two.should be mock_class_two.•configuration_two
+      instance_one.•configuration_one.should be instance_two.•configuration_one
+      instance_one.•configuration_two.should be instance_two.•configuration_two
+      ::CascadingConfiguration.object_configuration( mock_class_one, :array_one ).should be ::CascadingConfiguration.object_configuration( mock_class_two, :array_one )
+      ::CascadingConfiguration.object_configuration( mock_class_one, :array_two ).should be ::CascadingConfiguration.object_configuration( mock_class_two, :array_two )
+    end
+  end
+
 end

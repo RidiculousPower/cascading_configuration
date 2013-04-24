@@ -71,7 +71,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
     @support_modules = { }
     
     # create a cascading block to register configurations for parent at include/extend
-    initialize_inheritance_for_instance( @instance, extending )
+    initialize«inheritance_for_instance»( @instance, extending )
     
     @controller = self.class.controller
         
@@ -102,10 +102,10 @@ class ::CascadingConfiguration::InstanceController < ::Module
   end
 
   #########################################
-  #  initialize_inheritance_for_instance  #
+  #  initialize«inheritance_for_instance»  #
   #########################################
   
-  def initialize_inheritance_for_instance( instance, extending = false )
+  def initialize«inheritance_for_instance»( instance, extending = false )
     
     should_enable = true
     
@@ -121,7 +121,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
       case instance
       
         when ::Class
-                  
+          
           # Subclasses need to be told to cascade separately, as their cascade behavior is distinct
           instance.cluster( :cascading_configuration_inheritance ).subclass.cascade do |inheriting_instance|
             instance_controller.initialize«inheriting_configuration»( self, inheriting_instance, :subclass )
@@ -132,7 +132,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
 
             instance.cluster( :cascading_configuration_inheritance ).before_instance do |inheriting_instance|
               instance_controller.initialize«inheriting_configuration»( self, inheriting_instance, :instance )
-              instance_controller.initialize_inheritance_for_instance( inheriting_instance )
+              instance_controller.initialize«inheritance_for_instance»( inheriting_instance )
             end
             
           else
@@ -157,7 +157,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
             cluster = instance.cluster( :cascading_configuration_inheritance )
             cluster.before_include do |inheriting_instance|
               instance_controller.initialize«inheriting_configuration»( self, inheriting_instance, :include )
-              instance_controller.initialize_inheritance_for_instance( inheriting_instance )
+              instance_controller.initialize«inheritance_for_instance»( inheriting_instance )
             end
 
             cluster.before_extend do |inheriting_instance|
@@ -165,7 +165,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
               # extend cascades down classes but not modules
               case inheriting_instance
                 when ::Class
-                  instance_controller.initialize_inheritance_for_instance( inheriting_instance )
+                  instance_controller.initialize«inheritance_for_instance»( inheriting_instance )
               end
             end
 

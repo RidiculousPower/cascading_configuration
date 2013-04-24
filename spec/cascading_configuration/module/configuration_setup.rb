@@ -27,11 +27,11 @@ def setup_configuration_tests
                              configuration_write_name,
                              & parent_configuration_block )
   end
-  let( :parent_configuration_two ) { configuration_class.new_inheriting_configuration( parent_instance_two, 
+  let( :parent_configuration_two ) { configuration_class.new«inheriting_configuration»( parent_instance_two, 
                                                                                   parent_configuration,
                                                                                   :include,
                                                                                   & parent_two_configuration_block ) }
-  let( :child_configuration ) { configuration_class.new_inheriting_configuration( child_instance, 
+  let( :child_configuration ) { configuration_class.new«inheriting_configuration»( child_instance, 
                                                                              parent_configuration_two,
                                                                              :include,
                                                                              & child_configuration_block ) }

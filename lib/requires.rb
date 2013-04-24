@@ -6,17 +6,17 @@ files = [
   
   'controller',
 
-  'inactive_configuration',
-
   'object_with_configurations',
   
   'include_creates_instance_support',
   
   'configuration_hash',
-  'configuration_hash/active_configurations',
   'configuration_hash/inactive_configurations',
+  'configuration_hash/inactive_configurations/instance_configurations',
+  'configuration_hash/inactive_configurations/object_configurations',
+  'configuration_hash/active_configurations',
+  'configuration_hash/singleton_configurations',
   'configuration_hash/instance_configurations',
-  'configuration_hash/object_configurations',
   
   'module',
   'module/configuration',

@@ -35,7 +35,7 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
                              & parent_two_extension_block )
   end
   let( :child_configuration ) do
-    configuration_class.new_inheriting_configuration( child_instance, 
+    configuration_class.new«inheriting_configuration»( child_instance, 
                                                  parent_configuration, 
                                                  :include, 
                                                  *child_extension_modules,

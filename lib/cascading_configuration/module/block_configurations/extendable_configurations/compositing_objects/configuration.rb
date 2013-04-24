@@ -7,12 +7,12 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
       ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::Configuration
   
   ##############################################
-  #  self.new_inheriting_object_configuration  #
+  #  self.new«inheriting_object_configuration»  #
   ##############################################
   
-  def self.new_inheriting_object_configuration( for_instance, parent_configuration, event = nil, & block )
+  def self.new«inheriting_object_configuration»( for_instance, parent_configuration, event = nil, & block )
     
-    instance = parent_configuration.new_configuration_without_parent( for_instance, event, & block )
+    instance = parent_configuration.new«configuration_without_parent»( for_instance, event, & block )
     parent_configuration.parents.each { |this_parent| instance.register_parent( this_parent ) }
     
     return instance

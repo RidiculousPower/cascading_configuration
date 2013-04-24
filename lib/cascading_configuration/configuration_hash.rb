@@ -20,11 +20,10 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
   
   def register_parent( parent_configurations, event = nil )
     
-    super( parent_configurations )
-
-    # we call load_parent_state in super, so we can use a simple flag
-    # otherwise we have to store keyed data for lazy loading later
     @event = event
+    super( parent_configurations )
+    # we call load_parent_state so we can use a simple flag to track event
+    # otherwise we have to store keyed data for lazy loading later
     load_parent_state
     @event = nil
     
@@ -37,7 +36,7 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
   #########################
   
   def register_parent_key( parent_configurations, configuration_name )
-    
+
     if existing_configuration = self[ configuration_name ]
       parent_configuration = parent_configurations[ configuration_name ]
       @event ? existing_configuration.register_parent_for_ruby_hierarchy( parent_configuration ) 
@@ -86,6 +85,24 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     return self
 
   end
+  
+  ##########################
+  #  share_configurations  #
+  ##########################
+  
+  def share_configurations( configurations )
+
+    if is_parent?( configurations )
+      # replace each existing configuration with parent's configuration (achieved by marking as requiring lookup)
+      configurations.each { |this_name, this_configuration| register_parent_key( configurations, this_name ) }
+    else
+      # register shared configurations as parent without declaring it as parent in controller
+      register_parent( configurations )
+    end
     
+    return self
+    
+  end
+   
 end
 
