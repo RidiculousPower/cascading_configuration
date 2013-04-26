@@ -200,7 +200,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
   #  create_singleton_support  #
   ##############################
   
-  def create_singleton_support( module_type_name = :CCM_singleton, 
+  def create_singleton_support( module_type_name = :singleton_configurations, 
                                 support_module_class = self.class::SupportModule::SingletonSupportModule,
                                 module_constant_name = module_type_name.to_s.to_camel_case )
 
@@ -212,7 +212,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
   #  singleton_support  #
   #######################
   
-  def singleton_support( module_type_name = :CCM_singleton )
+  def singleton_support( module_type_name = :singleton_configurations )
 
     return support( module_type_name )
 
@@ -222,7 +222,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
   #  create_instance_support  #
   #############################
 
-  def create_instance_support( module_type_name = :CCM_instance, 
+  def create_instance_support( module_type_name = :instance_configurations, 
                                support_module_class = self.class::SupportModule::InstanceSupportModule,
                                module_constant_name = module_type_name.to_s.to_camel_case )
 
@@ -234,7 +234,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
   #  instance_support  #
   ######################
 
-  def instance_support( module_type_name = :CCM_instance )
+  def instance_support( module_type_name = :instance_configurations )
 
     return support( module_type_name )
 
@@ -244,7 +244,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
   #  create_local_instance_support  #
   ###################################
 
-  def create_local_instance_support( module_type_name = :CCM_local_instance, 
+  def create_local_instance_support( module_type_name = :local_instance_configurations, 
                                      support_module_class = self.class::SupportModule::LocalInstanceSupportModule,
                                      module_constant_name = module_type_name.to_s.to_camel_case )
 
@@ -256,7 +256,7 @@ class ::CascadingConfiguration::InstanceController < ::Module
   #  local_instance_support  #
   ############################
 
-  def local_instance_support( module_type_name = :CCM_local_instance )
+  def local_instance_support( module_type_name = :local_instance_configurations )
 
     return support( module_type_name )
 
