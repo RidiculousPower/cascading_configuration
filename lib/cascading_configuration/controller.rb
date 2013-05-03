@@ -446,9 +446,9 @@ module ::CascadingConfiguration::Controller
 
   end
   
-  #######################################
+  #####################################
   #  ensure_no_unregistered_ancestor  #
-  #######################################
+  #####################################
   
   def ensure_no_unregistered_ancestor( instance, missing_configuration_name )
     
@@ -476,7 +476,7 @@ module ::CascadingConfiguration::Controller
               case instance
                 when ::Class
                   register_parent( instance, this_ancestor, :subclass )
-                when ::Module
+                else
                   register_parent( instance, this_ancestor, :include )
               end
             end
@@ -486,15 +486,13 @@ module ::CascadingConfiguration::Controller
     
         else
 
-          unless is_parent?( instance, instance_class = instance.class )
-            if has_singleton_configurations?( instance_class )     or 
-               has_instance_configurations?( instance_class )      or
-               ensure_no_unregistered_ancestor( instance_class )
+          if has_singleton_configurations?( instance_class = instance.class )     or 
+             has_instance_configurations?( instance_class )      or
+             ensure_no_unregistered_ancestor( instance_class )
 
-              had_unregistered_superclass = true
-              register_parent( instance, instance_class, :instance )
+            had_unregistered_superclass = true
+            register_parent( instance, instance_class, :instance )
 
-            end
           end
       
       end
