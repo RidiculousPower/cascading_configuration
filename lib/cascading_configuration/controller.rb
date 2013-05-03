@@ -261,7 +261,7 @@ module ::CascadingConfiguration::Controller
     unless active_configurations = active_configurations( instance, false ) and
            configuration_instance = active_configurations[ configuration_name.to_sym ]
       # we don't want to ensure unless we failed to find what we expected
-      if ensure_no_unregistered_superclass( instance )
+      if ensure_no_unregistered_ancestor( instance, configuration_name )
         # if we had an unregistered superclass, ask again for the configuration
         configuration_instance = configuration( instance, configuration_name, ensure_exists )
       elsif ensure_exists
@@ -332,7 +332,6 @@ module ::CascadingConfiguration::Controller
                                                 : ::CascadingConfiguration::ConfigurationHash::
                                                     SingletonConfigurations.new( self, instance )
             @singleton_configurations[ instance_id ] = configurations
-            ensure_no_unregistered_superclass( instance )
           end
         end
       else
@@ -370,7 +369,6 @@ module ::CascadingConfiguration::Controller
           else
             ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations.new( self, instance )
         end
-        ensure_no_unregistered_superclass( instance )
       end
     end
     
@@ -447,59 +445,59 @@ module ::CascadingConfiguration::Controller
     return configurations
 
   end
-
+  
   #######################################
-  #  ensure_no_unregistered_superclass  #
+  #  ensure_no_unregistered_ancestor  #
   #######################################
   
-  def ensure_no_unregistered_superclass( instance )
+  def ensure_no_unregistered_ancestor( instance, missing_configuration_name )
     
+    # We want to know if we have a class above us that has configurations that we did not receive.
+    # This happens if:
+    # * a module is included/extended in sub-module before configurations are created for module
+    # * a subclass is created before configurations are created for class
+    # * an instance has just been created
+
     had_unregistered_superclass = false
+
+    # if we try to register Class or above we get stuck in a loop
+    unless instance.equal?( ::Class )
+      
+      case instance
     
-    if ::Class === instance
+        when ::Module
 
-      # if we try to register Class or above we get stuck in a loop
-      unless instance.equal?( ::Class )
-        # We want to know if we have a class above us that has configurations that we did not receive.
-        # This happens if we had already initialized the subclass before CC was added to the class above us.
-        # This could be multiple classes - so we could have D, ..., A where A has configs.
-        # It can't be modules because including them would call their hook, initializing the instance.
-        # So we need the next class and if it hasn't initialized, 
-        # find the next class - if it has initialized, register it as our parent
-        instance.ancestors.each do |this_ancestor|
-
-          next if this_ancestor.equal?( instance ) or ! ( ::Class === this_ancestor )
-          break if this_ancestor >= ::Class
-
-          if ensure_no_unregistered_superclass( this_ancestor ) or
-             has_singleton_configurations?( this_ancestor )     or 
-             has_instance_configurations?( this_ancestor )
-
-            had_unregistered_superclass = true
-            register_parent( instance, this_ancestor, :subclass )
-
+          instance.ancestors.each_range( 1 ) do |this_ancestor|
+            break unless this_ancestor.method_defined?( missing_configuration_name )
+            if ensure_no_unregistered_ancestor( this_ancestor, missing_configuration_name ) or
+               has_singleton_configurations?( this_ancestor )                               or 
+               has_instance_configurations?( this_ancestor )
+              had_unregistered_superclass = true
+              case instance
+                when ::Class
+                  register_parent( instance, this_ancestor, :subclass )
+                when ::Module
+                  register_parent( instance, this_ancestor, :include )
+              end
+            end
+            # lookup through the ancestor chain occurs recursively, so the first time we get here we are done
+            break
           end
-          
-          # we only want the first ancestor class, after which we are done
-          # any further lookup already occurred recursively
-          break
+    
+        else
 
-        end
+          unless is_parent?( instance, instance_class = instance.class )
+            if has_singleton_configurations?( instance_class )     or 
+               has_instance_configurations?( instance_class )      or
+               ensure_no_unregistered_ancestor( instance_class )
+
+              had_unregistered_superclass = true
+              register_parent( instance, instance_class, :instance )
+
+            end
+          end
+      
       end
-      
-    elsif ! ( ::Module === instance )
-      
-      unless is_parent?( instance, instance_class = instance.class )
-        if has_singleton_configurations?( instance_class )     or 
-           has_instance_configurations?( instance_class )      or
-           ensure_no_unregistered_superclass( instance_class )
-
-          had_unregistered_superclass = true
-          register_parent( instance, instance_class, :instance )
-
-        end
-      end
-      
     end
     
     return had_unregistered_superclass

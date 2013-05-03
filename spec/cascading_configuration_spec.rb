@@ -81,10 +81,10 @@ describe ::CascadingConfiguration do
   end
 
   ############################################
-  #  self.ensure_no_unregistered_superclass  #
+  #  self.ensure_no_unregistered_ancestor  #
   ############################################
   
-  context '::ensure_no_unregistered_superclass' do
+  context '::ensure_no_unregistered_ancestor' do
     let( :class_A ) { ::Class.new.name( :ClassA ) }
     let( :class_B ) { ::Class.new( class_A ).name( :ClassB ) }
     let( :class_C ) { ::Class.new( class_B ).name( :ClassC ) }
@@ -96,7 +96,7 @@ describe ::CascadingConfiguration do
         include ::CascadingConfiguration::Setting
         attr_setting :configuration_A, :configuration_B
       end
-      ::CascadingConfiguration.ensure_no_unregistered_superclass( class_D )
+      ::CascadingConfiguration.ensure_no_unregistered_ancestor( class_D, :configuration_A )
     end
     it 'will register parents properly after the fact (I believe this only applies to subclasses created before the class includes a CascadingConfiguration module)' do
       class_B.•configuration_A.parent.should be class_A.•configuration_A
