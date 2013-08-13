@@ -4,7 +4,11 @@
 #  CascadingConfiguration::Hash allows definition of hash attributes that will composite downward through
 #  the ancestor chain.
 # 
+::CascadingConfiguration::Hash = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::
+                                   CompositingObjects::Hash.new( :hash, ::Hash::Compositing, :configuration_hash )
 module ::CascadingConfiguration::Hash
+
+  ::CascadingConfiguration.register_configuration_module( self )
 
   ###############
   #  attr_hash  #
@@ -26,7 +30,7 @@ module ::CascadingConfiguration::Hash
   #
   #   @yield [ ]
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -53,7 +57,7 @@ module ::CascadingConfiguration::Hash
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -80,7 +84,7 @@ module ::CascadingConfiguration::Hash
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -107,7 +111,7 @@ module ::CascadingConfiguration::Hash
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -133,15 +137,10 @@ module ::CascadingConfiguration::Hash
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
-
-  hash_module = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::
-                  CompositingObjects::Hash.new( :hash, ::Hash::Compositing, :configuration_hash )
-
-  ::CascadingConfiguration.enable_instance_as_cascading_configuration_module( self, hash_module )
 
 end

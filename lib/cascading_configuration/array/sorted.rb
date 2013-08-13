@@ -4,7 +4,13 @@
 #  CascadingConfiguration::Array::Sorted allows definition of array attributes that will composite downward through
 #  the ancestor chain and ensure that member elements remain sorted.
 # 
+::CascadingConfiguration::Array::Sorted = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::
+                                            CompositingObjects::Array.new( :sorted_array, 
+                                                                           ::Array::Sorted::Compositing, 
+                                                                           :configuration_sorted_array )
 module ::CascadingConfiguration::Array::Sorted
+
+  ::CascadingConfiguration.register_configuration_module( self )
 
   #######################
   #  attr_sorted_array  #
@@ -26,7 +32,7 @@ module ::CascadingConfiguration::Array::Sorted
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -53,7 +59,7 @@ module ::CascadingConfiguration::Array::Sorted
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -80,7 +86,7 @@ module ::CascadingConfiguration::Array::Sorted
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -107,7 +113,7 @@ module ::CascadingConfiguration::Array::Sorted
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -133,17 +139,10 @@ module ::CascadingConfiguration::Array::Sorted
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
-
-  sorted_array_module = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::
-                          CompositingObjects::Array.new( :sorted_array, 
-                                                         ::Array::Sorted::Compositing, 
-                                                         :configuration_sorted_array )
-  
-  ::CascadingConfiguration.enable_instance_as_cascading_configuration_module( self, sorted_array_module )
 
 end

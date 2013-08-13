@@ -64,9 +64,9 @@ class ::CascadingConfiguration::Module::Configuration
     
   end
   
-  ######################################
+  #######################################
   #  new«configuration_without_parent»  #
-  ######################################
+  #######################################
   
   def new«configuration_without_parent»( for_instance, event = nil, & block )
     

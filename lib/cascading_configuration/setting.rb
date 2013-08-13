@@ -4,7 +4,10 @@
 #  CascadingConfiguration::Setting allows definition of setting attributes that will retrieve
 #  the first value defined in an instance looking up the ancestor chain.
 # 
+::CascadingConfiguration::Setting = ::CascadingConfiguration::Module::CascadingSettings.new( :setting, :configuration )
 module ::CascadingConfiguration::Setting
+
+  ::CascadingConfiguration.register_configuration_module( self )
   
   ##################
   #  attr_setting  #
@@ -103,9 +106,5 @@ module ::CascadingConfiguration::Setting
   #
   #   @return self
   #
-  
-  setting_module = ::CascadingConfiguration::Module::CascadingSettings.new( :setting, :configuration )
-  
-  ::CascadingConfiguration.enable_instance_as_cascading_configuration_module( self, setting_module )
 
 end

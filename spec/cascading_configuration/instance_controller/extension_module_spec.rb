@@ -4,7 +4,7 @@ require_relative '../../../lib/cascading_configuration.rb'
 
 require_relative '../../support/named_class_and_module.rb'
 
-describe ::CascadingConfiguration::InstanceController::ExtensionModule do
+describe ::CascadingConfiguration::ExtensionModule do
   
   let( :instance ) do
     ::Module.new do
@@ -14,7 +14,7 @@ describe ::CascadingConfiguration::InstanceController::ExtensionModule do
   end
   let( :instance_controller ) { ::CascadingConfiguration::InstanceController.new( instance ) }
   let( :ccm ) do
-    ::CascadingConfiguration::InstanceController::ExtensionModule.new( instance_controller, :some_configuration )
+    ::CascadingConfiguration::ExtensionModule.new( instance_controller, :some_configuration )
   end
   
   ################

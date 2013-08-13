@@ -47,7 +47,8 @@ class ::CascadingConfiguration::Module < ::Module
     @module_type_name_aliases = module_type_name_aliases
 
     define_cascading_definition_methods( @module_type_name, *@module_type_name_aliases )
-     
+    
+    # set default controller; changed when call is made to register_configuration_module
     @controller = ::CascadingConfiguration
     
   end
@@ -65,38 +66,6 @@ class ::CascadingConfiguration::Module < ::Module
   #
   attr_accessor :controller
   
-  ###################
-  #  extend_object  #
-  ###################
-  
-  def extend_object( instance )
-
-    instance.extend( ::CascadingConfiguration::ObjectWithConfigurations )
-
-    super
-    
-  end
-
-  ##############
-  #  extended  #
-  ##############
-  
-  ###
-  # Extend creates instance support for the instance in which extend occurs.
-  #
-  def extended( instance )
-    
-    super if defined?( super )
-    
-    # Ensure our instance has an instance controller
-    unless instance_controller = ::CascadingConfiguration::InstanceController.instance_controller( instance )
-      instance_controller = ::CascadingConfiguration::InstanceController.new( instance, true )
-    end
-
-    instance_controller.create_singleton_support
-    
-  end
-
   ######################
   #  module_type_name  #
   ######################
@@ -773,23 +742,11 @@ class ::CascadingConfiguration::Module < ::Module
     
     define_method( ccm_method_name ) do |*args, & block|
       
-      instance_controller = ::CascadingConfiguration::InstanceController.create_instance_controller( self )
       configurations, parsed_args = ccm.parse_configuration_descriptors( self, *args, & block )
+
       configurations.each do |this_accessor, this_write_accessor|
         ccm.define_singleton_configuration( self, this_accessor, this_write_accessor, *parsed_args, & block )
         ccm.define_instance_configuration( self, this_accessor, this_write_accessor, *parsed_args, & block )
-        configuration_accessor = ccm.configuration_accessor( this_accessor )
-        value_getter_proc = ccm.configuration_value_getter_proc( self, this_accessor )
-        value_setter_proc = ccm.configuration_value_setter_proc( self, this_accessor )
-        configuration_proc = ccm.configuration_instance_getter_proc( self, this_accessor )
-        instance_controller.define_singleton_method( this_accessor, & value_getter_proc )
-        instance_controller.define_singleton_method( this_write_accessor, & value_setter_proc )
-        instance_controller.define_singleton_method( configuration_accessor, & configuration_proc )
-        if instance_support_module = instance_controller.instance_support
-          instance_support_module.define_method( this_accessor, & value_getter_proc )
-          instance_support_module.define_method( this_write_accessor, & value_setter_proc )
-          instance_support_module.define_method( configuration_accessor, & configuration_proc )
-        end 
       end
       
       return self
@@ -825,17 +782,10 @@ class ::CascadingConfiguration::Module < ::Module
     
     define_method( ccm_method_name ) do |*args, & block|
 
-      instance_controller = ::CascadingConfiguration::InstanceController.create_instance_controller( self )
       configurations, parsed_args = ccm.parse_configuration_descriptors( self, *args, & block )
+
       configurations.each do |this_accessor, this_write_accessor|
         ccm.define_singleton_configuration( self, this_accessor, this_write_accessor, *parsed_args, & block )
-        configuration_accessor = ccm.configuration_accessor( this_accessor )
-        value_getter_proc = ccm.configuration_value_getter_proc( self, this_accessor )
-        value_setter_proc = ccm.configuration_value_setter_proc( self, this_accessor )
-        configuration_proc = ccm.configuration_instance_getter_proc( self, this_accessor )
-        instance_controller.define_singleton_method( this_accessor, & value_getter_proc )
-        instance_controller.define_singleton_method( this_write_accessor, & value_setter_proc )
-        instance_controller.define_singleton_method( configuration_accessor, & configuration_proc )
       end
       
       return self
@@ -869,17 +819,10 @@ class ::CascadingConfiguration::Module < ::Module
     
     define_method( ccm_method_name ) do |*args, & block|
       
-      instance_controller = ::CascadingConfiguration::InstanceController.create_instance_controller( self )
       configurations, parsed_args = ccm.parse_configuration_descriptors( self, *args, & block )
+
       configurations.each do |this_accessor, this_write_accessor|
         ccm.define_instance_configuration( self, this_accessor, this_write_accessor, *parsed_args, & block )
-        configuration_accessor = ccm.configuration_accessor( this_accessor )
-        value_getter_proc = ccm.configuration_value_getter_proc( self, this_accessor )
-        value_setter_proc = ccm.configuration_value_setter_proc( self, this_accessor )
-        configuration_proc = ccm.configuration_instance_getter_proc( self, this_accessor )
-        instance_controller.define_instance_method( this_accessor, & value_getter_proc )
-        instance_controller.define_instance_method( this_write_accessor, & value_setter_proc )
-        instance_controller.define_instance_method( configuration_accessor, & configuration_proc )
       end
       
       return self
@@ -913,22 +856,10 @@ class ::CascadingConfiguration::Module < ::Module
     
     define_method( ccm_method_name ) do |*args, & block|
 
-      instance_controller = ::CascadingConfiguration::InstanceController.create_instance_controller( self )
       configurations, parsed_args = ccm.parse_configuration_descriptors( self, *args, & block )
+
       configurations.each do |this_accessor, this_write_accessor|
         ccm.define_object_configuration( self, this_accessor, this_write_accessor, *parsed_args, & block )
-        configuration_accessor = ccm.configuration_accessor( this_accessor )
-        value_getter_proc = ccm.configuration_value_getter_proc( self, this_accessor )
-        value_setter_proc = ccm.configuration_value_setter_proc( self, this_accessor )
-        configuration_proc = ccm.configuration_instance_getter_proc( self, this_accessor )
-        instance_controller.define_local_instance_method( this_accessor, & value_getter_proc )
-        instance_controller.define_local_instance_method( this_write_accessor, & value_setter_proc )
-        instance_controller.define_local_instance_method( configuration_accessor, & configuration_proc )
-        if instance_support_module = instance_controller.instance_support
-          instance_support_module.define_method( this_accessor, & value_getter_proc )
-          instance_support_module.define_method( this_write_accessor, & value_setter_proc )
-          instance_support_module.define_method( configuration_accessor, & configuration_proc )
-        end 
       end
       
       return self
@@ -962,17 +893,10 @@ class ::CascadingConfiguration::Module < ::Module
     
     define_method( ccm_method_name ) do |*args, & block|
 
-      instance_controller = ::CascadingConfiguration::InstanceController.create_instance_controller( self )
       configurations, parsed_args = ccm.parse_configuration_descriptors( self, *args, & block )
+
       configurations.each do |this_accessor, this_write_accessor|
         ccm.define_local_instance_configuration( self, this_accessor, this_write_accessor, *parsed_args, & block )
-        configuration_accessor = ccm.configuration_accessor( this_accessor )
-        value_getter_proc = ccm.configuration_value_getter_proc( self, this_accessor )
-        value_setter_proc = ccm.configuration_value_setter_proc( self, this_accessor )
-        configuration_proc = ccm.configuration_instance_getter_proc( self, this_accessor )
-        instance_controller.define_local_instance_method( this_accessor, & value_getter_proc )
-        instance_controller.define_local_instance_method( this_write_accessor, & value_setter_proc )
-        instance_controller.define_local_instance_method( configuration_accessor, & configuration_proc )
       end
       
       return self

@@ -4,7 +4,11 @@
 #  CascadingConfiguration::Array allows definition of array attributes that will composite downward through
 #  the ancestor chain.
 # 
+::CascadingConfiguration::Array = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::
+                                    CompositingObjects::Array.new( :array, ::Array::Compositing, :configuration_array )
 module ::CascadingConfiguration::Array
+
+  ::CascadingConfiguration.register_configuration_module( self )
 
   ################
   #  attr_array  #
@@ -26,7 +30,7 @@ module ::CascadingConfiguration::Array
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -53,7 +57,7 @@ module ::CascadingConfiguration::Array
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -80,7 +84,7 @@ module ::CascadingConfiguration::Array
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -107,7 +111,7 @@ module ::CascadingConfiguration::Array
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -133,15 +137,10 @@ module ::CascadingConfiguration::Array
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
-
-  array_module = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::
-                   CompositingObjects::Array.new( :array, ::Array::Compositing, :configuration_array )
-  
-  ::CascadingConfiguration.enable_instance_as_cascading_configuration_module( self, array_module )
 
 end

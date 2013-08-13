@@ -67,3 +67,7 @@ Added definition of :•configuration\_name to retrieve configuration instance i
 ## 3/15/2013 ##
 
 Changed behavior of :object methods and :local\_instance methods so that :local\_instance means current object only and :object means current object and instances descended from current object.
+
+## 8/13/2013 ##
+
+Simplified CCM structure to remove ClassInstance and require extend (include no longer supported).

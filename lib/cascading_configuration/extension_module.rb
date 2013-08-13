@@ -4,7 +4,7 @@
 # Extension modules are applied to objects held by configuration instance. 
 #   Class is used when created automatically or internally.
 #
-class ::CascadingConfiguration::InstanceController::ExtensionModule < ::Module
+class ::CascadingConfiguration::ExtensionModule < ::Module
 
   ################
   #  initialize  #

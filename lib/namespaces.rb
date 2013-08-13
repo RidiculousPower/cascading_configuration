@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
 module ::CascadingConfiguration
-  class InstanceController < ::Module
+  module Controller
   end
 end

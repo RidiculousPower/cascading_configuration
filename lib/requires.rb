@@ -1,66 +1,60 @@
 # -*- encoding : utf-8 -*-
 
-basepath = 'cascading_configuration'
+[
 
-files = [
-  
-  'controller',
+  'cascading_configuration/parallel_ancestry',
 
-  'object_with_configurations',
+  'cascading_configuration/read_method_module',
+  'cascading_configuration/write_method_module',
   
-  'include_creates_instance_support',
+  'cascading_configuration/controller/configurations',
+  'cascading_configuration/controller/has_configurations',
+  'cascading_configuration/controller/register',
+  'cascading_configuration/controller/unregister',
+  'cascading_configuration/controller/replace',
+  'cascading_configuration/controller/share',
+  'cascading_configuration/controller/events',
+  'cascading_configuration/controller/methods',
+  'cascading_configuration/controller',
+
+  'cascading_configuration/object_with_configurations',
   
-  'configuration_hash',
-  'configuration_hash/inactive_configurations',
-  'configuration_hash/inactive_configurations/instance_configurations',
-  'configuration_hash/inactive_configurations/object_configurations',
-  'configuration_hash/active_configurations',
-  'configuration_hash/singleton_configurations',
-  'configuration_hash/instance_configurations',
+  'cascading_configuration/configuration_hash',
+  'cascading_configuration/configuration_hash/inactive_configurations',
+  'cascading_configuration/configuration_hash/inactive_configurations/instance_configurations',
+  'cascading_configuration/configuration_hash/inactive_configurations/object_configurations',
+  'cascading_configuration/configuration_hash/active_configurations',
+  'cascading_configuration/configuration_hash/singleton_configurations',
+  'cascading_configuration/configuration_hash/instance_configurations',
   
-  'module',
-  'module/configuration',
-  'module/configuration/class_configuration',
-  'module/configuration/class_instance_configuration',
-  'module/configuration/class_inheriting_from_module_configuration',
-  'module/configuration/module_configuration',
-  'module/configuration/instance_configuration',
-  'module/cascading_settings',
-  'module/cascading_settings/configuration',
-  'module/block_configurations',
-  'module/block_configurations/configuration',
-  'module/block_configurations/cascading_values',
-  'module/block_configurations/cascading_values/configuration',
-  'module/block_configurations/extendable_configurations',
-  'module/block_configurations/extendable_configurations/configuration',
-  'module/block_configurations/extendable_configurations/compositing_objects',
-  'module/block_configurations/extendable_configurations/compositing_objects/configuration',
-  'module/block_configurations/extendable_configurations/compositing_objects/array',
-  'module/block_configurations/extendable_configurations/compositing_objects/array/configuration',
-  'module/block_configurations/extendable_configurations/compositing_objects/hash',
-  'module/block_configurations/extendable_configurations/compositing_objects/hash/configuration',
+  'cascading_configuration/module',
+  'cascading_configuration/module/configuration',
+  'cascading_configuration/module/configuration/class_configuration',
+  'cascading_configuration/module/configuration/class_instance_configuration',
+  'cascading_configuration/module/configuration/class_inheriting_from_module_configuration',
+  'cascading_configuration/module/configuration/module_configuration',
+  'cascading_configuration/module/configuration/instance_configuration',
+  'cascading_configuration/module/cascading_settings',
+  'cascading_configuration/module/cascading_settings/configuration',
+  'cascading_configuration/module/block_configurations',
+  'cascading_configuration/module/block_configurations/configuration',
+  'cascading_configuration/module/block_configurations/cascading_values',
+  'cascading_configuration/module/block_configurations/cascading_values/configuration',
+  'cascading_configuration/module/block_configurations/extendable_configurations',
+  'cascading_configuration/module/block_configurations/extendable_configurations/configuration',
+  'cascading_configuration/module/block_configurations/extendable_configurations/compositing_objects',
+  'cascading_configuration/module/block_configurations/extendable_configurations/compositing_objects/configuration',
+  'cascading_configuration/module/block_configurations/extendable_configurations/compositing_objects/array',
+  'cascading_configuration/module/block_configurations/extendable_configurations/compositing_objects/array/configuration',
+  'cascading_configuration/module/block_configurations/extendable_configurations/compositing_objects/hash',
+  'cascading_configuration/module/block_configurations/extendable_configurations/compositing_objects/hash/configuration',
+
+  'cascading_configuration/value',
+  'cascading_configuration/setting',
+  'cascading_configuration/hash',  
+  'cascading_configuration/array',
+  'cascading_configuration/array/unique',
+  'cascading_configuration/array/sorted',
+  'cascading_configuration/array/sorted/unique'
     
-  'instance_controller/support_module',
-  'instance_controller/support_module/instance_support_module',
-  'instance_controller/support_module/singleton_support_module',
-  'instance_controller/support_module/object_support_module',
-  'instance_controller/support_module/local_instance_support_module',
-  'instance_controller/extension_module',
-  'instance_controller',
-  
-  'value',
-
-  'setting',
-  
-  'hash',
-  
-  'array',
-  'array/unique',
-  'array/sorted',
-  'array/sorted/unique'
-  
-]
-
-files.each do |this_file|
-  require_relative( File.join( basepath, this_file ) + '.rb' )
-end
+].each { |this_file| require_relative( this_file << '.rb' ) }

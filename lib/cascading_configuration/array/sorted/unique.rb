@@ -4,7 +4,16 @@
 #  CascadingConfiguration::Array::Sorted::Unique allows definition of array attributes that will composite downward 
 #  through the ancestor chain and ensure that member elements remain sorted and unique.
 # 
+::CascadingConfiguration::Array::Sorted::Unique = ::CascadingConfiguration::Module::
+                                                    BlockConfigurations::ExtendableConfigurations::
+                                                    CompositingObjects::Array.new( :sorted_unique_array, 
+                                                                                   ::Array::Sorted::Unique::Compositing, 
+                                                                                   :unique_sorted_array,
+                                                                                   :configuration_sorted_unique_array,
+                                                                                   :configuration_unique_sorted_array )
 module ::CascadingConfiguration::Array::Sorted::Unique
+
+  ::CascadingConfiguration.register_configuration_module( self )
 
   ##############################
   #  attr_sorted_unique_array  #
@@ -26,7 +35,7 @@ module ::CascadingConfiguration::Array::Sorted::Unique
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -53,7 +62,7 @@ module ::CascadingConfiguration::Array::Sorted::Unique
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -80,7 +89,7 @@ module ::CascadingConfiguration::Array::Sorted::Unique
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -107,7 +116,7 @@ module ::CascadingConfiguration::Array::Sorted::Unique
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
@@ -133,20 +142,11 @@ module ::CascadingConfiguration::Array::Sorted::Unique
   #
   #   @yield [ ] 
   #
-  #          Creates a new Module of type CascadingConfiguration::InstanceController::ExtensionModule
+  #          Creates a new Module of type CascadingConfiguration::ExtensionModule
   #          and runs module_eval( & block ) on instance with provided block.
   #
   #   @return self
   #
-
-  sorted_unique_array_module = ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigurations::
-                                 CompositingObjects::Array.new( :sorted_unique_array, 
-                                                                ::Array::Sorted::Unique::Compositing, 
-                                                                :unique_sorted_array,
-                                                                :configuration_sorted_unique_array,
-                                                                :configuration_unique_sorted_array )
-  
-  ::CascadingConfiguration.enable_instance_as_cascading_configuration_module( self, sorted_unique_array_module )
 
 end
 

@@ -6,10 +6,8 @@ require_relative '../helpers/ccm.rb'
 require_relative '../support/named_class_and_module.rb'
 
 # CCM = Cascading Configuration Module
-module ::CascadingConfiguration::ExampleCCM
-  example_module = ::CascadingConfiguration::Module::CascadingSettings.new( :example_name, :second_name )
-  ::CascadingConfiguration.enable_instance_as_cascading_configuration_module( self, example_module )
-end
+::CascadingConfiguration::ExampleCCM = ::CascadingConfiguration::Module::CascadingSettings.new( :example_name, :second_name )
+::CascadingConfiguration.register_configuration_module( ::CascadingConfiguration::ExampleCCM )
 
 describe ::CascadingConfiguration::ExampleCCM do
   
@@ -24,7 +22,7 @@ describe ::CascadingConfiguration::ExampleCCM do
     _configuration_name = configuration_name
     _configuration_write_name = configuration_write_name
     ::Module.new.name( :ModuleInstance ).module_eval do
-      include _configuration_module
+      extend _configuration_module
       __send__( _configuration_definer_method, { _configuration_name => _configuration_write_name } )
     end
   end
