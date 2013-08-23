@@ -8,7 +8,7 @@ describe CascadingConfiguration::Value do
 
   let( :module_instance ) do
     module_instance = ::Module.new.name( :ValueModuleInstance )
-    module_instance.module_eval { include ::CascadingConfiguration::Value }
+    module_instance.extend( ::CascadingConfiguration::Value )
     module_instance.attr_value( :cascading_value ) { |value| value + 1 }
     module_instance
   end
@@ -33,14 +33,16 @@ describe CascadingConfiguration::Value do
   
   let( :explicit_instance_from_class ) do
     explicit_instance_from_class = ::Object.new
-    explicit_instance_from_class.extend( class_instance::Controller.instance_support )
+    explicit_instance_from_class.extend( class_instance.•cascading_value.read_method_module,
+                                         class_instance.•cascading_value.write_method_module )
     ::CascadingConfiguration.register_parent( explicit_instance_from_class, class_instance )
     explicit_instance_from_class
   end
 
   let( :explicit_instance_from_instance ) do
     explicit_instance_from_instance = ::Object.new
-    explicit_instance_from_instance.extend( subclass::Controller.instance_support )
+    explicit_instance_from_instance.extend( subclass.•cascading_value.read_method_module,
+                                            subclass.•cascading_value.write_method_module )
     ::CascadingConfiguration.register_parent( explicit_instance_from_instance, instance )
     explicit_instance_from_instance
   end

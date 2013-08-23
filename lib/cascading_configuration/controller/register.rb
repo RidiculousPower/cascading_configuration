@@ -53,10 +53,10 @@ module ::CascadingConfiguration::Controller::Register
   #  register_singleton_to_singleton  #
   #####################################
   
-  def register_singleton_to_singleton( subclass, superclass, event = nil )
+  def register_singleton_to_singleton( instance, parent, event = nil )
 
     # singleton => singleton
-    singleton_configurations( subclass ).register_parent( singleton_configurations( superclass ), event )
+    singleton_configurations( instance ).register_parent( singleton_configurations( parent ), event )
     
   end
 

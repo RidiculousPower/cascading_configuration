@@ -6,10 +6,10 @@ class ::CascadingConfiguration::WriteMethodModule < ::Module
   #  initialize  #
   ################
 
-  def initialize( controller, write_accessor, configuration_name )
-    
+  def initialize( controller, configuration_name, write_accessor )
+
     @controller         = controller
-    @read_accessor      = write_accessor
+    @write_accessor     = write_accessor
     @configuration_name = configuration_name
     
     # instance.write_accessor calls configuration.value=

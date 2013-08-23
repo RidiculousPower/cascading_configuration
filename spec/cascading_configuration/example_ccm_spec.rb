@@ -67,7 +67,7 @@ describe ::CascadingConfiguration::ExampleCCM do
     _configuration_name = configuration_name
     _configuration_write_name = configuration_write_name
     ::Class.new.name( :ClassInstance ).module_eval do
-      include _configuration_module
+      extend _configuration_module
       __send__( _configuration_definer_method, _configuration_name, _configuration_write_name )
     end
   end
@@ -81,7 +81,7 @@ describe ::CascadingConfiguration::ExampleCCM do
     _configuration_name = configuration_name
     _configuration_write_name = configuration_write_name
     ::Class.new( ::Module ).name( :SubclassOfModule ).module_eval do
-      include _configuration_module
+      extend _configuration_module
       __send__( _configuration_definer_method, _configuration_name, _configuration_write_name )
     end
   end

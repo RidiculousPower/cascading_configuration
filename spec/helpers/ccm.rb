@@ -9,17 +9,6 @@ RSpec::Matchers.define :have_cascaded do |event, parent_instance, name, write_na
 
     unexpected_success_string = 'configuration cascaded to ' << hooked_instance.to_s << 
                                 ' but was not expected to do so.'
-    
-    # * should have cascaded hook
-    if should_cascade_hook
-      unless ::Module::Cluster === hooked_instance and
-             hooked_instance.has_cluster?( :cascading_configuration_inheritance ) ||
-             ::Class === parent_instance ||
-             inheritance_parent_is_class # class methods are inherited, so class B has the hook even though it
-                                         # was not specifically enabled
-        fail_string = 'inheritance hook did not cascade to ' << hooked_instance.name.to_s
-      end
-    end
 
     singleton_configuration = nil
     instance_configuration = nil

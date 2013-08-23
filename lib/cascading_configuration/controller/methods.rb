@@ -34,7 +34,7 @@ module ::CascadingConfiguration::Controller::Methods
   #########################
 
   def write_method_module( configuration_name, write_accessor )
-    
+
     configuration_name_sym   = configuration_name.to_sym
     write_accessor_sym       = write_accessor.to_sym
         

@@ -6,7 +6,7 @@ class ::CascadingConfiguration::ReadMethodModule < ::Module
   #  initialize  #
   ################
 
-  def initialize( controller, read_accessor, configuration_name )
+  def initialize( controller, configuration_name, read_accessor )
     
     @controller         = controller
     @read_accessor      = read_accessor

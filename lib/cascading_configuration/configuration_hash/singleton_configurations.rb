@@ -2,7 +2,7 @@
 
 class ::CascadingConfiguration::ConfigurationHash::SingletonConfigurations < 
       ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations
-  
+    
   #########################
   #  register_parent_key  #
   #########################
@@ -19,7 +19,7 @@ class ::CascadingConfiguration::ConfigurationHash::SingletonConfigurations <
       super
       
     end
-    
+
     # if we are inheriting from singleton configs we need to provide methods
     # if we are inheriting from instance configs, Ruby provided methods via inheritance
     if ::CascadingConfiguration::ConfigurationHash::SingletonConfigurations === parent_configurations

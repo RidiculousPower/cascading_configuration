@@ -48,7 +48,7 @@ class ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations <
         child_configuration = super
 
     end
-    
+
     return child_configuration
 
   end
