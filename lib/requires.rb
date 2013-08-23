@@ -29,6 +29,7 @@
   
   'cascading_configuration/module',
   'cascading_configuration/module/configuration',
+  'cascading_configuration/module/configuration/extension_module',
   'cascading_configuration/module/configuration/class_configuration',
   'cascading_configuration/module/configuration/class_instance_configuration',
   'cascading_configuration/module/configuration/class_inheriting_from_module_configuration',

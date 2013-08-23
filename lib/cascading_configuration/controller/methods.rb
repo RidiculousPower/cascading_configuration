@@ -12,7 +12,7 @@ module ::CascadingConfiguration::Controller::Methods
   def read_method_module( configuration_name, read_accessor )
     
     configuration_name_sym   = configuration_name.to_sym
-    read_accessor_sym        = read_accessor_sym.to_sym
+    read_accessor_sym        = read_accessor.to_sym
         
     unless read_method_modules = @read_method_modules[ configuration_name_sym ]
       @read_method_modules[ configuration_name_sym ] = read_method_modules = { }
@@ -36,7 +36,7 @@ module ::CascadingConfiguration::Controller::Methods
   def write_method_module( configuration_name, write_accessor )
     
     configuration_name_sym   = configuration_name.to_sym
-    write_accessor_sym       = write_accessor_sym.to_sym
+    write_accessor_sym       = write_accessor.to_sym
         
     unless write_method_modules = @write_method_modules[ configuration_name_sym ]
       @write_method_modules[ configuration_name_sym ] = write_method_modules = { }
@@ -59,7 +59,25 @@ module ::CascadingConfiguration::Controller::Methods
 
   def method_module_storage_constant( configuration_name, accessor )
     
-    return 'Configuration«' << configuration_name.to_s << '•' << accessor.to_s << '»'
+    accessor = accessor.accessor_name.to_s
+    configuration_name = configuration_name.to_s
+    
+    # "?" and "!" are not valid in constant name, but unicode chars are
+    # so we substitute "¿" and "¡"
+    case configuration_name[ -1 ]
+      when '?'
+        configuration_name[ -1 ] = '¿'
+      when '!'
+        configuration_name[ -1 ] = '¡'
+    end
+    case accessor[ -1 ]
+      when '?'
+        accessor[ -1 ] = '¿'
+      when '!'
+        accessor[ -1 ] = '¡'
+    end
+    
+    return 'Configuration«' << configuration_name.to_s << '•' << accessor << '»'
     
   end
 

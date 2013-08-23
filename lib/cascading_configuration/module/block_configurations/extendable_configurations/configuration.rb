@@ -29,10 +29,8 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
       if @extension_module
         @extension_module.module_eval( & block )
       else
-        instance_controller = ::CascadingConfiguration::InstanceController.create_instance_controller( @instance )
-        @extension_module = instance_controller.create_extension_module( @name, & block )
+        create_extension_module( @name, & block )
       end
-      @extension_modules.unshift( @extension_module )
     end
     @extension_modules.concat( *extension_modules )
     
@@ -40,9 +38,9 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
     
   end
 
-  ######################################
+  #######################################
   #  new«configuration_without_parent»  #
-  ######################################
+  #######################################
 
   def new«configuration_without_parent»( for_instance, event = nil, & block )
 
@@ -54,7 +52,24 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
     return new_configuration
 
   end
+    
+  #############################
+  #  create_extension_module  #
+  #############################
 
+  def create_extension_module( name, & block )
+
+    @extension_module = self.class::ExtensionModule.new( self, name, & block )
+    @extension_modules.unshift( @extension_module )
+    if ::Module === @instance
+      constant_name = 'ExtensionModule«' << name.to_s << '»'
+      @instance.const_set( constant_name, @extension_module )
+    end
+
+    return @extension_module
+
+  end
+    
   #######################################
   #  register_parent_extension_modules  #
   #######################################

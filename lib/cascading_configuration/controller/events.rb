@@ -8,8 +8,8 @@ module ::CascadingConfiguration::Controller::Events
   
   def register_subclass( subclass, superclass )
 
-    register_singleton_to_singleton( subclass, superclass )
-    register_instance_to_instance( subclass, superclass )
+    register_singleton_to_singleton( subclass, superclass, :subclass )
+    register_instance_to_instance( subclass, superclass, :subclass )
     
   end
 
@@ -19,8 +19,8 @@ module ::CascadingConfiguration::Controller::Events
 
   def register_include( class_or_module, included_module )
     
-    register_singleton_to_singleton( class_or_module, included_module )
-    register_instance_to_instance( class_or_module, included_module )
+    register_singleton_to_singleton( class_or_module, included_module, :include )
+    register_instance_to_instance( class_or_module, included_module, :include )
     
   end
 
@@ -30,7 +30,7 @@ module ::CascadingConfiguration::Controller::Events
 
   def register_extend( instance, extending_module )
 
-    register_instance_to_singleton( instance, extending_module )
+    register_instance_to_singleton( instance, extending_module, :extend )
 
   end
   
@@ -40,7 +40,7 @@ module ::CascadingConfiguration::Controller::Events
 
   def register_instance( instance, parent )
 
-    register_instance_to_singleton( instance, parent )
+    register_instance_to_singleton( instance, parent, :instance )
 
   end
 

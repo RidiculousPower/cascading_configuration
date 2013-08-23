@@ -53,10 +53,10 @@ module ::CascadingConfiguration::Controller::Register
   #  register_singleton_to_singleton  #
   #####################################
   
-  def register_singleton_to_singleton( subclass, superclass )
+  def register_singleton_to_singleton( subclass, superclass, event = nil )
 
     # singleton => singleton
-    singleton_configurations( subclass ).register_parent( singleton_configurations( superclass ) )
+    singleton_configurations( subclass ).register_parent( singleton_configurations( superclass ), event )
     
   end
 
@@ -64,10 +64,10 @@ module ::CascadingConfiguration::Controller::Register
   #  register_singleton_to_instance  #
   ####################################
   
-  def register_singleton_to_instance( subclass, superclass )
+  def register_singleton_to_instance( subclass, superclass, event = nil )
 
     # singleton => instance
-    instance_configurations( subclass ).register_parent( singleton_configurations( superclass ) )
+    instance_configurations( subclass ).register_parent( singleton_configurations( superclass ), event )
     
   end
 
@@ -75,12 +75,12 @@ module ::CascadingConfiguration::Controller::Register
   #  register_instance_to_singleton  #
   ####################################
   
-  def register_instance_to_singleton( subclass, superclass )
+  def register_instance_to_singleton( subclass, superclass, event = nil )
 
     # instance => singleton
-    singleton_configurations( subclass ).register_parent( instance_configurations( superclass ) )
+    singleton_configurations( subclass ).register_parent( instance_configurations( superclass ), event )
     # object => singleton
-    singleton_configurations( subclass ).register_parent( object_configurations( superclass ) )
+    singleton_configurations( subclass ).register_parent( object_configurations( superclass ), event )
     
   end
 
@@ -88,12 +88,12 @@ module ::CascadingConfiguration::Controller::Register
   #  register_instance_to_instance  #
   ###################################
   
-  def register_instance_to_instance( subclass, superclass )
+  def register_instance_to_instance( subclass, superclass, event = nil )
 
     # instance => instance
-    instance_configurations( subclass ).register_parent( instance_configurations( superclass ) )
+    instance_configurations( subclass ).register_parent( instance_configurations( superclass ), event )
     # object => object
-    object_configurations( subclass ).register_parent( object_configurations( superclass ) )
+    object_configurations( subclass ).register_parent( object_configurations( superclass ), event )
     
   end
 

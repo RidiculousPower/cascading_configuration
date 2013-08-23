@@ -1,17 +1,19 @@
 # -*- encoding : utf-8 -*-
 
-class ::CascadingConfiguration::Controller::WriteMethodModule < ::Module
+class ::CascadingConfiguration::WriteMethodModule < ::Module
 
   ################
   #  initialize  #
   ################
 
-  def initialize( write_accessor, configuration_name )
+  def initialize( controller, write_accessor, configuration_name )
+    
+    @controller         = controller
+    @read_accessor      = write_accessor
+    @configuration_name = configuration_name
     
     # instance.write_accessor calls configuration.value=
-    define_method( write_accessor ) do |value|
-      ::CascadingConfiguration.configuration( self, configuration_name ).value = value
-    end
+    define_method( write_accessor ) { |value| controller.configuration( self, configuration_name ).value = value }
     
   end
 

@@ -1,17 +1,21 @@
 # -*- encoding : utf-8 -*-
 
-class ::CascadingConfiguration::Controller::ReadMethodModule < ::Module
+class ::CascadingConfiguration::ReadMethodModule < ::Module
   
   ################
   #  initialize  #
   ################
 
-  def initialize( read_accessor, configuration_name )
+  def initialize( controller, read_accessor, configuration_name )
+    
+    @controller         = controller
+    @read_accessor      = read_accessor
+    @configuration_name = configuration_name
     
     # instance.read_accessor returns configuration.value
-    define_method( read_accessor ) { ::CascadingConfiguration.configuration( self, configuration_name ).value }
+    define_method( read_accessor ) { controller.configuration( self, configuration_name ).value }
     # instance.•read_accessor returns configuration
-    define_method( '•' << read_accessor.to_s ) { ::CascadingConfiguration.configuration( self, configuration_name ) }
+    define_method( '•' << read_accessor.to_s ) { controller.configuration( self, configuration_name ) }
     
   end
   

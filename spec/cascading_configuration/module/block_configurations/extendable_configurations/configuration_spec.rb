@@ -55,10 +55,7 @@ describe ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfig
     end
   end
   let( :parent_extension_block_module ) do
-    parent_instance_controller.const_get( 'ExtensionModule«parent_name»' )
-  end
-  let( :parent_instance_controller ) do
-    ::CascadingConfiguration::InstanceController.instance_controller( parent_instance )
+    parent_instance.const_get( 'ExtensionModule«parent_name»' )
   end
   let( :parent_two_extension_block ) { nil }
   let( :child_extension_block ) { nil }

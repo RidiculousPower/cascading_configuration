@@ -93,7 +93,7 @@ class ::CascadingConfiguration::Module::Configuration
     @module = configuration_module
     @name = name
     @write_name = write_name
-
+    
     initialize«common_values»( for_instance, *parsed_args, & block )
     initialize«common_finalize»( for_instance, *parsed_args, & block )    
 
@@ -131,6 +131,10 @@ class ::CascadingConfiguration::Module::Configuration
   ###############################
   
   def initialize«common_values»( for_instance, *parsed_args, & block )
+
+    controller = @module.controller
+    @read_method_module  = controller.read_method_module( @name, @name )
+    @write_method_module = controller.write_method_module( @name, @write_name )
 
     @instance = for_instance
     @has_value = false
@@ -186,10 +190,22 @@ class ::CascadingConfiguration::Module::Configuration
     end
     
   end
+
+  ########################
+  #  read_method_module  #
+  ########################
   
+  attr_reader :read_method_module
+
   ###############################
   #  permits_multiple_parents?  #
   ###############################
+
+  attr_reader :write_method_module
+  
+  #########################
+  #  write_method_module  #
+  #########################
   
   ###
   # Query whether configuration permits multiple parents.

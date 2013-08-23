@@ -13,7 +13,7 @@ RSpec::Matchers.define :have_defined_configuration do |base_name, alias_names, c
 
     fail_string = nil
     
-    instance.module_eval { __send__( include_or_extend, ccm ) }
+    instance.extend( ccm )
     
     instance.__send__( base_name, :configuration_name, & ccm_block )    
     instance.__send__( base_name, :configuration_name? => :__configuration_name__=, & ccm_block )
@@ -203,27 +203,27 @@ RSpec::Matchers.define :have_defined_configuration do |base_name, alias_names, c
   
   match do |configuration_module, & block| 
     
-    unexpected_success_string = 'configuration was defined for ' << ( instance.name || instance ).to_s << 
+    unexpected_success_string = 'configuration was defined for ' << ( ccm.name || ccm ).to_s << 
                                 ' with base name :' << base_name.to_s << ' and alias names :' << 
                                 alias_names.collect( & :to_s ).join( ', :' ) << ' but was not expected to be defined.'
 
-    unless instance.method_defined?( base_name )
+    unless ccm.method_defined?( base_name )
       fail_string = 'base method :' << base_name.to_s << ' was not defined for ' << 
-                    ( instance.name || instance ).to_s << '.'
+                    ( ccm.name || ccm ).to_s << '.'
     end
         
     unless fail_string
       alias_names.each do |this_alias_name|
-        unless instance.method_defined?( this_alias_name )
+        unless ccm.method_defined?( this_alias_name )
           fail_string = 'alias :' << this_alias_name.to_s << ' was not defined for base method :' << base_name.to_s <<
-                        ' for ' << ( instance.name || instance ).to_s << '.'
+                        ' for ' << ( ccm.name || ccm ).to_s << '.'
           break
         end
-        unless instance.instance_method( base_name ) == instance.instance_method( this_alias_name )
+        unless ccm.instance_method( base_name ) == ccm.instance_method( this_alias_name )
           fail_string = 'method for alias :' << this_alias_name.to_s << ' (' << 
-                        instance.instance_method( this_alias_name ).to_s << ') was not equivalent to base method :' << 
-                        base_name.to_s << ' (' << instance.instance_method( base_name ).to_s << ') for ' << 
-                        ( instance.name || instance ).to_s << '.'
+                        ccm.instance_method( this_alias_name ).to_s << ') was not equivalent to base method :' << 
+                        base_name.to_s << ' (' << ccm.instance_method( base_name ).to_s << ') for ' << 
+                        ( ccm.name || ccm ).to_s << '.'
           break
         end
       end
