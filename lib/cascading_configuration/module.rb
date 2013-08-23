@@ -552,8 +552,10 @@ class ::CascadingConfiguration::Module < ::Module
   def define_singleton_configuration( instance, accessor, write_accessor, *parsed_args, & block )
     
     configuration = self.class::Configuration.new( instance, self, accessor, write_accessor, *parsed_args, & block )
-    instance.extend( configuration.read_method_module, 
-                     configuration.write_method_module )
+    ::ParallelAncestry.suspend do
+      instance.extend( configuration.read_method_module, 
+                       configuration.write_method_module )
+    end
     @controller.singleton_configurations( instance )[ accessor ] = configuration
 
     return configuration
@@ -582,8 +584,10 @@ class ::CascadingConfiguration::Module < ::Module
     
     @controller.instance_configurations( instance )[ accessor ] = configuration
     
-    instance.module_eval { include( configuration.read_method_module, 
-                                    configuration.write_method_module ) }
+    ::ParallelAncestry.suspend do
+      instance.module_eval { include( configuration.read_method_module, 
+                                      configuration.write_method_module ) }
+    end
     
     return configuration
     
@@ -604,11 +608,15 @@ class ::CascadingConfiguration::Module < ::Module
     if ::Module === instance
       object_configuration = local_instance_configuration.new«inheriting_configuration»( instance )
       @controller.object_configurations( instance )[ accessor ] = object_configuration
-      instance.module_eval { include( object_configuration.read_method_module, 
-                                      object_configuration.write_method_module ) }
+      ::ParallelAncestry.suspend do
+        instance.module_eval { include( object_configuration.read_method_module, 
+                                        object_configuration.write_method_module ) }
+      end
     else
-      instance.extend( local_instance_configuration.read_method_module, 
-                       local_instance_configuration.write_method_module )
+      ::ParallelAncestry.suspend do
+        instance.extend( local_instance_configuration.read_method_module, 
+                         local_instance_configuration.write_method_module )
+      end
     end
 
     return local_instance_configuration
@@ -629,8 +637,10 @@ class ::CascadingConfiguration::Module < ::Module
                                                                   & block )
     
     @controller.local_instance_configurations( instance )[ accessor ] = local_instance_configuration
-    instance.extend( local_instance_configuration.read_method_module, 
-                     local_instance_configuration.write_method_module )
+    ::ParallelAncestry.suspend do
+      instance.extend( local_instance_configuration.read_method_module, 
+                       local_instance_configuration.write_method_module )
+    end
     
     return local_instance_configuration
     

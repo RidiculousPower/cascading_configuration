@@ -9,7 +9,7 @@ module ::CascadingConfiguration::ParallelAncestry
   def register_subclass( subclass, superclass )
 
     super
-    ::CascadingConfiguration.register_subclass( subclass, superclass )
+    ::CascadingConfiguration.register_subclass( subclass, superclass ) unless @suspended
     
   end
 
@@ -20,7 +20,7 @@ module ::CascadingConfiguration::ParallelAncestry
   def register_include( class_or_module, including_module )
     
     super
-    ::CascadingConfiguration.register_include( class_or_module, including_module )
+    ::CascadingConfiguration.register_include( class_or_module, including_module ) unless @suspended
 
   end
 
@@ -31,7 +31,7 @@ module ::CascadingConfiguration::ParallelAncestry
   def register_extend( instance, extending_module )
 
     super
-    ::CascadingConfiguration.register_extend( instance, extending_module )
+    ::CascadingConfiguration.register_extend( instance, extending_module ) unless @suspended
 
   end
 
@@ -42,7 +42,7 @@ module ::CascadingConfiguration::ParallelAncestry
   def register_instance( instance, parent_instance )
 
     super
-    ::CascadingConfiguration.register_instance( instance, parent_instance )
+    ::CascadingConfiguration.register_instance( instance, parent_instance ) unless @suspended
 
   end
 

@@ -8,7 +8,7 @@ describe ::CascadingConfiguration do
   
   let( :mock_class_one ) do
     ::Class.new do
-      include ::CascadingConfiguration
+      extend ::CascadingConfiguration
       attr_configuration :configuration_one, :configuration_two
       attr_object_array :array_one, :array_two, :array_three
     end.name( :MockClassOne )
@@ -16,7 +16,7 @@ describe ::CascadingConfiguration do
 
   let( :mock_class_two ) do
     ::Class.new do
-      include ::CascadingConfiguration
+      extend ::CascadingConfiguration
       attr_configuration :configuration_one, :configuration_two
       attr_object_array :array_one, :array_two, :array_three
     end
@@ -27,33 +27,6 @@ describe ::CascadingConfiguration do
   let( :instance_three  ) { mock_class_one.new }
   
   ###################
-  #  self.included  #
-  ###################
-  
-  context '::included' do
-    let( :including_class  ) { ::Class.new { include ::CascadingConfiguration } }
-    it 'enables including class with all cascading_configuration modules' do
-      including_class.ancestors.include?( ::CascadingConfiguration::Setting ).should == true
-      including_class.is_a?( ::CascadingConfiguration::Setting::ClassInstance ).should == true
-
-      including_class.ancestors.include?( ::CascadingConfiguration::Hash ).should == true
-      including_class.is_a?( ::CascadingConfiguration::Hash::ClassInstance ).should == true
-
-      including_class.ancestors.include?( ::CascadingConfiguration::Array ).should == true
-      including_class.is_a?( ::CascadingConfiguration::Array::ClassInstance ).should == true
-
-      including_class.ancestors.include?( ::CascadingConfiguration::Array::Unique ).should == true
-      including_class.is_a?( ::CascadingConfiguration::Array::Unique::ClassInstance ).should == true
-
-      including_class.ancestors.include?( ::CascadingConfiguration::Array::Sorted ).should == true
-      including_class.is_a?( ::CascadingConfiguration::Array::Sorted::ClassInstance ).should == true
-
-      including_class.ancestors.include?( ::CascadingConfiguration::Array::Sorted::Unique ).should == true
-      including_class.is_a?( ::CascadingConfiguration::Array::Sorted::Unique::ClassInstance ).should == true
-    end
-  end
-  
-  ###################
   #  self.extended  #
   ###################
   
@@ -61,28 +34,17 @@ describe ::CascadingConfiguration do
     let( :extending_class  ) { ::Class.new.extend( ::CascadingConfiguration ) }
     it 'enables extending class singleton (only) with all cascading_configuration modules' do
       extending_class.is_a?( ::CascadingConfiguration::Setting ).should == true
-      extending_class.is_a?( ::CascadingConfiguration::Setting::ClassInstance ).should == true
-
       extending_class.is_a?( ::CascadingConfiguration::Hash ).should == true
-      extending_class.is_a?( ::CascadingConfiguration::Hash::ClassInstance ).should == true
-
       extending_class.is_a?( ::CascadingConfiguration::Array ).should == true
-      extending_class.is_a?( ::CascadingConfiguration::Array::ClassInstance ).should == true
-
       extending_class.is_a?( ::CascadingConfiguration::Array::Unique ).should == true
-      extending_class.is_a?( ::CascadingConfiguration::Array::Unique::ClassInstance ).should == true
-
       extending_class.is_a?( ::CascadingConfiguration::Array::Sorted ).should == true
-      extending_class.is_a?( ::CascadingConfiguration::Array::Sorted::ClassInstance ).should == true
-
       extending_class.is_a?( ::CascadingConfiguration::Array::Sorted::Unique ).should == true
-      extending_class.is_a?( ::CascadingConfiguration::Array::Sorted::Unique::ClassInstance ).should == true
     end
   end
 
-  ############################################
+  ##########################################
   #  self.ensure_no_unregistered_ancestor  #
-  ############################################
+  ##########################################
   
   context '::ensure_no_unregistered_ancestor' do
     let( :class_A ) { ::Class.new.name( :ClassA ) }
@@ -93,14 +55,23 @@ describe ::CascadingConfiguration do
       class_D
       # A doesn't know about B, C, D so they don't properly inherit configurations
       class_A.class_eval do
-        include ::CascadingConfiguration::Setting
+        extend ::CascadingConfiguration::Setting
         attr_setting :configuration_A, :configuration_B
       end
-      ::CascadingConfiguration.ensure_no_unregistered_ancestor( class_D, :configuration_A )
     end
-    it 'will register parents properly after the fact (I believe this only applies to subclasses created before the class includes a CascadingConfiguration module)' do
-      class_B.•configuration_A.parent.should be class_A.•configuration_A
-      class_B.•configuration_B.parent.should be class_A.•configuration_B
+    it 'will register parents properly after the fact (I believe this only applies to subclasses created before the class is extended by a CascadingConfiguration module)' do      
+
+#      class_B.•configuration_A.parent.should be class_A.•configuration_A
+#      class_B.•configuration_B.parent.should be class_A.•configuration_B
+
+puts 'class_B: ' << ::CascadingConfiguration.singleton_configurations( class_B ).parents.collect { |p| p.configuration_instance.name }.to_s
+puts 'class_B: ' << ::CascadingConfiguration.singleton_configurations( class_B ).class.to_s
+class_B.•configuration_A
+
+puts 'class_C: ' << ::CascadingConfiguration.singleton_configurations( class_C ).parents.collect { |p| p.configuration_instance.name }.to_s
+puts 'class_D: ' << ::CascadingConfiguration.singleton_configurations( class_D ).parents.collect { |p| p.configuration_instance.name }.to_s
+
+class_B.•configuration_A
 
       class_C.•configuration_A.parent.should be class_B.•configuration_A
       class_C.•configuration_B.parent.should be class_B.•configuration_B

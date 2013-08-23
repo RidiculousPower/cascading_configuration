@@ -88,7 +88,8 @@ class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::Casc
       else
         child_configuration = parent_configuration.new«inheriting_configuration»( configuration_instance, @event )
     end
-    
+    puts 'Self: ' << child_configuration.instance.name.to_s
+    puts 'Parent: ' << child_configuration.parent.instance.name.to_s
     return child_configuration
 
   end

@@ -61,10 +61,10 @@ module ::CascadingConfiguration::Controller::Configurations
 
     unless active_configurations = active_configurations( instance, false ) and
            configuration_instance = active_configurations[ configuration_name.to_sym ]
-      
+
       if ( ! ( ::Module === instance ) or 
          ( ( instance_class = instance.class ) < ::Module and not instance_class < ::Class ) ) and
-         ( has_instance_configuration?( instance_class ||= instance.class, configuration_name ) or
+         ( has_instance_configuration?( instance_class, configuration_name ) or
            has_object_configuration?( instance_class, configuration_name ) )
 
         register_instance( instance, instance_class )
@@ -122,12 +122,6 @@ module ::CascadingConfiguration::Controller::Configurations
         unless configurations = @singleton_configurations[ instance_id = instance.__id__ ]
           if should_create
             configurations = ::CascadingConfiguration::ConfigurationHash::SingletonConfigurations.new( self, instance )
-#            is_module_subclass = ( ! ( ::Class === instance ) and 
-#                                   ( instance_class = instance.class ) < ::Module and not instance_class < ::Class )
-#            configurations = is_module_subclass ? ::CascadingConfiguration::ConfigurationHash::
-#                                                    InstanceConfigurations.new( self, instance )
-#                                                : ::CascadingConfiguration::ConfigurationHash::
-#                                                    SingletonConfigurations.new( self, instance )
             @singleton_configurations[ instance_id ] = configurations
           end
         end

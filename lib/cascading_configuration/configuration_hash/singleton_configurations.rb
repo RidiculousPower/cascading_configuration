@@ -24,8 +24,10 @@ class ::CascadingConfiguration::ConfigurationHash::SingletonConfigurations <
     # if we are inheriting from instance configs, Ruby provided methods via inheritance
     if ::CascadingConfiguration::ConfigurationHash::SingletonConfigurations === parent_configurations
       parent_configuration = parent_configurations[ configuration_name ]
-      configuration_instance.extend( parent_configuration.read_method_module, 
-                                     parent_configuration.write_method_module )
+      ::ParallelAncestry.suspend do
+        configuration_instance.extend( parent_configuration.read_method_module, 
+                                       parent_configuration.write_method_module )
+      end
     end
           
     return configuration_name
