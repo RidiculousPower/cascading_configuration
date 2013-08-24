@@ -17,17 +17,17 @@ class ::CascadingConfiguration::ConfigurationHash::SingletonConfigurations <
     else
       
       super
-      
-    end
 
-    # if we are inheriting from singleton configs we need to provide methods
-    # if we are inheriting from instance configs, Ruby provided methods via inheritance
-    if ::CascadingConfiguration::ConfigurationHash::SingletonConfigurations === parent_configurations
-      parent_configuration = parent_configurations[ configuration_name ]
-      ::ParallelAncestry.suspend do
-        configuration_instance.extend( parent_configuration.read_method_module, 
-                                       parent_configuration.write_method_module )
+      # if we are inheriting from singleton configs we need to provide methods
+      # if we are inheriting from instance configs, Ruby provided methods via inheritance
+      if ::CascadingConfiguration::ConfigurationHash::SingletonConfigurations === parent_configurations
+        parent_configuration = parent_configurations[ configuration_name ]
+        ::ParallelAncestry.suspend do
+          configuration_instance.extend( parent_configuration.read_method_module, 
+                                         parent_configuration.write_method_module )
+        end
       end
+      
     end
           
     return configuration_name

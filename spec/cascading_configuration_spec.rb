@@ -22,9 +22,9 @@ describe ::CascadingConfiguration do
     end
   end.name( :MockClassTwo )
 
-  let( :instance_one  ) { mock_class_one.new }
-  let( :instance_two  ) { mock_class_one.new }
-  let( :instance_three  ) { mock_class_one.new }
+  let( :instance_one  ) { mock_class_one.new.name( :InstanceOne ) }
+  let( :instance_two  ) { mock_class_one.new.name( :InstanceTwo ) }
+  let( :instance_three  ) { mock_class_one.new.name( :InstanceThree ) }
   
   ###################
   #  self.extended  #
@@ -33,20 +33,20 @@ describe ::CascadingConfiguration do
   context '::extended' do
     let( :extending_class  ) { ::Class.new.extend( ::CascadingConfiguration ) }
     it 'enables extending class singleton (only) with all cascading_configuration modules' do
-      extending_class.is_a?( ::CascadingConfiguration::Setting ).should == true
-      extending_class.is_a?( ::CascadingConfiguration::Hash ).should == true
-      extending_class.is_a?( ::CascadingConfiguration::Array ).should == true
-      extending_class.is_a?( ::CascadingConfiguration::Array::Unique ).should == true
-      extending_class.is_a?( ::CascadingConfiguration::Array::Sorted ).should == true
-      extending_class.is_a?( ::CascadingConfiguration::Array::Sorted::Unique ).should == true
+      ::CascadingConfiguration::Setting.should === extending_class
+      ::CascadingConfiguration::Hash.should === extending_class
+      ::CascadingConfiguration::Array.should === extending_class
+      ::CascadingConfiguration::Array::Unique.should === extending_class
+      ::CascadingConfiguration::Array::Sorted.should === extending_class
+      ::CascadingConfiguration::Array::Sorted::Unique.should === extending_class
     end
   end
 
-  ##########################################
-  #  self.ensure_no_unregistered_ancestor  #
-  ##########################################
+  ###########################################################
+  #  Cascading Configurations to Already Existant Children  #
+  ###########################################################
   
-  context '::ensure_no_unregistered_ancestor' do
+  context 'Cascading Configurations to Already Existant Children' do
     let( :class_A ) { ::Class.new.name( :ClassA ) }
     let( :class_B ) { ::Class.new( class_A ).name( :ClassB ) }
     let( :class_C ) { ::Class.new( class_B ).name( :ClassC ) }
@@ -60,24 +60,40 @@ describe ::CascadingConfiguration do
       end
     end
     it 'will register parents properly after the fact (I believe this only applies to subclasses created before the class is extended by a CascadingConfiguration module)' do      
-
-#      class_B.•configuration_A.parent.should be class_A.•configuration_A
-#      class_B.•configuration_B.parent.should be class_A.•configuration_B
-
-puts 'class_B: ' << ::CascadingConfiguration.singleton_configurations( class_B ).parents.collect { |p| p.configuration_instance.name }.to_s
-puts 'class_B: ' << ::CascadingConfiguration.singleton_configurations( class_B ).class.to_s
-class_B.•configuration_A
-
-puts 'class_C: ' << ::CascadingConfiguration.singleton_configurations( class_C ).parents.collect { |p| p.configuration_instance.name }.to_s
-puts 'class_D: ' << ::CascadingConfiguration.singleton_configurations( class_D ).parents.collect { |p| p.configuration_instance.name }.to_s
-
-class_B.•configuration_A
+      class_B.•configuration_A.parent.should be class_A.•configuration_A
+      class_B.•configuration_B.parent.should be class_A.•configuration_B
 
       class_C.•configuration_A.parent.should be class_B.•configuration_A
       class_C.•configuration_B.parent.should be class_B.•configuration_B
 
       class_D.•configuration_A.parent.should be class_C.•configuration_A
       class_D.•configuration_B.parent.should be class_C.•configuration_B
+    end
+  end
+  
+  ##############################################################################
+  #  Cascading Compositing Object Configurations to Already Existant Children  #
+  ##############################################################################
+  
+  context 'Cascading Compositing Object Configurations to Already Existant Children' do
+    let( :class_A ) { ::Class.new.name( :ClassA ) }
+    let( :class_B ) { ::Class.new( class_A ).name( :ClassB ) }
+    let( :class_C ) { ::Class.new( class_B ).name( :ClassC ) }
+    let( :class_D ) { ::Class.new( class_C ).name( :ClassD ) }
+    before :each do
+      class_D
+      # A doesn't know about B, C, D so they don't properly inherit configurations
+      class_A.class_eval do
+        extend ::CascadingConfiguration::Array
+        attr_array :configuration_A, :configuration_B
+      end
+    end
+    it 'will register parents properly after the fact (I believe this only applies to subclasses created before the class is extended by a CascadingConfiguration module)' do
+      ::CascadingConfiguration.singleton_configurations( class_B ).load_parent_state
+      ::CascadingConfiguration.singleton_configurations( class_C ).load_parent_state
+      ::CascadingConfiguration.singleton_configurations( class_D ).load_parent_state
+      class_C.•configuration_A.parents.include?( class_B.•configuration_A ).should be true
+      
     end
   end
   

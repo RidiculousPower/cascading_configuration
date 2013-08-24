@@ -7,10 +7,11 @@ class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::Casc
   #########################
   
   def register_parent_key( parent_configurations, configuration_name )
-    
+
     if existing_configuration = self[ configuration_name ]
 
       parent_configuration = parent_configurations[ configuration_name ]
+
       case parent_configurations
         when ::CascadingConfiguration::ConfigurationHash::InactiveConfigurations::ObjectConfigurations
           singleton_configuration = @controller.local_instance_configuration( parent_configuration.parent.instance, 
@@ -32,6 +33,7 @@ class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::Casc
     else
 
       super
+      self[ configuration_name ]
 
     end
 
@@ -43,9 +45,9 @@ class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::Casc
   #  post_set_hook  #
   ###################
   
-  def post_set_hook( key, configuration )
+  def post_set_hook( configuration_name, configuration )
 
-    @controller.active_configurations( configuration_instance )[ key ] = configuration
+    @controller.active_configurations( configuration_instance )[ configuration_name ] = configuration
     
     return configuration
     
@@ -55,9 +57,9 @@ class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::Casc
   #  post_delete_hook  #
   ######################
   
-  def post_delete_hook( key, configuration )
+  def post_delete_hook( configuration_name, configuration )
     
-    @controller.active_configurations( configuration_instance ).delete( key )
+    @controller.active_configurations( configuration_instance ).delete( configuration_name )
     
     return configuration
     
@@ -68,7 +70,7 @@ class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::Casc
   ########################
 
   def child_pre_set_hook( configuration_name, parent_configuration, parent_configurations )
-    
+
     child_configuration = nil
 
     case parent_configurations
@@ -88,8 +90,7 @@ class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::Casc
       else
         child_configuration = parent_configuration.new«inheriting_configuration»( configuration_instance, @event )
     end
-    puts 'Self: ' << child_configuration.instance.name.to_s
-    puts 'Parent: ' << child_configuration.parent.instance.name.to_s
+
     return child_configuration
 
   end

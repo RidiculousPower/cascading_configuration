@@ -35,15 +35,12 @@ class ::CascadingConfiguration::Module::CascadingSettings::Configuration <
     # if we have a configuration we use it as parent
     # otherwise we look up configuration for parent
     controller = @module.controller
-    case parent
-      when ::CascadingConfiguration::Module::Configuration
-        # parent is what we want already
+    unless ::CascadingConfiguration::Module::Configuration === parent
+      if controller.has_configuration?( parent, @name )
+        parent = controller.configuration( parent, @name )
       else
-        if controller.has_configuration?( parent, @name )
-          parent = controller.configuration( parent, @name )
-        else
-          parent = nil
-        end
+        parent = nil
+      end
     end
 
     unless parent.nil? or @parent && is_parent?( parent )

@@ -58,18 +58,15 @@ module ::CascadingConfiguration::Controller::Configurations
   def configuration( instance, configuration_name, ensure_exists = true )
     
     configuration_instance = nil
+    raise_error = ensure_exists
 
     unless active_configurations = active_configurations( instance, false ) and
-           configuration_instance = active_configurations[ configuration_name.to_sym ]
+           configuration_instance = active_configurations[ configuration_name = configuration_name.to_sym ]
 
-      if ( ! ( ::Module === instance ) or 
-         ( ( instance_class = instance.class ) < ::Module and not instance_class < ::Class ) ) and
-         ( has_instance_configuration?( instance_class, configuration_name ) or
-           has_object_configuration?( instance_class, configuration_name ) )
-
-        register_instance( instance, instance_class )
-        configuration_instance = configuration( instance, configuration_name, ensure_exists )
-      else
+      singleton_configurations( instance ).load_parent_state
+      
+      unless active_configurations = active_configurations( instance, false ) and
+             configuration_instance = active_configurations[ configuration_name ]
         if ensure_exists
           exception_string = 'No configuration ' << configuration_name.to_s
           exception_string << ' for ' << instance.to_s 
@@ -121,7 +118,11 @@ module ::CascadingConfiguration::Controller::Configurations
       when ::Module
         unless configurations = @singleton_configurations[ instance_id = instance.__id__ ]
           if should_create
-            configurations = ::CascadingConfiguration::ConfigurationHash::SingletonConfigurations.new( self, instance )
+            configurations = ::CascadingConfiguration::ConfigurationHash::SingletonConfigurations.new( self, instance )            
+            unless ::Class === instance
+              configurations.register_parent( instance_configurations( instance_class = instance.class ) )
+              configurations.register_parent( object_configurations( instance_class ) )
+            end
             @singleton_configurations[ instance_id ] = configurations
           end
         end
@@ -154,12 +155,15 @@ module ::CascadingConfiguration::Controller::Configurations
 
     unless configurations = @instance_configurations[ instance_id = instance.__id__ ]
       if should_create
-        @instance_configurations[ instance_id ] = configurations = case instance
+        case instance
           when ::Module
-            ::CascadingConfiguration::ConfigurationHash::InactiveConfigurations.new( self, instance )
+            configurations = ::CascadingConfiguration::ConfigurationHash::InactiveConfigurations.new( self, instance )
           else
-            ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations.new( self, instance )
+            configurations = ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations.new( self, instance )
+            configurations.register_parent( instance_configurations( instance.class ) )
+            configurations.register_parent( object_configurations( instance.class ) )
         end
+        @instance_configurations[ instance_id ] = configurations
       end
     end
     
