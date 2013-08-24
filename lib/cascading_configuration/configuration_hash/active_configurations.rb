@@ -33,7 +33,6 @@ class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::Casc
     else
 
       super
-      self[ configuration_name ]
 
     end
 

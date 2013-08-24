@@ -9,9 +9,7 @@ class ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations <
   
   def register_parent_key( parent_configurations, configuration_name )
 
-    shared_configuration_objects = @controller.objects_sharing_instance_configurations( configuration_instance )
-
-    if shared_configuration_objects and#= @controller.objects_sharing_instance_configurations( configuration_instance ) and
+    if shared_configuration_objects = @controller.objects_sharing_instance_configurations( configuration_instance ) and
        shared_configuration_objects.include?( parent_configurations.configuration_instance )
 
       self[ configuration_name ] = parent_configurations[ configuration_name ]
