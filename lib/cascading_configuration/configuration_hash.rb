@@ -23,9 +23,6 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     
     @event_for_parent[ parent_configurations.__id__ ] = event
     super( parent_configurations )
-    # we call load_parent_state so we can use a simple flag to track event
-    # otherwise we have to store keyed data for lazy loading later
-    load_parent_state
     
     return self
     
