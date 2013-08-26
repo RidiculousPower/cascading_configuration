@@ -11,6 +11,7 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
     super( nil, instance )
     
     @controller = controller
+    @event_for_parent = { }
     
   end
 
@@ -20,12 +21,11 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
   
   def register_parent( parent_configurations, event = nil )
     
-    @event = event
+    @event_for_parent[ parent_configurations.__id__ ] = event
     super( parent_configurations )
     # we call load_parent_state so we can use a simple flag to track event
     # otherwise we have to store keyed data for lazy loading later
     load_parent_state
-    @event = nil
     
     return self
     
@@ -39,8 +39,9 @@ class ::CascadingConfiguration::ConfigurationHash < ::Hash::Compositing
 
     if existing_configuration = self[ configuration_name ]
       parent_configuration = parent_configurations[ configuration_name ]
-      @event ? existing_configuration.register_parent_for_ruby_hierarchy( parent_configuration ) 
-             : existing_configuration.register_parent( parent_configuration )
+      event = @event_for_parent[ parent_configurations.__id__ ]
+      event ? existing_configuration.register_parent_for_ruby_hierarchy( parent_configuration ) 
+            : existing_configuration.register_parent( parent_configuration )
     else
       super
     end

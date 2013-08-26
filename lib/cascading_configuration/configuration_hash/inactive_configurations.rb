@@ -8,7 +8,8 @@ class ::CascadingConfiguration::ConfigurationHash::InactiveConfigurations < ::Ca
 
   def child_pre_set_hook( configuration_name, parent_configuration, parent_configurations )
     
-    return parent_configuration.new«inheriting_inactive_configuration»( configuration_instance, @event )
+    event = @event_for_parent[ parent_configurations.__id__ ]
+    return parent_configuration.new«inheriting_inactive_configuration»( configuration_instance, event )
     
   end
   

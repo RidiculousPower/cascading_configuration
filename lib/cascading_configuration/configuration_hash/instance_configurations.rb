@@ -37,7 +37,8 @@ class ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations <
     case parent_configurations
       when ::CascadingConfiguration::ConfigurationHash::InactiveConfigurations::ObjectConfigurations
 
-        child_configuration = parent_configuration.new«inheriting_object_configuration»( instance, @event )
+        event = @event_for_parent[ parent_configurations.__id__ ]
+        child_configuration = parent_configuration.new«inheriting_object_configuration»( instance, event )
         parent_instance = parent_configurations.configuration_instance
         # inheritance relations need to map to the singleton configuration if it exists
         singleton_configuration = @controller.configuration( parent_instance, configuration_name, false )
