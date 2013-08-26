@@ -23,28 +23,36 @@ module ::CascadingConfiguration::Controller::Register
   #
   # @return 
   #
-  def register_parent( instance, parent )
+  def register_parent( instance, parent, event = nil )
     
-    case parent
-      
-      when ::Module
+    case event
+      when nil
 
-        if ::Module === instance
-          register_include( instance, parent )
-        else
-          register_instance( instance, parent )
+        case parent
+          when ::Module
+            if ::Module === instance
+              register_include( instance, parent )
+            else
+              register_instance( instance, parent )
+            end
+          else
+            # Inheriting from instance to module or class or other instance.
+            # We have only instance configurations, so we have to decide what that means for module or class.
+            # We make both singleton and instance configurations inherit from instance. 
+            register_instance_to_instance( instance, parent )
+            register_instance_to_singleton( instance, parent ) if ::Module === instance
         end
-        
-      else
 
-        # Inheriting from instance to module or class or other instance.
-        # We have only instance configurations, so we have to decide what that means for module or class.
-        # We make both singleton and instance configurations inherit from instance. 
-        register_instance_to_instance( instance, parent )
-        register_instance_to_singleton( instance, parent ) if ::Module === instance
-        
+      when :include
+        register_include( instance, parent )
+      when :extend
+        register_extend( instance, parent )
+      when :subclass
+        register_subclass( instance, parent )
+      when :instance
+        register_instance( instance, parent )
     end
-              
+                  
     return self
     
   end

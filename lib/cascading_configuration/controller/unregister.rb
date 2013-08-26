@@ -24,9 +24,7 @@ module ::CascadingConfiguration::Controller::Unregister
   # @return 
   #
   def unregister_parent( instance, parent )
-    
-    super
-    
+        
     case instance
       when ::Module
         if ! ( ::Class === instance ) and 

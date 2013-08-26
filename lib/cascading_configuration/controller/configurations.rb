@@ -157,7 +157,8 @@ module ::CascadingConfiguration::Controller::Configurations
       if should_create
         case instance
           when ::Module
-            configurations = ::CascadingConfiguration::ConfigurationHash::InactiveConfigurations.new( self, instance )
+            configurations = ::CascadingConfiguration::ConfigurationHash::
+                               InactiveConfigurations::InstanceConfigurations.new( self, instance )
           else
             configurations = ::CascadingConfiguration::ConfigurationHash::InstanceConfigurations.new( self, instance )
             configurations.register_parent( instance_configurations( instance.class ) )

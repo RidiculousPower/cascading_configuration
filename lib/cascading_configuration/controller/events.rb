@@ -18,7 +18,7 @@ module ::CascadingConfiguration::Controller::Events
   ######################
 
   def register_include( class_or_module, included_module )
-    
+
     register_singleton_to_singleton( class_or_module, included_module, :include )
     register_instance_to_instance( class_or_module, included_module, :include )
     

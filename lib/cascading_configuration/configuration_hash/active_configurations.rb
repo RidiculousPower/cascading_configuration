@@ -23,7 +23,8 @@ class ::CascadingConfiguration::ConfigurationHash::ActiveConfigurations < ::Casc
           parent = parent_configurations.configuration_instance
           if singleton_configuration = @controller.local_instance_configuration( parent, configuration_name, false ) or
              singleton_configuration = @controller.singleton_configuration( parent, configuration_name, false )
-            existing_configuration.register_parent( singleton_configuration )
+            @event ? existing_configuration.register_parent_for_ruby_hierarchy( parent_configuration ) 
+                   : existing_configuration.register_parent( parent_configuration )
           end
         else
           @event ? existing_configuration.register_parent_for_ruby_hierarchy( parent_configuration ) 

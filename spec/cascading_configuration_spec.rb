@@ -47,19 +47,27 @@ describe ::CascadingConfiguration do
   ###########################################################
   
   context 'Cascading Configurations to Already Existant Children' do
-    let( :class_A ) { ::Class.new.name( :ClassA ) }
+    let( :module_A ) { ::Module.new.name( :ModuleA ) }
+    let( :module_B ) { _module_A = module_A ; ::Module.new { include _module_A }.name( :ModuleB ) }
+    let( :class_A ) { _module_B = module_B ; ::Class.new { include _module_B }.name( :ClassA ) }
     let( :class_B ) { ::Class.new( class_A ).name( :ClassB ) }
     let( :class_C ) { ::Class.new( class_B ).name( :ClassC ) }
     let( :class_D ) { ::Class.new( class_C ).name( :ClassD ) }
     before :each do
       class_D
       # A doesn't know about B, C, D so they don't properly inherit configurations
-      class_A.class_eval do
+      module_A.module_eval do
         extend ::CascadingConfiguration::Setting
         attr_setting :configuration_A, :configuration_B
       end
     end
-    it 'will register parents properly after the fact (I believe this only applies to subclasses created before the class is extended by a CascadingConfiguration module)' do      
+    it 'will register parents properly after the fact (I believe this only applies to subclasses created before the class is extended by a CascadingConfiguration module)' do
+      module_B.•configuration_A.parent.should be module_A.•configuration_A
+      module_B.•configuration_B.parent.should be module_A.•configuration_B
+
+      class_A.•configuration_A.parent.should be module_B.•configuration_A
+      class_A.•configuration_B.parent.should be module_B.•configuration_B
+
       class_B.•configuration_A.parent.should be class_A.•configuration_A
       class_B.•configuration_B.parent.should be class_A.•configuration_B
 
@@ -76,23 +84,33 @@ describe ::CascadingConfiguration do
   ##############################################################################
   
   context 'Cascading Compositing Object Configurations to Already Existant Children' do
-    let( :class_A ) { ::Class.new.name( :ClassA ) }
+    let( :module_A ) { ::Module.new.name( :ModuleA ) }
+    let( :module_B ) { _module_A = module_A ; ::Module.new { include _module_A }.name( :ModuleB ) }
+    let( :class_A ) { _module_B = module_B ; ::Class.new { include _module_B }.name( :ClassA ) }
     let( :class_B ) { ::Class.new( class_A ).name( :ClassB ) }
     let( :class_C ) { ::Class.new( class_B ).name( :ClassC ) }
     let( :class_D ) { ::Class.new( class_C ).name( :ClassD ) }
     before :each do
       class_D
       # A doesn't know about B, C, D so they don't properly inherit configurations
-      class_A.class_eval do
+      module_A.module_eval do
         extend ::CascadingConfiguration::Array
         attr_array :configuration_A, :configuration_B
       end
     end
     it 'will register parents properly after the fact (I believe this only applies to subclasses created before the class is extended by a CascadingConfiguration module)' do
-      ::CascadingConfiguration.singleton_configurations( class_B ).load_parent_state
-      ::CascadingConfiguration.singleton_configurations( class_C ).load_parent_state
-      ::CascadingConfiguration.singleton_configurations( class_D ).load_parent_state
+
+      module_B.•configuration_A.parents.include?( module_A.•configuration_A ).should be true
+      module_B.•configuration_B.parents.include?( module_A.•configuration_B ).should be true
+
+      class_A.•configuration_A.parents.include?( module_B.•configuration_A ).should be true
+      class_A.•configuration_B.parents.include?( module_B.•configuration_B ).should be true
+
+      class_B.•configuration_A.parents.include?( class_A.•configuration_A ).should be true
+      class_B.•configuration_B.parents.include?( class_A.•configuration_B ).should be true
+
       class_C.•configuration_A.parents.include?( class_B.•configuration_A ).should be true
+      class_C.•configuration_B.parents.include?( class_B.•configuration_B ).should be true
       
     end
   end

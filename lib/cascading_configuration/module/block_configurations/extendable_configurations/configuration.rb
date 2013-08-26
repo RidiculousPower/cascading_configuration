@@ -75,7 +75,7 @@ class ::CascadingConfiguration::Module::BlockConfigurations::ExtendableConfigura
   #######################################
   
   def register_parent_extension_modules( parent )
-    
+
     @extension_modules.register_parent( parent.extension_modules )
     
     return self
